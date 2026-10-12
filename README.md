@@ -37,7 +37,7 @@ LTE data, microphone/headset routing, charging, suspend and remaining
 sensors need further work.
 
 ## Merge info ##
-This repo is not legiable to be merged to Nura (Formerly known as postmarket os) due to the ai policy seen [here](https://docs.nura.eco/policies-and-processes/development/ai-policy.html).
+This repo is not eligible to be merged to Nura (Formerly known as postmarket os) due to the ai policy seen [here](https://docs.nura.eco/policies-and-processes/development/ai-policy.html).
 Do not intentionally upload it, merge it or contribute code with the fact stated.
 
 ## Layout
