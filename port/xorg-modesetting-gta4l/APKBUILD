@@ -1,0 +1,50 @@
+pkgname=xorg-modesetting-gta4l
+pkgver=21.1.25
+pkgrel=0
+pkgdesc="Xorg modesetting driver with vendor DRM property compatibility"
+url="https://www.x.org/wiki"
+arch="aarch64"
+license="MIT"
+options="!check"
+depends="xorg-server=$pkgver-r0"
+replaces="xorg-server"
+makedepends="
+	libepoxy-dev libpciaccess-dev libxfont2-dev mesa-dev eudev-dev
+	libdrm-dev libx11-dev libxau-dev libxcb-dev libxcvt-dev libxdmcp-dev
+	libxext-dev libxkbfile-dev libxshmfence-dev meson nettle-dev pixman-dev
+	wayland-dev wayland-protocols xcb-util-dev xcb-util-image-dev
+	xcb-util-keysyms-dev xcb-util-renderutil-dev xcb-util-wm-dev
+	xkbcomp-dev xorgproto xtrans font-util-dev
+"
+source="https://www.x.org/releases/individual/xserver/xorg-server-$pkgver.tar.xz
+	nullable-output-atoms.patch
+"
+builddir="$srcdir/xorg-server-$pkgver"
+
+prepare() {
+	default_prepare
+	sed -i -e 's/termio.h/termios.h/' hw/xfree86/os-support/xf86_OSlib.h
+}
+
+build() {
+	export CFLAGS="${CFLAGS/-fno-plt}"
+	export CXXFLAGS="${CXXFLAGS/-fno-plt}"
+	export LDFLAGS="$LDFLAGS -Wl,-z,lazy"
+	abuild-meson \
+		-Db_lto=true -Dxorg=true -Dxephyr=false -Dxnest=false \
+		-Dxvfb=false -Dxwin=false -Dglamor=true -Dglx=true \
+		-Dsecure-rpc=false -Dsystemd_logind=false -Dudev=true \
+		-Dpciaccess=true -Ddri1=false -Ddri2=true -Ddri3=true \
+		-Dlisten_tcp=false . output
+	ninja -C output hw/xfree86/drivers/modesetting/modesetting_drv.so
+}
+
+package() {
+	install -Dm755 output/hw/xfree86/drivers/modesetting/modesetting_drv.so \
+		"$pkgdir/usr/lib/xorg/modules/drivers/modesetting_drv.so"
+}
+
+sha512sums="
+ccb807df73fa3bd1eacd0558425010cabeb90c11843b2d895166335823107766bbb14ad4ce33943453b81c689a90134b936572304138c290811d76d5e5d93360  xorg-server-21.1.25.tar.xz
+aaf81feb1e503f31ee0534cba57b05a7f68af1c1360db81d42df33cb0c105494df4a9007f3453e47ff1361eff54960b13414e50e8527f8a726055d934ca4f7f2  nullable-output-atoms.patch
+"

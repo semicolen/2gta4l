@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Camera
+Comment=Take photos with the tablet cameras
+Exec=/usr/bin/gta4l-camera
+Icon=camera-photo
+Categories=AudioVideo;Photography;
+Terminal=false

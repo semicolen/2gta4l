@@ -1,0 +1,10 @@
+#!/sbin/openrc-run
+name="SM-T505 camera controller"
+description="On-demand camera preview; hardware remains off until requested"
+supervisor=supervise-daemon
+command=/usr/bin/python3
+command_args=/usr/libexec/gta4l-camera-service.py
+respawn_delay=3
+respawn_max=5
+respawn_period=60
+depend() { need localmount; after udev; }

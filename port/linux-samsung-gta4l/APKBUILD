@@ -1,0 +1,109 @@
+# Reference: <https://postmarketos.org/vendorkernel>
+# Kernel config based on: arch/arm64/configs/gta4l_eur_open_defconfig
+
+pkgname=linux-samsung-gta4l
+pkgver=4.19.300
+pkgrel=8
+pkgdesc="Samsung Galaxy Tab A7 10.4 2020 (LTE) kernel fork"
+arch="aarch64"
+_carch="arm64"
+_flavor="samsung-gta4l"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	bash
+	bc
+	bison
+	devicepkg-dev
+	findutils
+	flex
+	openssl-dev
+	perl
+	linux-headers
+	clang
+	llvm
+	lld
+	xz
+	kmod
+"
+
+export CC="clang"	
+export HOSTCC="clang"
+export KERNEL_IMAGE_NAME="Image.gz"
+export LLVM="1"
+export LLVM_IAS="1"
+
+# Source
+_repository="android_kernel_samsung_sm6115"
+_commit="381a5549ee66fa751f632ee0840f5631274209ee"
+_config="config-$_flavor.$arch"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/LineageOS/$_repository/archive/$_commit.tar.gz
+	$_config
+	avoid-assertion-failure.patch
+	restore-hci-sockets.patch
+	cache-drm-refresh.patch
+	backlight-status.patch
+	touch-resume-order.patch
+	plane-resume-state.patch
+	guard-qca-tty.patch
+	restore-bt-module-build.patch
+"
+builddir="$srcdir/$_repository-$_commit"
+_outdir="out"
+
+prepare() {
+	default_prepare
+	REPLACE_GCCH=0 . downstreamkernel_prepare
+}
+
+build() {
+	unset LDFLAGS
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+}
+
+package() {
+	downstreamkernel_package "$builddir" "$pkgdir" "$_carch" \
+		"$_flavor" "$_outdir"
+
+	make dtbs_install O="$_outdir" ARCH="$_carch" \
+		INSTALL_DTBS_PATH="$pkgdir"/boot/dtbs
+	# Samsung's v2 boot header carries a concatenated Qualcomm DTB payload.
+	# Preserve every compiled board/SoC revision for bootloader ID selection.
+	mkdir -p "$pkgdir/boot/dtbs/qcom"
+	find "$_outdir/arch/arm64/boot/dts" -name '*.dtb' -type f \
+		| LC_ALL=C sort | xargs cat > "$pkgdir/boot/dtbs/qcom/gta4l.dtb"
+	test -s "$pkgdir/boot/dtbs/qcom/gta4l.dtb"
+
+	# The vendor audio, WLAN and rmnet drivers are modules. The downstream
+	# packaging helper installs only the kernel image; include every built module.
+	make modules_install O="$_outdir" ARCH="$_carch" \
+		INSTALL_MOD_PATH="$pkgdir" DEPMOD=/bin/true
+	# Build/source symlinks would point into the disposable build chroot.
+	rm -f "$pkgdir"/lib/modules/*/build "$pkgdir"/lib/modules/*/source
+	depmod -b "$pkgdir" "$(cat "$_outdir/include/config/kernel.release")"
+	# Use the names produced by this source revision, rather than stock Android
+	# aliases. Some Lineage modules use *_dlkm names.
+	mkdir -p "$pkgdir/etc/modules-load.d"
+	find "$pkgdir/lib/modules" -name '*.ko' -type f \
+		| grep -E '/(techpack/audio/|drivers/staging/qcacld-3.0/)' \
+		| LC_ALL=C sort | sed 's|.*/||;s/\.ko$//' \
+		> "$pkgdir/etc/modules-load.d/gta4l.conf"
+	grep -q '^wlan$' "$pkgdir/etc/modules-load.d/gta4l.conf"
+	grep -q '^machine_dlkm$' "$pkgdir/etc/modules-load.d/gta4l.conf"
+}
+
+sha512sums="
+f39b6e8038903187d73ea0c0cb0c672862639c768c0f2be755b5557c6081b4198e9b4249682baf3522b3980e70ef5d389819d6b68bc84b415f4156485af0abf9  linux-samsung-gta4l-381a5549ee66fa751f632ee0840f5631274209ee.tar.gz
+8c60eca3ab65a770faba489994fe5b0f626eb05e6a2fe89d6002db475c343ee75129d0e868a609347e8e2e830d8d5e0f6a77da17f9096566b72a84d168866f33  config-samsung-gta4l.aarch64
+f3886bff666e812b72aa4ecd9f3aae262e9732ae7ca3d899af42b875653bc0bce0e5e8ab8c092c1e077464e348036eafe0b10c8eeb71535bdfa0ddb4564e2553  avoid-assertion-failure.patch
+253b6c91a9d67e9b27ad639392052df2d89f5ca535b94d081d530d9118bd48e2fabf02aa13948b9d57966a420ba4ecdd988419014f9545e22094f66f1f14ace3  restore-hci-sockets.patch
+6ed62ecb692100c299a6ef72907f09230689fcf1d940bebddc3c579e45a7d140b308ee86d0de8c2132d08abeac5bdb4ac8ad5c7d5b71d9174b9dcc91d82d2cbc  cache-drm-refresh.patch
+549f2483c50ab794ac690ab8a80eff8446b66780edcd826318374abc14c2498370f163b13f0835c677bf0ee2f7490b429fafb16d459d3c48849a0eb0def7837f  backlight-status.patch
+4730f6f3f555f29c3d3390a189f3a6c317cc642437b94330f87ae8dbe446592253965898c507a5747e0a2ce00959b372dba629cdc6196138b0fa1e35e8346c01  touch-resume-order.patch
+fc2577d3f1782b388cdd6be189bb3b6c52646f3ca1adac7db3fecd1ffd451f246ae1a27ff1e7ef407af0ea6ef5814953019366f17691aec4038824add3fdccfc  plane-resume-state.patch
+b76faa65b4e11b2d32c6bf3bdd955574d0182af039a64a0f3c95c6584abe69b2dcbf0831a013b3659acb1700351c5f3153e81955167e428bc9c6f605fcf1cdfb  guard-qca-tty.patch
+08ddb4d0afbe2a22fc3d1dff7ba2a25ebfbaf85129011f4371e8c275ec59ddd46c82a84e2aea6d3410538205df2e54456ed0d94cc2f7925637be522c78484bc5  restore-bt-module-build.patch
+"

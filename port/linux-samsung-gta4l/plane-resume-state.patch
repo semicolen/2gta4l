@@ -1,0 +1,18 @@
+--- a/techpack/display/msm/sde/sde_plane.c
++++ b/techpack/display/msm/sde/sde_plane.c
+@@ -3273,8 +3273,13 @@
+ 			pstate->scaler3_cfg.lut_flag)
+ 		psde->cached_lut_flag = pstate->scaler3_cfg.lut_flag;
+ 
+-	/* force reprogramming of all the parameters, if the flag is set */
+-	if (psde->revalidate) {
++	/*
++	 * DPMS keeps the plane framebuffer and rectangles unchanged, but
++	 * disabling the CRTC loses SSPP programming. The CRTC unregisters
++	 * its power-event callback before power-down, so POST_DISABLE may
++	 * not set revalidate. Restore all plane state on the active edge.
++	 */
++	if (psde->revalidate || crtc->state->active_changed) {
+ 		SDE_DEBUG("plane:%d - reconfigure all the parameters\n",
+ 				plane->base.id);
+ 		_sde_plane_check_lut_dirty(psde, pstate);

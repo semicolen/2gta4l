@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.postmarketos.Gta4l.Rotation
+Exec=/usr/bin/gta4l-rotate

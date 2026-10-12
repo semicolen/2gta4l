@@ -1,0 +1,33 @@
+# Based on Alpine main/bubblewrap; retain upstream compatibility for Linux 4.19.
+pkgname=bubblewrap-gta4l
+pkgver=0.13.0
+pkgrel=0
+pkgdesc="Bubblewrap sandbox with Linux 4.19 compatibility for Samsung gta4l"
+url="https://github.com/containers/bubblewrap"
+arch="aarch64"
+license="LGPL-2.1-or-later"
+options="!check"
+provides="bubblewrap=$pkgver-r$pkgrel"
+replaces="bubblewrap"
+makedepends="libcap-dev libcap-static muon"
+source="bubblewrap-$pkgver.tar.gz::https://github.com/containers/bubblewrap/archive/v$pkgver.tar.gz"
+builddir="$srcdir/bubblewrap-$pkgver"
+
+build() {
+	abuild-muon \
+		-Dassume_kernel=4.19.0 \
+		-Dman=disabled \
+		-Dtests=false \
+		-Dc_link_args="$LDFLAGS -static" \
+		-Dprefer_static=true \
+		output
+	ninja -C output
+}
+
+package() {
+	install -Dm755 output/bwrap "$pkgdir/usr/bin/bwrap"
+}
+
+sha512sums="
+33091ca27e6abe7e1136e1c96a350b3953e030e7bd38c22aab04ad13cfc5d6c913580b98150bfe635af0391a201b154dc0828d99e0af5ab198ffb90cc92680c2  bubblewrap-0.13.0.tar.gz
+"

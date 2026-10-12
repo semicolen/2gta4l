@@ -1,0 +1,25 @@
+#!/sbin/openrc-run
+description="Initialize the downstream Qualcomm IPA data interface"
+
+depend() {
+    need gta4l-modem
+    after udev-settle
+    before modemmanager networkmanager
+}
+
+start() {
+    ebegin "Activating signed IPA firmware"
+    if [ ! -c /dev/ipa ]; then
+        eend 1 "IPA character device is unavailable"
+        return 1
+    fi
+    # ipa3_write() schedules firmware loading on a nonempty write.
+    printf '1\n' > /dev/ipa || { eend 1; return 1; }
+    local remaining=15
+    while [ ! -e /sys/class/net/rmnet_ipa0 ] && [ "$remaining" -gt 0 ]; do
+        sleep 1
+        remaining=$((remaining - 1))
+    done
+    [ -e /sys/class/net/rmnet_ipa0 ]
+    eend $? "Vendor IPA data interface did not appear"
+}

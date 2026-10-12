@@ -1,0 +1,21 @@
+#!/sbin/openrc-run
+supervisor=supervise-daemon
+description="Serve a private copy of the SM-T505 sensor registry to the DSP"
+command="/usr/bin/hexagonrpcd-gta4l"
+command_args="-s -f /dev/adsprpc-smd-secure -R /var/lib/gta4l-sensors/runtime"
+output_log="/var/log/gta4l/sensors.log"
+error_log="$output_log"
+respawn_delay=10
+respawn_max=5
+respawn_period=1800
+depend() {
+    need gta4l-adsp qrtr-ns gta4l-pd-mapper gta4l-tqftpserv
+    after udev-settle
+    before iio-sensor-proxy
+}
+start_pre() {
+    checkpath --directory --mode 0700 /var/log/gta4l/sensors-private
+    output_log="/var/log/gta4l/sensors-private/rpc.log"
+    error_log="$output_log"
+    /usr/bin/gta4l-sensors-prepare || return 1
+}

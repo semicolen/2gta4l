@@ -1,0 +1,30 @@
+{
+  "install_options": {
+    "DEVICE": "samsung-gta4l",
+    "FLASH_KERNEL": "true",
+    "FLAVOR": "",
+    "ISOREC": "false",
+    "KERNEL_PARTLABEL": "boot",
+    "INITFS_PARTLABEL": "recovery",
+    "SYSTEM_PARTLABEL": "userdata",
+    "INSTALL_PARTITION": "userdata",
+    "CIPHER": "aes-xts-plain64",
+    "FDE": "false"
+  },
+  "upstream_installer_sha256": "f7d7654098d82f8c532528a5960c30548bbda8e1478429558b0c53afcd494058",
+  "installer_revision": 2,
+  "package_revision": 4,
+  "recovery_mount_view": "/proc/1/mountinfo",
+  "partition_setup": "staged sparse-file MBR, checked readback and kpartx mappings",
+  "patched_members_sha256": {
+    "META-INF/com/google/android/update-binary": "a89b6b225474a398b03d1bfe51e1b33662a86dd96346d61b8ec110a50852958c",
+    "META-INF/com/google/android/update-binary.pmos": "f7d7654098d82f8c532528a5960c30548bbda8e1478429558b0c53afcd494058",
+    "chroot/bin/pmos_install": "c6b3be09a4670468631076a69087c7c2feea8c214921f7c29fab49dc3a1b1f23",
+    "chroot/bin/pmos_install_functions": "014907224c2aece34d12db28881b58255905f0cb1b9a66aa583f7e0f1981624d",
+    "gta4l_userdata_mounts.sh": "6ef89d670ee42d98ba6716ee37c76a89b8221131ef198210abb9fc157baaf216"
+  },
+  "embedded_boot_matches": true,
+  "embedded_module_loader_matches": true,
+  "zip_crc_checks_passed": true,
+  "runtime_verified": false
+}

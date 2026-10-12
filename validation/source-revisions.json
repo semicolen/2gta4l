@@ -1,0 +1,27 @@
+{
+  "device": "SM-T505",
+  "stock_version": "T505XXS8CXG1",
+  "kernel_commit": "381a5549ee66fa751f632ee0840f5631274209ee",
+  "sources": {
+    "base-port": {
+      "commit": "35b3893a62ea326fe487b0790827fc1a72717f49",
+      "url": "https://github.com/semicolen/2gta4l.git"
+    },
+    "orangefox": {
+      "commit": "e820bb63df247510bdd150bca28e1365f92faf05",
+      "url": "https://github.com/semicolen/orangefoxrecovery-sm505.git"
+    },
+    "pmbootstrap": {
+      "commit": "200f5123615808326ac796f66b02fdc6cebbcbf1",
+      "url": "https://gitlab.postmarketos.org/postmarketOS/pmbootstrap.git"
+    },
+    "pmaports": {
+      "commit": "8b13cfdbea31aee694a3e7266c7a531189db33f0",
+      "url": "https://gitlab.postmarketos.org/postmarketOS/pmaports.git"
+    },
+    "boot-deploy": {
+      "commit": "a50452a054233c2d7bf6142cbc332c94c79cc18f",
+      "url": "https://gitlab.postmarketos.org/postmarketOS/boot-deploy.git"
+    }
+  }
+}

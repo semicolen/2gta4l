@@ -1,0 +1,37 @@
+#!/bin/sh
+set -eu
+[ "$(id -u)" = 0 ]
+case "${1:-}" in
+    rear) option=--preview-rear ;;
+    front) option=--preview-front ;;
+    rear-photo) option=--photo-rear ;;
+    front-photo) option=--photo-front ;;
+    *) exit 2 ;;
+esac
+ROOT=${GTA4L_CAMERA_ROOT:-/usr/lib/gta4l-camera/runtime}
+[ -d "$ROOT" ]
+printf '%s\n' '3dfa3c004119eea2e70114689ea39025a60c1349f7564977626c5b0974f378a8  camera.qcom.so' |
+    (cd "$ROOT/vendor/lib64/hw" && sha256sum -c -)
+mkdir -p "$ROOT/dev" "$ROOT/proc" "$ROOT/sys" "$ROOT/lib/firmware" \
+    "$ROOT/usr/lib/firmware" "$ROOT/data/vendor/camera" "$ROOT/run/gta4l-camera"
+export ROOT
+exec unshare -m /bin/sh -c '
+    set -eu
+    mount --make-rprivate /
+    mount --bind /dev "$ROOT/dev"
+    mount --bind /proc "$ROOT/proc"
+    mount -o remount,bind,ro "$ROOT/proc"
+    mount --bind /sys "$ROOT/sys"
+    mount -o remount,bind,ro "$ROOT/sys"
+    mount --bind /usr/lib/firmware "$ROOT/lib/firmware"
+    mount -o remount,bind,ro "$ROOT/lib/firmware"
+    mount --bind /usr/lib/firmware "$ROOT/usr/lib/firmware"
+    mount -o remount,bind,ro "$ROOT/usr/lib/firmware"
+    mount --bind /var/lib/gta4l-camera "$ROOT/data/vendor/camera"
+    mount --bind /run/gta4l-camera/frames "$ROOT/run/gta4l-camera"
+    export LD_LIBRARY_PATH=/apex/com.android.runtime/lib64/bionic:/vendor/lib64:/vendor/lib64/hw:/apex/com.android.vndk.v31/lib64:/system/lib64
+    case "$1" in
+        --photo-*) exec timeout -k 5 35 chroot "$ROOT" /system/bin/camera-hal-enumerate "$1" ;;
+        *) exec chroot "$ROOT" /system/bin/camera-hal-enumerate "$1" ;;
+    esac
+' gta4l-camera "$option"

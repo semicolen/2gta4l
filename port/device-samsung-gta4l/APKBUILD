@@ -1,0 +1,103 @@
+# Reference: <https://postmarketos.org/devicepkg>
+pkgname=device-samsung-gta4l
+pkgdesc="Samsung Galaxy Tab A7 10.4 2020 (LTE)"
+pkgver=1
+pkgrel=22
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+	linux-samsung-gta4l
+	mkbootimg
+	postmarketos-base
+	kmod
+	xf86-video-fbdev
+	bubblewrap-gta4l
+	xorg-modesetting-gta4l
+	mesa-vulkan-kgsl-gta4l
+	alsa-ucm-gta4l
+	networkmanager-bluetooth
+	rotation-gta4l
+	gps-gta4l
+	camera-gta4l
+	xfce4-screensaver=4.20.2-r1
+"
+makedepends="devicepkg-dev"
+install="$pkgname-openrc.post-install $pkgname-openrc.post-upgrade"
+
+subpackages="
+	$pkgname-nonfree-firmware:nonfree_firmware
+	$pkgname-openrc
+"
+
+source="
+	deviceinfo
+	modules-initfs
+	98-touchscreen-cal.rules
+	90-gta4l-fbdev.conf
+	gta4l-rmtfs.initd
+	gta4l-modem.initd
+	gta4l-subsystem.c
+	gta4l-ipa.initd
+	78-mm-gta4l.rules
+	79-gta4l-kgsl.rules
+	79-gta4l-ion.rules
+	gta4l-adsp.initd
+	gta4l-dbus-services.initd
+	polkit.confd
+"
+
+build() {
+	devicepkg_build $startdir $pkgname
+	${CC:-cc} $CFLAGS "$srcdir/gta4l-subsystem.c" $LDFLAGS -o "$srcdir/gta4l-subsystem"
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+	install -Dm644 "$srcdir/90-gta4l-fbdev.conf" \
+		"$pkgdir/etc/X11/xorg.conf.d/90-gta4l-fbdev.conf"
+	install -Dm644 "$srcdir/79-gta4l-kgsl.rules" "$pkgdir/etc/udev/rules.d/79-gta4l-kgsl.rules"
+	install -Dm644 "$srcdir/79-gta4l-ion.rules" "$pkgdir/etc/udev/rules.d/79-gta4l-ion.rules"
+}
+
+openrc() {
+	install_if="$pkgname=$pkgver-r$pkgrel openrc"
+	depends="openrc qrtr-ns-gta4l pd-mapper-gta4l rmtfs rmtfs-udev modemmanager-openrc polkit-openrc bluez-openrc bluetooth-gta4l tqftpserv-gta4l wlfw-gta4l sensors-gta4l-openrc iio-sensor-proxy-openrc camera-gta4l-openrc"
+	mkdir -p "$subpkgdir"
+	install -Dm755 "$srcdir/gta4l-rmtfs.initd" "$subpkgdir/etc/init.d/gta4l-rmtfs"
+	install -Dm755 "$srcdir/gta4l-modem.initd" "$subpkgdir/etc/init.d/gta4l-modem"
+	install -Dm755 "$srcdir/gta4l-ipa.initd" "$subpkgdir/etc/init.d/gta4l-ipa"
+	install -Dm755 "$srcdir/gta4l-adsp.initd" "$subpkgdir/etc/init.d/gta4l-adsp"
+	install -Dm755 "$srcdir/gta4l-dbus-services.initd" "$subpkgdir/etc/init.d/gta4l-dbus-services"
+	install -Dm644 "$srcdir/78-mm-gta4l.rules" "$subpkgdir/etc/udev/rules.d/78-mm-gta4l.rules"
+	install -Dm755 "$srcdir/gta4l-subsystem" "$subpkgdir/usr/bin/gta4l-subsystem"
+	install -Dm644 "$srcdir/polkit.confd" "$subpkgdir/etc/conf.d/polkit"
+}
+
+nonfree_firmware() {
+	pkgdesc="SM-T505 vendor firmware for touchscreen, wireless, GPU, DSPs and LTE"
+	depends="firmware-samsung-gta4l"
+	mkdir "$subpkgdir"
+
+	# Touchscreen rotation fix
+	install -Dm644 "$srcdir"/98-touchscreen-cal.rules \
+		"$subpkgdir"/etc/udev/rules.d/98-touchscreen-cal.rules
+}
+
+sha512sums="
+b424c548a635366018dc941bb7f5803bbcfe0dfbe68987f7bb1e9a8309fef6669e421c54b30b067011bbc6ab519b15b31551b27a8093f5b03829746ade211b75  deviceinfo
+e70bae17df23dcaaaea0e2d3616556f04baa23f8ee1357785c0f539bf97282d8ddff53953e155b72689bb73beb38c2da3d08de2a61e866684edfa10a6593885d  modules-initfs
+12f51cd9c2324006162065db51bf348bee4a36a8edafce30e84414d6373750136957edde220dca1982c988f9fe646345471b1e5418427a83f0975c95b973b441  98-touchscreen-cal.rules
+da25df34b942f7310a7edba8b89674eb151d8be0cceb4e8f2aa976bee73d9886f3d24c69fd9ae5bb37f2da6ee6dd72032127f1b32c1ebec279574727793632a0  90-gta4l-fbdev.conf
+2a00e318030c23ad0bd3b0e70ca13afd0f69a677cf4df861d8b0971a5eec4b062749f3bd16f2c61f1e6a83d6c79bd5eceb26a4413b15c3a780b30eea32001664  gta4l-rmtfs.initd
+18a21f83bb1aaa5f132a515ae1dc284e65e894672c60ced7ee84e03abc327c681cdf04d74e1cd6a97373d7401edf69fb70b3046b035c20173eba3b7ff0b358ed  gta4l-modem.initd
+6e6d7bed0de4f718d58de57dff35dc83d66f2603b4590374b945f33f35c3052a165639560934455df67af8c22b8b253a82a00f5d4f1a8181d1e5c572446973f9  gta4l-subsystem.c
+ea96a0add3591d1f51fedbf460f7b6ec66b19b8ad174f6fb75b7248a5efb4fe6de22fb215380bd702b91c932ce22157c025c6e6c8edd842c9fd6e99bc3419d6a  gta4l-ipa.initd
+cc5cd26435abd24c14b264dd9c562ec0fc6e4bb1140701fdf8d92b4d0bc4ca2c33d27b4fca7ca5489f3311d06254b43f4869bed85c0a18834f53169206d4926b  78-mm-gta4l.rules
+276689dfc56fa72e27152a415bfc8ce814312eb5adc202e506a7e12414b816b59d7e97996f3ae8cde4e0cbde8b9378d189b8e91c0d0651d1c9c012bc710243e4  79-gta4l-kgsl.rules
+55ac81513b52a86b92ddd62416d6ec2845879a691a136666e4042e191b8ce387c06623f36cb6ad03377cf129c05e3703e2cec1113cb9cce3b1ed3ceaed80f7d7  79-gta4l-ion.rules
+cbadd139f7db28551c56145a93df3b9d6201551f974fa83638f599b6b3f35b5c1924b7386a45b6d82454dfd93fd430fc8956b8ccd500f783020cb503ecab1997  gta4l-adsp.initd
+7cd3b8ba4ae06c5bd95ee9dc24a106dd8f4409a5ffc6ada6c31694a1d67ad178890a3e820ac6e7faa1400701ab947a1a1a1b4d21b830f90273c2a935ddd8ace7  gta4l-dbus-services.initd
+18fa31436485133fbb6956ce06163f77be7f54c93bc39f066f7eeb85adfca46fafc05427a62b566b4c156b209f2fd021021d46514e7e661e8aa877dc51e28f9f  polkit.confd
+"

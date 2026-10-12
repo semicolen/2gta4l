@@ -1,0 +1,27 @@
+# Extracted locally from the user's matching Samsung stock archive.
+# Keep proprietary binaries outside the source repository.
+pkgname=firmware-samsung-gta4l
+pkgver=20240703
+pkgrel=0
+pkgdesc="SM-T505 T505XXS8CXG1 touchscreen, wireless, GPU, DSP and LTE firmware"
+url="https://opensource.samsung.com/"
+arch="aarch64"
+license="proprietary"
+options="!strip !check !archcheck !tracedeps"
+
+source="gta4l-firmware-T505XXS8CXG1.tar.gz"
+
+package() {
+	mkdir -p "$pkgdir/lib/firmware" "$pkgdir/vendor"
+	cp -a "$srcdir/lib/firmware/postmarketos" "$pkgdir/lib/firmware/"
+	cp -a "$srcdir/vendor/." "$pkgdir/vendor/"
+	# Zero-flash touch controllers request firmware before mounting rootfs.
+	mkdir -p "$pkgdir/usr/share/mkinitfs/files"
+	find "$pkgdir/lib/firmware/postmarketos" -maxdepth 1 -type f \
+		\( -name 'Himax_*.bin' -o -name '*ts_fw*.bin' -o -name 'focaltech*.bin' \) \
+		| sed "s|^$pkgdir||" > "$pkgdir/usr/share/mkinitfs/files/gta4l-touch-firmware.files"
+}
+
+sha512sums="
+950a68aa659d2080049f260b0b2c47dd1c5434c8ce07acfc29d4af323d22b0e34b603aff050ec285c7a0cf2ac40756003b3088879e59bbadb855b31868cc91c9  gta4l-firmware-T505XXS8CXG1.tar.gz
+"

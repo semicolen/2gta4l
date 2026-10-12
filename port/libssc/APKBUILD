@@ -1,0 +1,50 @@
+# Contributor: Dylan Van Assche <dylan@postmarketos.org>
+# Maintainer: Dylan Van Assche <dylan@postmarketos.org>
+pkgname=libssc
+pkgver=0.4.4
+pkgrel=0
+pkgdesc="Library to expose Qualcomm Sensor Core sensors"
+url="https://codeberg.org/DylanVanAssche/libssc"
+arch="all"
+license="GPL-3.0-or-later"
+makedepends="
+	eudev-dev
+	glib-dev
+	libgudev-dev
+	linux-headers
+	libqmi-dev
+	meson
+	protobuf-c-dev
+	protobuf-dev
+	python3-dev
+	py3-gobject3
+	py3-protobuf
+	qrtr-libs
+"
+subpackages="$pkgname-dbg $pkgname-dev $pkgname-pyc"
+builddir="$srcdir/$pkgname"
+source="$pkgname-$pkgver.tar.gz::https://codeberg.org/DylanVanAssche/libssc/archive/v$pkgver.tar.gz"
+
+# Tests suddenly fail on s390x, disable them for now
+case "$CARCH" in
+	s390x) options="!check";;
+esac
+
+build() {
+	abuild-meson \
+		-Db_lto=true \
+		. output
+	meson compile -C output
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+check() {
+	meson test --print-errorlogs -C output
+}
+
+sha512sums="
+6b7ec092c645af7210b3fc7c7e3ca48a5d7d74d2b787c103d30de6ca9d64c30479d75e9364d369944dc8b9ac9b4caeb6a9dea4641997aad40ab47fbc41224604  libssc-0.4.4.tar.gz
+"

@@ -1,0 +1,10 @@
+# Start in the final service identity so pidfd self-reads remain usable on
+# Linux 4.19 after exec. Do not weaken Polkit's authorization policies.
+command_user="polkitd:polkitd"
+POLKIT_OPTS=" "
+output_log="/var/log/gta4l/polkit.log"
+error_log="/var/log/gta4l/polkit.log"
+start_pre() {
+    checkpath -d -m 0755 -o root:root /var/log/gta4l
+    checkpath -f -m 0600 -o polkitd:polkitd /var/log/gta4l/polkit.log
+}

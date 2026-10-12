@@ -1,0 +1,25 @@
+pkgname=sensors-gta4l
+pkgver=1.0
+pkgrel=0
+pkgdesc="Downstream sensor registry startup for SM-T505"
+url="https://github.com/semicolen/2gta4l"
+arch="aarch64"
+license="MIT"
+options="!check !archcheck"
+depends="hexagonrpc-gta4l firmware-sensors-gta4l python3 e2fsprogs-extra"
+subpackages="$pkgname-openrc"
+source="gta4l-sensors-prepare.py gta4l-sensors.initd iio-sensor-proxy.confd"
+package() {
+    install -Dm755 "$srcdir/gta4l-sensors-prepare.py" "$pkgdir/usr/bin/gta4l-sensors-prepare"
+}
+openrc() {
+    install_if="$pkgname=$pkgver-r$pkgrel openrc"
+    depends="openrc iio-sensor-proxy-openrc"
+    install -Dm755 "$srcdir/gta4l-sensors.initd" "$subpkgdir/etc/init.d/gta4l-sensors"
+    install -Dm644 "$srcdir/iio-sensor-proxy.confd" "$subpkgdir/etc/conf.d/iio-sensor-proxy"
+}
+sha512sums="
+32bfc5af3761670ecd6fe8e3ee553c58b15d14412eb2bb2b86f349176a09e74e2cf7e9e073ff12a00523fead7be1e3e1429d41bcd95fc50e96709e703e780abb  gta4l-sensors-prepare.py
+6c4c3cd1bbb4dcbe1a534606ec1c33e912fb996b4366c27d1da280807403434b16d74e33b3ff4c271ec2f5369149e8b1fa6c45a5d52ca36281281330371daee2  gta4l-sensors.initd
+189ced86aaf0908341be9dfbc29edff3c96bcfc269035f71f6e606de0fbe8274a3a8fa07efc9b33cdd0e44fecbe88c0deb07499e9ab23049b797a402bc99ac9f  iio-sensor-proxy.confd
+"

@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.sh text eol=lf
+APKBUILD text eol=lf
+deviceinfo text eol=lf
+*.patch -whitespace
+# Preserve the byte-exact checksummed recipe and reference header.
+port/linux-samsung-gta4l/APKBUILD whitespace=-blank-at-eol
+port/hexagonrpc-gta4l/gta4l-reference-uapi.h whitespace=-blank-at-eof

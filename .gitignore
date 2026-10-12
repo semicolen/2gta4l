@@ -1,0 +1,9 @@
+artifacts/
+evidence/
+firmware-local/
+logs/
+downloads/
+.publication/
+__pycache__/
+*.pyc
+port/camera-gta4l/gta4l-camera-runtime-*.tar.gz

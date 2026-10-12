@@ -1,0 +1,174 @@
+--- a/src/mm-shared-qmi.c
++++ b/src/mm-shared-qmi.c
+@@ -5741,6 +5741,143 @@
+ 
+ 
+ static void
++loc_send_start (QmiClientLoc *client, GTask *task)
++{
++    g_autoptr(QmiMessageLocStartInput) input = qmi_message_loc_start_input_new ();
++
++    qmi_message_loc_start_input_set_session_id (input, DEFAULT_LOC_SESSION_ID, NULL);
++    qmi_message_loc_start_input_set_intermediate_report_state (input, QMI_LOC_INTERMEDIATE_REPORT_STATE_DISABLE, NULL);
++    qmi_message_loc_start_input_set_minimum_interval_between_position_reports (input, 1000, NULL);
++    qmi_message_loc_start_input_set_fix_recurrence_type (input, QMI_LOC_FIX_RECURRENCE_TYPE_REQUEST_PERIODIC_FIXES, NULL);
++    qmi_client_loc_start (client, input, 10, NULL,
++                         (GAsyncReadyCallback) loc_start_ready, task);
++}
++
++/* Device-selected LOC preparation. Wait for both the request acknowledgement
++ * and the completion indication before starting the normal GPS session. */
++typedef struct {
++    QmiClientLoc *client;
++    gulong        indication_id;
++    guint         timeout_id;
++    gboolean      response_received;
++    gboolean      indication_received;
++    gboolean      finished;
++} Gta4lLocUnlock;
++
++static void
++gta4l_loc_unlock_cleanup (Gta4lLocUnlock *ctx)
++{
++    if (ctx->indication_id) {
++        g_signal_handler_disconnect (ctx->client, ctx->indication_id);
++        ctx->indication_id = 0;
++    }
++    if (ctx->timeout_id) {
++        g_source_remove (ctx->timeout_id);
++        ctx->timeout_id = 0;
++    }
++}
++
++static void
++gta4l_loc_unlock_free (Gta4lLocUnlock *ctx)
++{
++    gta4l_loc_unlock_cleanup (ctx);
++    g_clear_object (&ctx->client);
++    g_free (ctx);
++}
++
++static void
++gta4l_loc_unlock_progress (GTask *task, GError *error)
++{
++    Gta4lLocUnlock *ctx = g_task_get_task_data (task);
++
++    if (ctx->finished) {
++        g_clear_error (&error);
++        return;
++    }
++    if (!error && !(ctx->response_received && ctx->indication_received))
++        return;
++    ctx->finished = TRUE;
++    gta4l_loc_unlock_cleanup (ctx);
++    if (error) {
++        g_prefix_error (&error, "Couldn't prepare SM-T505 GPS engine: ");
++        g_task_return_error (task, error);
++        g_object_unref (task);
++    } else
++        loc_send_start (ctx->client, task);
++}
++
++static gboolean
++gta4l_loc_unlock_timeout (GTask *task)
++{
++    Gta4lLocUnlock *ctx = g_task_get_task_data (task);
++
++    ctx->timeout_id = 0;
++    gta4l_loc_unlock_progress (task,
++        g_error_new_literal (MM_CORE_ERROR, MM_CORE_ERROR_ABORTED,
++                             "LOC engine-lock completion timed out"));
++    return G_SOURCE_REMOVE;
++}
++
++static void
++gta4l_loc_unlock_indication (QmiClientLoc *client,
++                             QmiIndicationLocSetEngineLockOutput *output,
++                             GTask *task)
++{
++    Gta4lLocUnlock *ctx = g_task_get_task_data (task);
++    QmiLocIndicationStatus status;
++    GError *error = NULL;
++
++    if (ctx->finished)
++        return;
++    if (!qmi_indication_loc_set_engine_lock_output_get_indication_status (output, &status, &error) ||
++        !mm_error_from_qmi_loc_indication_status (status, &error)) {
++        gta4l_loc_unlock_progress (task, error);
++        return;
++    }
++    ctx->indication_received = TRUE;
++    gta4l_loc_unlock_progress (task, NULL);
++}
++
++static void
++gta4l_loc_unlock_response (QmiClientLoc *client, GAsyncResult *res, GTask *task)
++{
++    /* The request owns an additional reference: a timeout or early indication
++     * failure may finish the outer task before this callback arrives. */
++    g_autoptr(GTask) callback_ref = task;
++    g_autoptr(QmiMessageLocSetEngineLockOutput) output = NULL;
++    g_autoptr(GError) error = NULL;
++    Gta4lLocUnlock *ctx = g_task_get_task_data (task);
++
++    output = qmi_client_loc_set_engine_lock_finish (client, res, &error);
++    if (ctx->finished)
++        return;
++    if (!output || !qmi_message_loc_set_engine_lock_output_get_result (output, &error)) {
++        gta4l_loc_unlock_progress (task, g_steal_pointer (&error));
++        return;
++    }
++    ctx->response_received = TRUE;
++    gta4l_loc_unlock_progress (task, NULL);
++}
++
++static void
++gta4l_loc_unlock (QmiClientLoc *client, GTask *task)
++{
++    g_autoptr(QmiMessageLocSetEngineLockInput) input = NULL;
++    Gta4lLocUnlock *ctx = g_new0 (Gta4lLocUnlock, 1);
++
++    ctx->client = g_object_ref (client);
++    g_task_set_task_data (task, ctx, (GDestroyNotify) gta4l_loc_unlock_free);
++    ctx->indication_id = g_signal_connect (client, "set-engine-lock",
++                                           G_CALLBACK (gta4l_loc_unlock_indication), task);
++    ctx->timeout_id = g_timeout_add_seconds (15, (GSourceFunc) gta4l_loc_unlock_timeout, task);
++    input = qmi_message_loc_set_engine_lock_input_new ();
++    qmi_message_loc_set_engine_lock_input_set_lock_type (input, QMI_LOC_LOCK_TYPE_NONE, NULL);
++    qmi_client_loc_set_engine_lock (client, input, 10, NULL,
++                                    (GAsyncReadyCallback) gta4l_loc_unlock_response,
++                                    g_object_ref (task));
++}
++
++static void
+ start_gps_engine (MMSharedQmi         *self,
+                   GAsyncReadyCallback  callback,
+                   gpointer             user_data)
+@@ -5777,20 +5914,13 @@
+                                         MM_PORT_QMI_FLAG_DEFAULT,
+                                         NULL);
+     if (client) {
+-        QmiMessageLocStartInput *input;
+-
+-        input = qmi_message_loc_start_input_new ();
+-        qmi_message_loc_start_input_set_session_id (input, DEFAULT_LOC_SESSION_ID, NULL);
+-        qmi_message_loc_start_input_set_intermediate_report_state (input, QMI_LOC_INTERMEDIATE_REPORT_STATE_DISABLE, NULL);
+-        qmi_message_loc_start_input_set_minimum_interval_between_position_reports (input, 1000, NULL);
+-        qmi_message_loc_start_input_set_fix_recurrence_type (input, QMI_LOC_FIX_RECURRENCE_TYPE_REQUEST_PERIODIC_FIXES, NULL);
+-        qmi_client_loc_start (QMI_CLIENT_LOC (client),
+-                              input,
+-                              10,
+-                              NULL,
+-                              (GAsyncReadyCallback) loc_start_ready,
+-                              task);
+-        qmi_message_loc_start_input_unref (input);
++        if (g_strcmp0 (mm_base_modem_get_plugin (MM_BASE_MODEM (self)), "qcom-soc") == 0 &&
++            g_strcmp0 (qmi_device_get_path_display (QMI_DEVICE (qmi_client_peek_device (client))), "qrtr://0") == 0 &&
++            g_file_test ("/etc/ModemManager/gta4l-gps-unlock", G_FILE_TEST_IS_REGULAR)) {
++            mm_obj_dbg (self, "Preparing SM-T505 GPS engine through QMI LOC");
++            gta4l_loc_unlock (QMI_CLIENT_LOC (client), task);
++        } else
++            loc_send_start (QMI_CLIENT_LOC (client), task);
+         return;
+     }
+ 

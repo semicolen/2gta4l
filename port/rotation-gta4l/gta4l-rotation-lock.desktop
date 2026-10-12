@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Toggle rotation lock
+Comment=Lock the current orientation or enable automatic rotation
+Exec=gta4l-rotate --toggle
+Icon=object-rotate-right
+Categories=Settings;HardwareSettings;
+Terminal=false

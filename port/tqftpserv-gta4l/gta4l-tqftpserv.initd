@@ -1,0 +1,17 @@
+#!/sbin/openrc-run
+supervisor=supervise-daemon
+description="Serve stock Qualcomm firmware for the downstream SM-T505 kernel"
+command="/usr/bin/tqftpserv-gta4l"
+output_log="/var/log/gta4l/tqftpserv.log"
+error_log="/var/log/gta4l/tqftpserv.log"
+
+depend() {
+    need qrtr-ns
+    before gta4l-modem gta4l-adsp
+    after udev-settle
+}
+
+start_pre() {
+    checkpath -d -m 0755 /var/log/gta4l
+    export TQFTPSERV_FW_DIR=/lib/firmware/postmarketos
+}

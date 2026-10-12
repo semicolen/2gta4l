@@ -1,0 +1,34 @@
+pkgname=alsa-ucm-gta4l
+pkgver=1.0
+pkgrel=3
+pkgdesc="ALSA speaker routing for Samsung Galaxy Tab A7 LTE (SM-T505)"
+url="https://github.com/semicolen/2gta4l"
+arch="aarch64"
+license="MIT"
+depends="alsa-ucm-conf"
+options="!check !archcheck"
+subpackages="$pkgname-pulseaudio:pulse"
+source="gta4l.conf HiFi.conf 90-gta4l-audio.rules 90-gta4l-audio.pa"
+
+package() {
+	install -Dm644 "$srcdir/gta4l.conf" "$pkgdir/usr/share/alsa/ucm2/Qualcomm/gta4l/gta4l.conf"
+	install -Dm644 "$srcdir/HiFi.conf" "$pkgdir/usr/share/alsa/ucm2/Qualcomm/gta4l/HiFi.conf"
+	mkdir -p "$pkgdir/usr/share/alsa/ucm2/conf.d/bengal-qrd-snd-"
+	ln -s ../../Qualcomm/gta4l/gta4l.conf \
+		"$pkgdir/usr/share/alsa/ucm2/conf.d/bengal-qrd-snd-/bengal-qrd-snd-card.conf"
+}
+
+pulse() {
+	pkgdesc="PulseAudio timing for the SM-T505 downstream DSP"
+	install_if="$pkgname=$pkgver-r$pkgrel pulseaudio"
+	depends="pulseaudio-alsa"
+	install -Dm644 "$srcdir/90-gta4l-audio.rules" "$subpkgdir/usr/lib/udev/rules.d/90-gta4l-audio.rules"
+	install -Dm644 "$srcdir/90-gta4l-audio.pa" "$subpkgdir/etc/pulse/default.pa.d/90-gta4l-audio.pa"
+}
+
+sha512sums="
+40028320fc9d3a7341a00dfc42933c59634240ae87b62164c56d07152fa7b99f87fae43a76fa1b88c03e9d3532b3721817576c95d2b4b72f5ed1c07d99f897a6  gta4l.conf
+cd96747daf8ff529b2a893f521fbbf9beb2ddc0c8229cdbb4cfcee9f5b0ac2c54682a2e6b77fd6b49099040557d7a53b80e51cdb8401cdbbf0812e0b24b45a5f  HiFi.conf
+726e2cd6ad4ce08799d41cb9a872c1c24b301c60755f5ed1d5600cb2660ba4e09e7550b70095aaa1e36fa1b5591b33ae7682565cd330571ffd5ce9bae59ca549  90-gta4l-audio.rules
+b63c597b690ae7a34172b3f2ba120963d8125aff4b9d5fd494c8ea6004b65209565b1cc5fcf289d8ec91caca79de3f7a723d5494787096f545a8ac5c9add8f5c  90-gta4l-audio.pa
+"

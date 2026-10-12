@@ -1,0 +1,45 @@
+#!/sbin/sh
+# SM-T505 preflight for the upstream postmarketOS recovery installer.
+set -eu
+OUTFD="$2"
+ZIP="$3"
+ui_print() {
+    printf 'ui_print %s\nui_print\n' "$1" > "/proc/self/fd/$OUTFD"
+}
+fail() {
+    ui_print "SM-T505 preflight failed: $1"
+    exit 1
+}
+device="$(getprop ro.product.device)"
+model="$(getprop ro.product.model)"
+bootloader="$(getprop ro.bootloader)"
+[ "$device" = gta4l ] || fail "device is $device"
+case "$bootloader:$model" in
+    T505*:*) ;;
+    :SM-T505|:SM_T505) ;;
+    *) fail "LTE model identification failed ($bootloader / $model)" ;;
+esac
+[ "$(id -u)" = 0 ] || fail 'OrangeFox root access is required'
+boot="$(readlink -f /dev/block/by-name/boot)"
+data="$(readlink -f /dev/block/by-name/userdata)"
+[ "$boot" = /dev/block/mmcblk0p69 ] || fail "unexpected boot mapping: $boot"
+[ "$data" = /dev/block/mmcblk0p80 ] || fail "unexpected userdata mapping: $data"
+[ "$(blockdev --getsize64 "$boot")" = 100663296 ] || fail 'boot is not 96 MiB'
+[ "$(blockdev --getsize64 "$data")" -ge 4294967296 ] || fail 'userdata is too small'
+# The installer must keep reading the ZIP after userdata has been reformatted.
+# A file on Android's internal storage would disappear during installation.
+case "$ZIP" in
+    /tmp/*|/sideload/*|/external_sd/*|/usb_otg/*) ;;
+    *) fail 'copy the ZIP to /tmp or use OrangeFox ADB sideload / external media' ;;
+esac
+ui_print 'SM-T505 verified. This installer replaces Android userdata and boot.'
+ui_print 'Recovery, modem, EFS, persist and the bootloader are preserved.'
+mkdir -p /tmp/postmarketos
+unzip -p "$ZIP" gta4l_userdata_mounts.sh > /tmp/postmarketos/userdata-mounts.sh
+. /tmp/postmarketos/userdata-mounts.sh
+if ! gta4l_unmount_userdata > /tmp/postmarketos/preflight.log 2>&1; then
+    fail 'userdata is busy; unmount Data in OrangeFox, then retry. See /tmp/postmarketos/preflight.log'
+fi
+unzip -p "$ZIP" META-INF/com/google/android/update-binary.pmos > /tmp/postmarketos/upstream-installer
+chmod 755 /tmp/postmarketos/upstream-installer
+exec /tmp/postmarketos/upstream-installer "$@"

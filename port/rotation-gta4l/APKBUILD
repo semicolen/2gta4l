@@ -1,0 +1,24 @@
+pkgname=rotation-gta4l
+pkgver=1.0
+pkgrel=0
+pkgdesc="Automatic Xfce display and touch rotation for Galaxy Tab A7 LTE"
+url="https://github.com/semicolen/2gta4l"
+arch="aarch64"
+license="MIT"
+options="!check !archcheck"
+depends="python3 py3-dbus py3-gobject3 xrandr xinput xset iio-sensor-proxy sensors-gta4l"
+source="gta4l-rotate.py gta4l-rotation.desktop gta4l-rotation-lock.desktop 81-gta4l-sensors.rules org.postmarketos.Gta4l.Rotation.service"
+package() {
+    install -Dm755 "$srcdir/gta4l-rotate.py" "$pkgdir/usr/bin/gta4l-rotate"
+    install -Dm644 "$srcdir/gta4l-rotation.desktop" "$pkgdir/etc/xdg/autostart/gta4l-rotation.desktop"
+    install -Dm644 "$srcdir/gta4l-rotation-lock.desktop" "$pkgdir/usr/share/applications/gta4l-rotation-lock.desktop"
+    install -Dm644 "$srcdir/81-gta4l-sensors.rules" "$pkgdir/etc/udev/rules.d/81-gta4l-sensors.rules"
+    install -Dm644 "$srcdir/org.postmarketos.Gta4l.Rotation.service" "$pkgdir/usr/share/dbus-1/services/org.postmarketos.Gta4l.Rotation.service"
+}
+sha512sums="
+58be82fd999150a39ab5f1fea6d1dc78988d37cd0bb559d217a6bd45cae791e1cb03a28deca6a364bd61be45190a7e04f5cb54689eadeeb435abc4670e088af3  gta4l-rotate.py
+372e97d81d90e64e7e41e9b74efa68a12af31e0a8b5c4f7d8b86e0442e84f04195309f9a670cfde6e907661bb0a28a386d2ffa027653045c36d1e2570b7332b3  gta4l-rotation.desktop
+5fdc88a9f375fbd4e3ef2ee503a0b76a3b90e9e811e6e63d58e48beec06fbd7eae8ff72d10de4378f9a57d2870e399954cecc5e9d670a755a6bd4c3488b28f4f  gta4l-rotation-lock.desktop
+cedf34b3ca8f3017ba8b0053d7b87ede2ab50043e2c83da13bb8bef6c9bc999b7d35c028dfe517982ad255a31c3f2e806f805fdc018944972bd718fb26e7042f  81-gta4l-sensors.rules
+17f3311fc4677e205ee54b7aee5e1482f6bea01b1e63025b0ddd0f9021c11a8b48732b900ae48c537fd34a1c80779b3fc5906fc7445255685e54f4deb8c7bfe7  org.postmarketos.Gta4l.Rotation.service
+"

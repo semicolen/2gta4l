@@ -1,0 +1,15 @@
+--- a/drivers/gpu/drm/drm_modes.c
++++ b/drivers/gpu/drm/drm_modes.c
+@@ -1745,6 +1745,12 @@
+ 		break;
+ 	}
+ 
++	/* Downstream DSI validation consumes the cached refresh field, while
++	 * standard DRM clients may leave it zero. Derive it from the timings
++	 * before asking the vendor driver to validate the requested mode. */
++	if (!out->vrefresh)
++		out->vrefresh = drm_mode_vrefresh(out);
++
+ 	out->status = drm_mode_validate_driver(dev, out);
+ 	if (out->status != MODE_OK)
+ 		return -EINVAL;

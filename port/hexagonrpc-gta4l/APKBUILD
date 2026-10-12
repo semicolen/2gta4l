@@ -1,0 +1,47 @@
+pkgname=hexagonrpc-gta4l
+pkgver=0.5.0
+pkgrel=0
+pkgdesc="Qualcomm sensor file server for the SM-T505 downstream FastRPC ABI"
+url="https://github.com/linux-msm/hexagonrpc"
+arch="aarch64"
+license="GPL-3.0-or-later LGPL-3.0-or-later MIT"
+makedepends="meson linux-headers"
+subpackages="$pkgname-dbg $pkgname-doc"
+source="hexagonrpc-da7a3742ab8d5273a281b70ee11f16fb2cb6a690.tar.gz::https://github.com/linux-msm/hexagonrpc/archive/da7a3742ab8d5273a281b70ee11f16fb2cb6a690.tar.gz
+    gta4l-fastrpc.h
+    downstream-fastrpc.patch
+    gta4l-reference-uapi.h
+    kernel-abi-test.c
+"
+builddir="$srcdir/hexagonrpc-da7a3742ab8d5273a281b70ee11f16fb2cb6a690"
+
+prepare() {
+    default_prepare
+    cp "$srcdir/gta4l-fastrpc.h" include/
+}
+
+build() {
+    abuild-meson -Dhexagonrpcd_verbose=true . output
+    meson compile -C output
+    ${CC:-cc} $CFLAGS -Iinclude -I"$srcdir" "$srcdir/kernel-abi-test.c" $LDFLAGS -o output/kernel-abi-test
+}
+
+check() {
+    meson test --print-errorlogs -C output
+    ./output/kernel-abi-test
+}
+
+package() {
+    install -Dm755 output/hexagonrpcd/hexagonrpcd "$pkgdir/usr/bin/hexagonrpcd-gta4l"
+    install -Dm755 output/libhexagonrpc/libhexagonrpc.so.0.5 "$pkgdir/usr/lib/libhexagonrpc.so.0.5"
+    install -Dm644 hexagonrpcd/hexagonrpcd.1 "$pkgdir/usr/share/man/man1/hexagonrpcd-gta4l.1"
+    install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+}
+
+sha512sums="
+866ffde3110d3744cd6ea0dd4b965e640e293e21a77cd3767ba770515ed09dda11667d70f806d4fedad283d7e38671c2d455b6c612b7225a038930d3eac5bc2c  hexagonrpc-da7a3742ab8d5273a281b70ee11f16fb2cb6a690.tar.gz
+fb1e08396bda9d77b7b3f30ff3a7cb7371794fd9e514cfe1658c57c753900eca6f015723c656ed8a1e4ae8a673c4114fe461c4e8253199b63962972c8e33b452  gta4l-fastrpc.h
+882742c2703851f1c82b7dd3cb496871288d23f2f0f8a6ec590c4c124e2564d801ac59d062fe80d5e9e329e0084807440b74f4ab10fef5b6252206686988743c  downstream-fastrpc.patch
+833ae60ba4ae3d869ccc668269fceb8b5b597df8d79f5e6409b709f2dc4847f62b8b32de806e5f31445b3bbcb77f20d61f3afd46b71ee4dff50a802ad0c3ae6d  gta4l-reference-uapi.h
+842138f136650126589364df1ef1c4957878801bdb03a0d6b9c8fb3e7c8f36d650bbeb7a298e66f341535a539722a200c4ff3bf958e989d6b529cc43125edf22  kernel-abi-test.c
+"

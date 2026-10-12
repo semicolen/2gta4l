@@ -1,0 +1,31 @@
+pkgname=qrtr-ns-gta4l
+pkgver=1.2
+pkgrel=0
+pkgdesc="QRTR userspace name server for the SM-T505 downstream kernel"
+url="https://github.com/linux-msm/qrtr"
+arch="aarch64"
+license="BSD-3-Clause"
+options="!check"
+depends="qrtr-libs"
+makedepends="meson linux-headers"
+source="qrtr-v$pkgver.tar.gz::https://github.com/linux-msm/qrtr/archive/v$pkgver/qrtr-v$pkgver.tar.gz
+	qrtr-ns.initd
+"
+builddir="$srcdir/qrtr-$pkgver"
+
+build() {
+	abuild-meson -Dqrtr-ns=enabled -Dsystemd-service=disabled . output
+	meson compile -C output
+}
+
+package() {
+	# qrtr supplies the library and diagnostic tools; install only the missing daemon.
+	install -Dm755 output/src/qrtr-ns "$pkgdir/usr/bin/qrtr-ns"
+	install -Dm755 "$srcdir/qrtr-ns.initd" "$pkgdir/etc/init.d/qrtr-ns"
+	install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+}
+
+sha512sums="
+aec1dfc598a70f0128d81a56faab74a2a7676dc0c4ff2e858f76aaf815afb5b785af0cf18427212f92aec3c61297af3f94a64671ec5e161c4a340d2edcfaabdd  qrtr-v1.2.tar.gz
+979e49a6822cda802bb65faa42cc0e37d1ffeea1c454a28f94102f6f7f4b1dd2b20146cdf72c251889bc3e8ae66b000cfcda799c61ae0afeef51f96d49bb7f2a  qrtr-ns.initd
+"

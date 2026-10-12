@@ -1,0 +1,3 @@
+# The vendor IPA driver registers its data interface without a parent device.
+# Group this specific physical data port with the QRTR Qualcomm SoC modem.
+ACTION=="add|change|move|bind", SUBSYSTEM=="net", KERNEL=="rmnet_ipa0", ENV{ID_MM_CANDIDATE}="1", ENV{ID_MM_QCOM_SOC}="1", ENV{ID_MM_PHYSDEV_UID}="qcom-soc"

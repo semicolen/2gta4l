@@ -1,0 +1,20 @@
+pkgname=bluetooth-gta4l
+pkgver=1.0
+pkgrel=0
+pkgdesc="Stock WCN3988 Bluetooth bootstrap for the SM-T505 downstream UART"
+url="https://github.com/semicolen/2gta4l"
+arch="aarch64"
+license="MIT"
+options="!check !archcheck"
+depends="python3 bluez e2fsprogs-extra firmware-samsung-gta4l"
+source="gta4l-bt-initialize.py gta4l-bluetooth.initd"
+
+package() {
+    install -Dm755 "$srcdir/gta4l-bt-initialize.py" "$pkgdir/usr/bin/gta4l-bt-initialize"
+    install -Dm755 "$srcdir/gta4l-bluetooth.initd" "$pkgdir/etc/init.d/gta4l-bluetooth"
+}
+
+sha512sums="
+69fc569821bf4a298ac82b41654826e33bd9c4067813d129940f1a903bb57a0a8e9db45676ce1e6c6495b3c77435e85f1579797bd1ddc83f43a119bc3acbc57c  gta4l-bt-initialize.py
+d5df249af75de2d466f82994f0853b7e5958307e42c5faa653a0b10c698d40d0297ca63edb013318795dabf4982d989106102037e88397ad605b9910a27db412  gta4l-bluetooth.initd
+"

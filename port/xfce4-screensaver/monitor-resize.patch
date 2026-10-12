@@ -1,0 +1,55 @@
+--- a/src/gs-lock-plug.c
++++ b/src/gs-lock-plug.c
+@@ -1499,6 +1499,20 @@
+     g_object_unref (bg);
+ }
+ 
++/* Monitor rotation changes both the background's minimum size and the
++ * XEmbed plug's fixed size request. Keep the existing authentication dialog. */
++static void
++lock_monitor_geometry_notify (GdkMonitor *monitor,
++                              GParamSpec *pspec,
++                              GSLockPlug *plug) {
++    GdkRectangle geometry;
++    gdk_monitor_get_geometry (monitor, &geometry);
++    redraw_background (plug);
++    gtk_widget_set_size_request (plug->priv->plug_widget,
++                                 geometry.width, geometry.height);
++    gtk_widget_queue_resize (plug->priv->plug_widget);
++}
++
+ static void
+ keyboard_toggled_cb (GtkToggleButton *button,
+                      gpointer *user_data) {
+@@ -1776,6 +1790,14 @@
+                                      "monitor-index", monitor_index,
+                                      NULL);
+ 
++    GdkDisplay *display = gdk_display_get_default ();
++    GdkMonitor *monitor = gdk_display_get_monitor (display, monitor_index);
++    if (monitor == NULL)
++        monitor = gdk_display_get_monitor (display, 0);
++    if (monitor != NULL)
++        g_signal_connect_object (monitor, "notify::geometry",
++                                 G_CALLBACK (lock_monitor_geometry_notify), plug, 0);
++
+     gtk_window_set_focus_on_map (GTK_WINDOW (plug->priv->plug_widget), TRUE);
+ 
+     return plug;
+--- a/src/gs-window.c
++++ b/src/gs-window.c
+@@ -328,6 +328,14 @@
+                          GParamSpec *pspec,
+                          GSWindow *window) {
+     gs_debug ("Got monitor geometry notify signal");
++    if (window->priv->keyboard_socket != NULL) {
++        GdkRectangle geometry;
++        gint height;
++        gdk_monitor_get_geometry (monitor, &geometry);
++        height = geometry.height < 610 ? 205 - ((610 - geometry.height) / 2) : 205;
++        gtk_widget_set_size_request (window->priv->keyboard_socket,
++                                     MIN (geometry.width, 1400), MAX (height, 1));
++    }
+     gtk_widget_queue_resize (GTK_WIDGET (window));
+ }
+ 

@@ -1,0 +1,26 @@
+pkgname=vulkan-tools-gta4l
+pkgver=1.4.360
+pkgrel=0
+pkgdesc="Locally built Vulkan diagnostics for SM-T505 GPU bring-up"
+url="https://github.com/KhronosGroup/Vulkan-Tools"
+arch="aarch64"
+license="Apache-2.0"
+options="!check"
+makedepends="cmake glslang-dev libx11-dev libxrandr-dev python3 samurai volk vulkan-headers vulkan-loader-dev wayland-dev wayland-protocols"
+source="vulkan-tools-$pkgver.tar.gz::https://github.com/KhronosGroup/Vulkan-Tools/archive/refs/tags/v$pkgver.tar.gz"
+builddir="$srcdir/Vulkan-Tools-$pkgver"
+
+build() {
+    cmake -B output -G Ninja \
+        -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_SKIP_RPATH=True -DBUILD_CUBE=ON -DBUILD_VULKANINFO=ON
+    cmake --build output
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install output
+}
+
+sha512sums="
+1a0d01f0c3cd1ff585066fb82ac7cf9b87a553ab5c6b2916fdd281d7df6bd088c2a9a750634450b643c477c35f825e698f505c8cc2c91d11059b2989e16a40df  vulkan-tools-1.4.360.tar.gz
+"

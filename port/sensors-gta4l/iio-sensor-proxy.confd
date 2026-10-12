@@ -1,0 +1,2 @@
+# Start the downstream DSP reverse-RPC listener before SensorProxy discovery.
+rc_need="gta4l-sensors"

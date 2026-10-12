@@ -1,0 +1,2 @@
+# Allow the desktop user's video group to access the downstream GPU device.
+ACTION=="add|change", KERNEL=="kgsl-3d0", GROUP="video", MODE="0660"

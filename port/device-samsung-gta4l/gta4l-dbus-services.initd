@@ -1,0 +1,12 @@
+#!/sbin/openrc-run
+description="Start supervised D-Bus providers before desktop and network clients"
+
+depend() {
+    need polkit modemmanager
+    before elogind networkmanager lightdm
+}
+
+start() {
+    ebegin "D-Bus providers are ready under OpenRC supervision"
+    eend 0
+}

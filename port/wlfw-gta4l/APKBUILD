@@ -1,0 +1,27 @@
+pkgname=wlfw-gta4l
+pkgver=1.0
+pkgrel=0
+pkgdesc="Stock WLAN board-data initialization for the SM-T505 downstream kernel"
+url="https://github.com/semicolen/2gta4l"
+arch="aarch64"
+license="MIT"
+options="!check"
+depends="qrtr firmware-samsung-gta4l"
+source="wlfw-initialize.c gta4l-wlan-start gta4l-wlan.initd"
+builddir="$srcdir"
+
+build() {
+    ${CC:-cc} $CFLAGS -O2 -Wall -Wextra -Werror wlfw-initialize.c $LDFLAGS -o wlfw-initialize
+}
+
+package() {
+    install -Dm755 wlfw-initialize "$pkgdir/usr/bin/wlfw-initialize-gta4l"
+    install -Dm755 gta4l-wlan-start "$pkgdir/usr/bin/gta4l-wlan-start"
+    install -Dm755 gta4l-wlan.initd "$pkgdir/etc/init.d/gta4l-wlan"
+}
+
+sha512sums="
+ecf42f207c399a3512bf6d57984e894ac5faade06665a28d516d3b531e4edd8b9df9edfb7e68298e3e7556fac1e174abe336bc785b3affe6da95fc7b181984fd  wlfw-initialize.c
+b01373aee6a783e4ef79face8c16a13bf3f764ebcfeb949e6f60cde06cf32bebf4cc7481982e3d92ca17c75bc7e6a0cab419135dade3854c82a957b67a570247  gta4l-wlan-start
+a2f69f737d986100a72aed3d4021efc4675c45978a5ed3b84da6a2108352627408f2d620b656d21fe85281f3a744a0f82ad8b8ae84f460c81bd73b7a63ceeddc  gta4l-wlan.initd
+"

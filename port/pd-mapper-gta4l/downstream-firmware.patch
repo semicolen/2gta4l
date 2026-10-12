@@ -1,0 +1,50 @@
+--- a/pd-mapper.c
++++ b/pd-mapper.c
+@@ -289,6 +289,30 @@
+ 	size_t len;
+ 	size_t n;
+ 
++	/* Downstream PIL exposes subsystem devices instead of remoteproc. */
++	const char *override = getenv("PD_MAPPER_FW_DIR");
++	if (override) {
++		fw_dir = opendir(override);
++		if (!fw_dir) {
++			warn("failed to open firmware directory");
++			return -1;
++		}
++		while ((fw_de = readdir(fw_dir)) != NULL) {
++			len = strlen(fw_de->d_name);
++			if (!((len > 4 && !strcmp(fw_de->d_name + len - 4, ".jsn")) ||
++			      (len > 7 && !strcmp(fw_de->d_name + len - 7, ".jsn.xz"))))
++				continue;
++			if (snprintf(json_path, sizeof(json_path), "%s/%s", override,
++				     fw_de->d_name) >= sizeof(json_path)) {
++				closedir(fw_dir);
++				return -1;
++			}
++			assoc_set(json_set, json_path, NULL);
++		}
++		closedir(fw_dir);
++		return 0;
++	}
++
+ 	class_fd = open("/sys/class/remoteproc", O_RDONLY | O_DIRECTORY);
+ 	if (class_fd < 0) {
+ 		warn("failed to open remoteproc class");
+@@ -411,6 +435,16 @@
+ 	if (!pd_maps) {
+ 		fprintf(stderr, "no pd maps available\n");
+ 		exit(1);
++	}
++
++	/* Validate stock manifests without contacting hardware. */
++	if (argc == 2 && !strcmp(argv[1], "--check-maps")) {
++		const struct pd_map *map = pd_maps;
++		while (map->service) {
++			printf("%s %s %d\n", map->service, map->domain, map->instance);
++			map++;
++		}
++		return 0;
+ 	}
+ 
+ 	fd = qrtr_open(0);

@@ -1,0 +1,14 @@
+#!/sbin/openrc-run
+supervisor=supervise-daemon
+description="Qualcomm modem storage through the downstream UIO transport"
+command="/usr/bin/rmtfs"
+# The downstream PIL starts the modem; -s is for mainline remoteproc.
+# Read-only NV storage during first bring-up keeps calibration backups intact.
+command_args="-P -r"
+respawn_delay=5
+
+depend() {
+	need qrtr-ns
+	after udev-settle
+	before modemmanager
+}

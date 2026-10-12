@@ -1,0 +1,11 @@
+#!/sbin/openrc-run
+supervisor=supervise-daemon
+description="QRTR name server for the downstream Qualcomm kernel"
+command="/usr/bin/qrtr-ns"
+command_args="-f"
+respawn_delay=5
+
+depend() {
+	after modules udev-settle
+	before modemmanager pd-mapper tqftpserv rmtfs
+}

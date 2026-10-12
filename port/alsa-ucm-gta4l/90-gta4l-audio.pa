@@ -1,0 +1,7 @@
+# Match the automatic card/sink names to retain desktop volume and routing.
+# Timer scheduling needs a continuously accurate PCM position; this Q6 driver
+# advances its pointer only at DSP block completion. Use four 10 ms periods.
+# Keep idle suspension enabled so the DSP and amplifiers stop after playback.
+.ifexists module-alsa-card.so
+load-module module-alsa-card device_id=bengalqrdsndcar name=platform-soc_qcom_msm-audio-apr_qcom_q6core-audio_sound card_name=alsa_card.platform-soc_qcom_msm-audio-apr_qcom_q6core-audio_sound namereg_fail=false tsched=no fragments=4 fragment_size=1920 use_ucm=yes
+.endif

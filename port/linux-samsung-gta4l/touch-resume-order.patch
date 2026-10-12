@@ -1,0 +1,30 @@
+--- a/drivers/input/touchscreen/hxchipset/himax_platform.c
++++ b/drivers/input/touchscreen/hxchipset/himax_platform.c
+@@ -994,9 +994,24 @@
+ 		switch (*blank) {
+ 		case DRM_PANEL_BLANK_UNBLANK:
+ #ifdef HX_CONTAINER_SPEED_UP
+-			queue_delayed_work(ts->ts_int_workqueue,
+-				&ts->ts_int_work,
+-				msecs_to_jiffies(0));
++			/*
++			 * The panel's id 29 notification occurs after its GPIO
++			 * reset and before DSI on commands. A deferred firmware
++			 * reload resets this shared TDDI chip after LCD setup.
++			 * Finish that reload here while the LCD is still off.
++			 */
++			if (evdata->id == 29) {
++				cancel_delayed_work_sync(&ts->ts_int_work);
++				pr_info("[HXTP] synchronous pre-LCD firmware resume start\n");
++				if (!ts->initialized && himax_chip_common_init())
++					return -ECANCELED;
++				himax_chip_common_resume(ts);
++				pr_info("[HXTP] synchronous pre-LCD firmware resume complete\n");
++			} else {
++				queue_delayed_work(ts->ts_int_workqueue,
++					&ts->ts_int_work,
++					msecs_to_jiffies(0));
++			}
+ #else
+ 			himax_common_resume(ts->dev);
+ #endif

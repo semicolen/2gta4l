@@ -1,0 +1,11 @@
+#!/sbin/openrc-run
+supervisor=supervise-daemon
+description="Qualcomm protection-domain mapper for the SM-T505 downstream kernel"
+command="/usr/bin/pd-mapper-gta4l"
+export PD_MAPPER_FW_DIR=/lib/firmware/postmarketos
+respawn_delay=5
+
+depend() {
+	need qrtr-ns
+	after modules
+}

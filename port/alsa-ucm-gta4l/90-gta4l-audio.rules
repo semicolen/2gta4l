@@ -1,0 +1,4 @@
+# The downstream Q6 PCM pointer advances only at completed DSP blocks.
+# Load this internal card explicitly with interrupt scheduling in PulseAudio;
+# external ALSA cards remain available to module-udev-detect.
+SUBSYSTEM=="sound", KERNEL=="card[0-9]*", ATTR{id}=="bengalqrdsndcar", ENV{PULSE_IGNORE}="1"

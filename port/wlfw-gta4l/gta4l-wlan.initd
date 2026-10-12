@@ -1,0 +1,26 @@
+#!/sbin/openrc-run
+description="Initialize stock WLAN board data and create the Wi-Fi interface"
+
+depend() {
+    need gta4l-modem
+    after modules udev-settle gta4l-ipa
+    before networkmanager wpa_supplicant
+}
+
+start() {
+    checkpath -d -m 0755 -o root:root /var/log/gta4l
+    checkpath -f -m 0600 -o root:root /var/log/gta4l/wlan-initialize.log
+    ebegin "Initializing SM-T505 WLAN firmware"
+    /usr/bin/gta4l-wlan-start >> /var/log/gta4l/wlan-initialize.log 2>&1
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping SM-T505 WLAN"
+    if [ -c /dev/wlan ] && [ -d /sys/class/net/wlan0 ]; then
+        timeout -k 5 25 /bin/sh -c 'printf "OFF\n" > /dev/wlan'
+        eend $?
+    else
+        eend 0
+    fi
+}

@@ -1,0 +1,2 @@
+# The downstream Vulkan driver's external memory uses ION.
+ACTION=="add|change", SUBSYSTEM=="misc", KERNEL=="ion", GROUP="video", MODE="0660"

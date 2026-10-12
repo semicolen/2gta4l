@@ -1,0 +1,17 @@
+# Proprietary stock files only; personal persist calibration is excluded.
+pkgname=firmware-sensors-gta4l
+pkgver=20240703
+pkgrel=0
+pkgdesc="SM-T505 T505XXS8CXG1 sensor DSP libraries and registry configuration"
+url="https://opensource.samsung.com/"
+arch="aarch64"
+license="proprietary"
+options="!strip !check !archcheck !tracedeps"
+source="gta4l-sensor-firmware-T505XXS8CXG1.tar.gz"
+package() {
+    mkdir -p "$pkgdir/usr/share/gta4l-sensors"
+    cp -a "$srcdir/dsp" "$srcdir/sns_reg.conf" "$srcdir/vendor-config" "$pkgdir/usr/share/gta4l-sensors/"
+}
+sha512sums="
+5fdcb0deaf043825337b6e8f5d32e3611aebace980f31d628752918d581939e40fe12cea3a5f628d2969f638bc00c2429ef6f0130c0aa320fc53b19df80cdef8  gta4l-sensor-firmware-T505XXS8CXG1.tar.gz
+"

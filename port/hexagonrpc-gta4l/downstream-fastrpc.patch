@@ -1,0 +1,111 @@
+--- a/libhexagonrpc/hexagonrpc.c
++++ b/libhexagonrpc/hexagonrpc.c
+@@ -27,6 +27,7 @@
+ #include <string.h>
+ 
+ #include <misc/fastrpc.h>
++#include "gta4l-fastrpc.h"
+ #include <sys/ioctl.h>
+ 
+ #include <libhexagonrpc/hexagonrpc.h>
+@@ -807,7 +808,7 @@
+ 		invoke.sc = REMOTE_SCALARS_MAKE(def->msg_id,
+ 						count.n_inbufs, count.n_outbufs);
+ 
+-	ret = ioctl(fd, FASTRPC_IOCTL_INVOKE, (__u64) &invoke);
++	ret = gta4l_rpc_invoke(fd, &invoke, args, count.n_inbufs + count.n_outbufs);
+ 	if (ret)
+ 		goto err;
+ 
+--- a/hexagonrpcd/apps_mem.c
++++ b/hexagonrpcd/apps_mem.c
+@@ -25,6 +25,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <misc/fastrpc.h>
++#include "gta4l-fastrpc.h"
+ #include <sys/ioctl.h>
+ 
+ #include "apps_mem.h"
+@@ -70,7 +71,7 @@
+ 	mmap.vaddrin = 0;
+ 	mmap.size = first_in->len;
+ 
+-	ret = ioctl(ctx->fd, FASTRPC_IOCTL_MMAP, &mmap);
++	ret = gta4l_rpc_mmap(ctx->fd, &mmap);
+ 	if (ret) {
+ 		fprintf(stderr, "Memory map failed: %s\n",
+ 			hexagonrpc_strerror(ret));
+--- a/hexagonrpcd/rpcd.c
++++ b/hexagonrpcd/rpcd.c
+@@ -26,6 +26,7 @@
+ #include <libhexagonrpc/interface/remotectl.h>
+ #include <libhexagonrpc/session.h>
+ #include <misc/fastrpc.h>
++#include "gta4l-fastrpc.h"
+ #include <unistd.h>
+ #include <signal.h>
+ #include <stdbool.h>
+@@ -418,7 +419,7 @@
+ 	}
+ 
+ 	if (attach_sns)
+-		ret = ioctl(fd, FASTRPC_IOCTL_INIT_ATTACH_SNS, NULL);
++		ret = gta4l_rpc_attach_sensors(fd);
+ 	else if (create_shell != NULL)
+ 		ret = create_shell_pd(fd, create_shell);
+ 	else
+--- a/tests/test_hexagonrpc.c
++++ b/tests/test_hexagonrpc.c
+@@ -21,6 +21,7 @@
+ 
+ #include <libhexagonrpc/hexagonrpc.h>
+ #include <misc/fastrpc.h>
++#include "gta4l-fastrpc.h"
+ #include <stdarg.h>
+ #include <stdint.h>
+ #include <stdio.h>
+@@ -281,8 +282,8 @@
+ 
+ int ioctl(int fd, ioctl_operation op, ...)
+ {
+-	struct fastrpc_invoke *invoke;
+-	struct fastrpc_invoke_args *args;
++	struct gta4l_rpc_invoke *invoke;
++	struct gta4l_rpc_arg *args;
+ 	size_t i, n_inbufs, n_outbufs;
+ 	void *data;
+ 	va_list list;
+@@ -291,7 +292,7 @@
+ 	data = va_arg(list, void *);
+ 	va_end(list);
+ 
+-	if (op != (ioctl_operation) FASTRPC_IOCTL_INVOKE) {
++	if (op != (ioctl_operation) _IOWR('R', 1, struct gta4l_rpc_invoke)) {
+ 		return syscall(SYS_ioctl, fd, op, data);
+ 	} else {
+ 		invoke = data;
+@@ -307,12 +308,9 @@
+ 
+ 		n_inbufs = REMOTE_SCALARS_INBUFS(invoke->sc);
+ 		n_outbufs = REMOTE_SCALARS_OUTBUFS(invoke->sc);
+-		args = (struct fastrpc_invoke_args *) invoke->args;
++		args = (struct gta4l_rpc_arg *) invoke->args;
+ 
+ 		for (i = 0; i < n_inbufs; i++) {
+-			if (args[i].fd != -1 || args[i].attr != 0)
+-				return -1;
+-
+ 			if (args[i].length != expected[i].len)
+ 				return -1;
+ 
+@@ -323,9 +321,6 @@
+ 		}
+ 
+ 		for (i = n_inbufs; i < n_inbufs + n_outbufs; i++) {
+-			if (args[i].fd != -1 || args[i].attr != 0)
+-				return -1;
+-
+ 			if (args[i].length < expected[i].len)
+ 				return -1;
+ 

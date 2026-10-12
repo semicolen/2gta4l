@@ -1,0 +1,47 @@
+pkgname=mesa-vulkan-kgsl-gta4l
+pkgver=26.2.4
+pkgrel=0
+pkgdesc="Mesa Turnip Vulkan driver for SM-T505 downstream KGSL testing"
+url="https://www.mesa3d.org"
+arch="aarch64"
+license="MIT"
+options="!check"
+makedepends="
+    bison flex meson python3 py3-mako py3-packaging py3-ply py3-yaml glslang-dev
+    libdrm-dev elfutils-dev expat-dev vulkan-loader-dev zlib-dev zstd-dev
+    libx11-dev libxrandr-dev libxshmfence-dev libxcb-dev xcb-util-wm-dev
+    wayland-dev wayland-protocols xorgproto
+"
+source="https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz"
+builddir="$srcdir/mesa-$pkgver"
+
+build() {
+    abuild-meson \
+        -Dgallium-drivers= -Dvulkan-drivers=freedreno \
+        -Dfreedreno-kmds=kgsl -Dplatforms=x11,wayland \
+        -Dglx=disabled -Degl=disabled -Dgbm=disabled -Dopengl=false \
+        -Dgles1=disabled -Dgles2=disabled -Dllvm=disabled \
+        -Dvideo-codecs= -Dmicrosoft-clc=disabled -Dvalgrind=disabled \
+        -Dlibunwind=disabled -Dbuild-tests=false -Dvulkan-layers= \
+        -Dtools= -Dvulkan-beta=true . output
+    ninja -C output src/freedreno/vulkan/libvulkan_freedreno.so
+}
+
+package() {
+    install -Dm755 output/src/freedreno/vulkan/libvulkan_freedreno.so \
+        "$pkgdir/usr/lib/gta4l-kgsl/libvulkan_freedreno.so"
+    mkdir -p "$pkgdir/usr/share/gta4l-kgsl"
+    cat > "$pkgdir/usr/share/gta4l-kgsl/freedreno_icd.aarch64.json" <<'EOF'
+{
+  "file_format_version": "1.0.0",
+  "ICD": {
+    "library_path": "/usr/lib/gta4l-kgsl/libvulkan_freedreno.so",
+    "api_version": "1.4.0"
+  }
+}
+EOF
+}
+
+sha512sums="
+42e793561661a567e72c7324d071ab9f82d3a9f1e000827ed989b8d5fcc2cd16e50c02808d43465b3135c25a3cad77649ba0bf9e35d95b848f8fc8d8b9ce327c  mesa-26.2.4.tar.xz
+"

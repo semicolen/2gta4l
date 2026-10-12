@@ -1,0 +1,30 @@
+pkgname=pd-mapper-gta4l
+pkgver=1.1
+pkgrel=0
+pkgdesc="Qualcomm PD mapper with downstream firmware directory support"
+url="https://github.com/linux-msm/pd-mapper"
+arch="aarch64"
+license="BSD-3-Clause"
+options="!check"
+makedepends="qrtr-dev xz-dev"
+source="pd-mapper-v$pkgver.tar.gz::https://github.com/linux-msm/pd-mapper/archive/v$pkgver/pd-mapper-v$pkgver.tar.gz
+	downstream-firmware.patch
+	gta4l-pd-mapper.initd
+"
+builddir="$srcdir/pd-mapper-$pkgver"
+
+build() {
+	make prefix=/usr
+}
+
+package() {
+	install -Dm755 pd-mapper "$pkgdir/usr/bin/pd-mapper-gta4l"
+	install -Dm755 "$srcdir/gta4l-pd-mapper.initd" "$pkgdir/etc/init.d/gta4l-pd-mapper"
+	install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
+
+sha512sums="
+d870933f1000adf6701d5dde29bc528aa9a60686179cf696322bf0663833c5ed7a085882c79aa8cd4231baba3906299da1c0160c118c163ea4b2954a0e19e9cc  pd-mapper-v1.1.tar.gz
+e829877d0ae16cae3fb4b6a7c155a1767c1373e567d2128250487c6c7a9dab828b9802b9cd1b98b2829d62bfc9b7a8dfc9b527aded9ecf422135fa651587de6f  downstream-firmware.patch
+cea1419cee6b27df4944e9b61670fb7fadaee8109fadf803be63b2fbf0fe617f1bcfc3327180bff9b5ac1ea838169c04b9f9b97541a21ab53ee910fa3eb38f70  gta4l-pd-mapper.initd
+"

@@ -1,0 +1,12 @@
+#!/sbin/openrc-run
+supervisor=supervise-daemon
+
+description="Keep the downstream Qualcomm audio and sensor DSP active"
+command="/usr/bin/gta4l-subsystem"
+command_args="/dev/subsys_adsp"
+respawn_delay=15
+
+depend() {
+	need qrtr-ns gta4l-pd-mapper gta4l-tqftpserv
+	after udev-settle
+}

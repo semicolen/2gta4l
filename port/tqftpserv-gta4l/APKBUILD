@@ -1,0 +1,36 @@
+pkgname=tqftpserv-gta4l
+pkgver=1.2
+pkgrel=0
+pkgdesc="Qualcomm firmware server with downstream subsystem path support"
+url="https://github.com/linux-msm/tqftpserv"
+arch="aarch64"
+license="BSD-3-Clause"
+options="!check"
+makedepends="meson qrtr-dev zstd-dev"
+source="tqftpserv-v$pkgver.tar.gz::https://github.com/linux-msm/tqftpserv/archive/refs/tags/v$pkgver.tar.gz
+    downstream-firmware.patch
+    gta4l-tqftpserv.initd
+    translation-test.c
+"
+builddir="$srcdir/tqftpserv-$pkgver"
+
+build() {
+    abuild-meson -Dsystemd-unit-prefix=/usr/lib/systemd/system/ . output
+    meson compile -C output
+    ${CC:-cc} $CFLAGS -DHAVE_ZSTD -I. "$srcdir/translation-test.c" translate.c zstd-decompress.c \
+        $LDFLAGS -lzstd -o output/translation-test
+    ./output/translation-test
+}
+
+package() {
+    install -Dm755 output/tqftpserv "$pkgdir/usr/bin/tqftpserv-gta4l"
+    install -Dm755 "$srcdir/gta4l-tqftpserv.initd" "$pkgdir/etc/init.d/gta4l-tqftpserv"
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
+
+sha512sums="
+d940aa8c48d20df893b633a870829a42506374c01591ff01c38e7aeb763ed80eb94b647ce72a6e252b41fdf3197b72840c9a23b3552a65ff4a2b140e1d79da19  tqftpserv-v1.2.tar.gz
+5d6ff040d6c7632aeff46fbb01d598cdf9d0ed0b35560b8a9cff021dff171cc64314cbead684714089f48a67a49f82e4ad702fd30888a1ee7baf678b2070428a  downstream-firmware.patch
+111f7c70e7bfbf3d684549cca50c5cf656cb9e2e1abe5514866c108aababd4ae2b3b792cf41ddb2053b120dd904d2b068a9849affec48c32544e533b59aae135  gta4l-tqftpserv.initd
+cb1e230010b87149846a7b7d10d1baa05aec3f1736dd0585eac2a613021d8c9222b705cf39be613d2e58bfcea07e60c07c7ce6fa5fe95b1b0eb0a664ae04ab04  translation-test.c
+"

@@ -1,0 +1,20 @@
+pkgname=gps-gta4l
+pkgver=1.0
+pkgrel=3
+pkgdesc="SM-T505 on-demand GPS and desktop location integration"
+url="https://postmarketos.org"
+arch="aarch64"
+license="MIT"
+options="!check"
+depends="qmi-utils modemmanager=1.25.95_git20261005-r3 geoclue"
+source="90-gta4l-gps.conf gta4l-gps-unlock"
+
+package() {
+	install -Dm644 "$srcdir/gta4l-gps-unlock" "$pkgdir/etc/ModemManager/gta4l-gps-unlock"
+	install -Dm644 "$srcdir/90-gta4l-gps.conf" "$pkgdir/etc/geoclue/conf.d/90-gta4l-gps.conf"
+}
+
+sha512sums="
+a81f4c846d488d3e22361910c007c427b7304f54436509bedbe83062a607de533e24567b375ad53b899d843dc79e76457f87220447792947e3c27b00d52ebdc8  90-gta4l-gps.conf
+93c664941489161534a2d28d2788b66f7f180f34f29ad46b94ea5ea5f646b6dded3382a29e6b707f148b2d50ae9dc79def3c3e95dc995664579d1c7cff29b641  gta4l-gps-unlock
+"

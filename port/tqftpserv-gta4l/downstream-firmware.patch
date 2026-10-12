@@ -1,0 +1,30 @@
+--- a/translate.c
++++ b/translate.c
+@@ -85,6 +85,27 @@
+ 	ssize_t n;
+ 	int fd = -1;
+ 
++	/* Downstream PIL has subsystem devices, not remoteproc firmware paths. */
++	const char *override = getenv("TQFTPSERV_FW_DIR");
++	if (override) {
++		if (!*override || !*file || *file == '/' || strstr(file, "..")) {
++			errno = EACCES;
++			return -1;
++		}
++		n = snprintf(path, sizeof(path), "%s/%s", override, file);
++		if (n < 0 || (size_t)n >= sizeof(path)) {
++			errno = ENAMETOOLONG;
++			return -1;
++		}
++		fd = open_maybe_compressed(path);
++		if (fd < 0) {
++			if (!errno)
++				errno = ENOENT;
++			warn("failed to open %s", path);
++		}
++		return fd;
++	}
++
+ 	read_fw_path_from_sysfs(fw_sysfs_path, sizeof(fw_sysfs_path));
+ 
+ 	class_fd = open("/sys/class/remoteproc", O_RDONLY | O_DIRECTORY);

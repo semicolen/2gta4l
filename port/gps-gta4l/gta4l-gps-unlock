@@ -1,0 +1,2 @@
+# Enable the targeted ModemManager GPS request quirk for the SM-T505.
+# The quirk also requires qcom-soc and the exact qrtr://0 LOC client.

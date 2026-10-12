@@ -1,0 +1,17 @@
+#!/sbin/openrc-run
+description="Make SM-T505 GNSS available to location clients"
+
+depend() {
+	need gta4l-modem modemmanager
+	before lightdm
+}
+
+start() {
+	ebegin "Preparing SM-T505 GPS engine"
+	/usr/libexec/gta4l-gps-prepare
+	eend $?
+}
+
+stop() {
+	rm -f /run/gta4l-gps-ready
+}

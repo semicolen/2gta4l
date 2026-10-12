@@ -1,0 +1,17 @@
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -449,6 +449,14 @@
+ 	int ret;
+ 
+ 	BT_DBG("hu %p qca_open", hu);
++
++	/* This downstream setup requires serdev, including its power and
++	 * firmware paths. Reject tty attachment before allocating work that
++	 * would later dereference hu->serdev. SM-T505 uses a userspace
++	 * WCN3988 bootstrap followed by the standard H4 transport.
++	 */
++	if (!hu->serdev)
++		return -EOPNOTSUPP;
+ 
+ 	if (!hci_uart_has_flow_control(hu))
+ 		return -EOPNOTSUPP;

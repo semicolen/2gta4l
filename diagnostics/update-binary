@@ -1,0 +1,28 @@
+#!/sbin/sh
+# Boot-only diagnostic update. No partitioning or filesystem formatting.
+set -eu
+OUTFD="$2"
+ZIP="$3"
+ui_print() { printf 'ui_print %s\nui_print\n' "$1" > "/proc/self/fd/$OUTFD"; }
+fail() { ui_print "Diagnostic update stopped: $1"; exit 1; }
+[ "$(id -u)" = 0 ] || fail 'root recovery required'
+[ "$(getprop ro.product.device)" = gta4l ] || fail 'wrong device'
+case "$(getprop ro.bootloader)" in T505*) ;; *) fail 'SM-T505 LTE bootloader required';; esac
+boot="$(readlink -f /dev/block/by-name/boot)"
+[ "$boot" = /dev/block/mmcblk0p69 ] || fail 'unexpected boot partition'
+[ "$(blockdev --getsize64 "$boot")" = 100663296 ] || fail 'unexpected boot size'
+mkdir -p /tmp/gta4l-diagnostics
+head -c @ORIGINAL_BYTES@ "$boot" > /tmp/gta4l-diagnostics/before.img
+hash="$(sha256sum /tmp/gta4l-diagnostics/before.img | cut -d ' ' -f 1)"
+[ "$hash" = @ORIGINAL_SHA256@ ] || fail 'installed boot does not match the verified bring-up build'
+unzip -p "$ZIP" boot.img > /tmp/gta4l-diagnostics/boot.img
+hash="$(sha256sum /tmp/gta4l-diagnostics/boot.img | cut -d ' ' -f 1)"
+[ "$hash" = @DIAGNOSTIC_SHA256@ ] || fail 'diagnostic image checksum mismatch'
+[ "$(wc -c < /tmp/gta4l-diagnostics/boot.img)" -eq @DIAGNOSTIC_BYTES@ ] || fail 'image size mismatch'
+ui_print 'Installing SM-T505 diagnostic boot; existing Linux system and recovery retained.'
+dd if=/tmp/gta4l-diagnostics/boot.img of="$boot" bs=4194304 conv=fsync
+head -c @DIAGNOSTIC_BYTES@ "$boot" > /tmp/gta4l-diagnostics/readback.img
+hash="$(sha256sum /tmp/gta4l-diagnostics/readback.img | cut -d ' ' -f 1)"
+[ "$hash" = @DIAGNOSTIC_SHA256@ ] || fail 'boot readback checksum mismatch; stay in recovery'
+sync
+ui_print 'Diagnostic boot verified. Startup logs will be saved in /var/log/gta4l and /var/log/rc.log.'
