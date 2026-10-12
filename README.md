@@ -96,7 +96,7 @@ LTE data routing are subsequent device validation steps.
 
 ## Installation target
 
-The selected target is **internal userdata + boot through OrangeFox**. This
+The selected target is **internal userdata + boot through OrangeFox**. (Via this OrangeFox recovery [here](https://github.com/semicolen/orangefoxrecovery-sm505)) This
 replaces existing Android user data. Recovery, dynamic super partitions,
 bootloader, modem partitions and device calibration partitions are not
 installation targets. The device package disables pmbootstrap fastboot
