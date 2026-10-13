@@ -32,8 +32,9 @@ requests pass after reboot, with gathering stopped when the client closes.
 Rear/front camera preview and lens switching work at 640×480,
 including preview rotation in all four positions. Camera r2 captures full-size
 3264×2448 rear and 2592×1944 front photos and corrects chroma order. Native
-photo saving, preview restart and correct colors pass. Camera recording,
-LTE data, microphone/headset routing, charging, suspend and remaining
+photo saving, preview restart and correct colors pass. Mobile data is
+user-confirmed working with a phone SIM; see [LTE-REPORT.md](LTE-REPORT.md).
+Camera recording, microphone/headset routing, charging, suspend and remaining
 sensors need further work.
 
 ## Merge info ##
@@ -95,8 +96,8 @@ the ZIP, `boot.img`, verification reports, source manifest, `SHA256SUMS`, and
 The Qualcomm runtime includes a locally compiled QRTR name server and a
 locally compiled protection-domain mapper adapted for downstream PIL.
 The modem storage service uses the retained UIO driver and read-only NV
-storage for the first tests. Enabling persistent modem writes and checking
-LTE data routing are subsequent device validation steps.
+storage for the first tests. Mobile data is now user-confirmed working with
+a phone SIM. Persistent modem storage writes remain unverified.
 
 ## Installation target
 

@@ -1,0 +1,15 @@
+{
+  "device": "SM-T505",
+  "reported_date": "2026-10-13",
+  "timezone": "Europe/Stockholm",
+  "feature": "mobile data",
+  "status": "working",
+  "verification": "user confirmation",
+  "test": "User inserted phone SIM into the installed postmarketOS tablet and reported working mobile data",
+  "installed_kernel_release": 9,
+  "automated_mobile_internet_test": false,
+  "radio_access_technology_recorded": false,
+  "calls_verified": false,
+  "sms_verified": false,
+  "fresh_ui_candidates_tested": false
+}

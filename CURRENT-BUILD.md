@@ -56,8 +56,9 @@ Battery reporting and the growing charge-time estimate have been audited;
 the connected computer's 500 mA USB limit leaves little charging power with
 the screen on. See `BATTERY-REPORT.md`. Wall charging, full-charge termination,
 runtime and suspend remain unverified. Camera recording, generic V4L2/PipeWire
-camera access and microphone/headset routing also remain unverified. LTE modem discovery works,
-but mobile data needs an active plan to validate. Desktop OpenGL uses software
+camera access and microphone/headset routing also remain unverified. Mobile
+data is user-confirmed working with a phone SIM on 13 October 2026; see
+`LTE-REPORT.md`. Calls and SMS remain unverified. Desktop OpenGL uses software
 rendering; the isolated Turnip driver passes hardware Vulkan tests.
 
 The six r5 UI candidates use device r23 and are documented in [UI-BUILDS.md](UI-BUILDS.md).
