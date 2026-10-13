@@ -1,0 +1,4 @@
+# CPU OpenGL rendering for the downstream display driver.
+LIBGL_ALWAYS_SOFTWARE=1
+GALLIUM_DRIVER=llvmpipe
+QT_QUICK_BACKEND=software

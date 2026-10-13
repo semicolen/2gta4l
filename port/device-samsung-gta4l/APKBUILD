@@ -2,7 +2,7 @@
 pkgname=device-samsung-gta4l
 pkgdesc="Samsung Galaxy Tab A7 10.4 2020 (LTE)"
 pkgver=1
-pkgrel=22
+pkgrel=23
 url="https://postmarketos.org"
 license="MIT"
 arch="aarch64"
@@ -21,7 +21,6 @@ depends="
 	rotation-gta4l
 	gps-gta4l
 	camera-gta4l
-	xfce4-screensaver=4.20.2-r1
 "
 makedepends="devicepkg-dev"
 install="$pkgname-openrc.post-install $pkgname-openrc.post-upgrade"
@@ -29,6 +28,7 @@ install="$pkgname-openrc.post-install $pkgname-openrc.post-upgrade"
 subpackages="
 	$pkgname-nonfree-firmware:nonfree_firmware
 	$pkgname-openrc
+	$pkgname-xfce:xfce
 "
 
 source="
@@ -83,6 +83,13 @@ nonfree_firmware() {
 	# Touchscreen rotation fix
 	install -Dm644 "$srcdir"/98-touchscreen-cal.rules \
 		"$subpkgdir"/etc/udev/rules.d/98-touchscreen-cal.rules
+}
+
+xfce() {
+	pkgdesc="SM-T505 Xfce lock-screen rotation compatibility"
+	install_if="$pkgname=$pkgver-r$pkgrel postmarketos-ui-xfce4"
+	depends="xfce4-screensaver=4.20.2-r1"
+	mkdir -p "$subpkgdir"
 }
 
 sha512sums="

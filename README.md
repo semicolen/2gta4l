@@ -162,3 +162,5 @@ the Bluetooth kernel package set and boot-only update locally with:
 wsl -d Ubuntu -u root --exec bash '/mnt/c/postmarketOS-gta4l/tools/build-bluetooth-port-update.sh'
 wsl -d Ubuntu -u root --exec python3 '/mnt/c/postmarketOS-gta4l/tools/build-bluetooth-boot-update.py'
 ```
+
+See [UI-BUILDS.md](UI-BUILDS.md) for six local desktop installer candidates.

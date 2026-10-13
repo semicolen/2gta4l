@@ -6,3 +6,4 @@ deviceinfo text eol=lf
 # Preserve the byte-exact checksummed recipe and reference header.
 port/linux-samsung-gta4l/APKBUILD whitespace=-blank-at-eol
 port/hexagonrpc-gta4l/gta4l-reference-uapi.h whitespace=-blank-at-eof
+ui-profiles/aports/postmarketos-ui-plasma-desktop/postmarketos-ui-plasma-desktop-systemd.post-* whitespace=-blank-at-eof

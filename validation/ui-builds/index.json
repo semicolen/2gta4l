@@ -1,0 +1,494 @@
+{
+  "device": "SM-T505",
+  "build_host": "WSL Ubuntu",
+  "profiles": [
+    {
+      "ui": "xfce4",
+      "name": "Xfce",
+      "build_host": "WSL Ubuntu",
+      "package": "postmarketOS-SM-T505-OrangeFox-xfce4-r5.zip",
+      "bytes": 754141967,
+      "sha256": "94c747ae7f544054b7223ae5b8cb69ca5e3270b18426eb9e17d1e147e05cd13d",
+      "boot_sha256": "4d4c3e929d9c87fc807840e13ae8fee946eea99d0aaeb2a5a3605491e8a98663",
+      "boot_bytes": 28938256,
+      "kernel_release": 9,
+      "device_release": 23,
+      "embedded_modules_verified": 37,
+      "embedded_apk_database_verified": true,
+      "packaging_schema": 2,
+      "apk_signing_keys_verified": {
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-4a6a0840.rsa.pub": "9c102bcc376af1498d549b77bdbfa815ae86faa1d2d82f040e616b18ef2df2d4",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5243ef4b.rsa.pub": "ebf31683b56410ecc4c00acd9f6e2839e237a3b62b5ae7ef686705c7ba0396a9",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-524d27bb.rsa.pub": "1bb2a846c0ea4ca9d0e7862f970863857fc33c32f5506098c636a62a726a847b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5261cecb.rsa.pub": "12f899e55a7691225603d6fb3324940fc51cd7f133e7ead788663c2b7eecb00c",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub": "73867d92083f2f8ab899a26ccda7ef63dfaa0032a938620eda605558958a8041",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58cbb476.rsa.pub": "9a4cd858d9710963848e6d5f555325dc199d1c952b01cf6e64da2c15deedbd97",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58e4f17d.rsa.pub": "780b3ed41786772cbc7b68136546fa3f897f28a23b30c72dde6225319c44cfff",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5e69ca50.rsa.pub": "59c01c57b446633249f67c04b115dd6787f4378f183dff2bbf65406df93f176d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub": "db0b49163f07ffba64a5ca198bcf1688610b0bd1f0d8d5afeaf78559d73f2278",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-6165ee59.rsa.pub": "207e4696d3c05f7cb05966aee557307151f1f00217af4143c1bcaf33b8df733f",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-61666e3f.rsa.pub": "128d34d4aec39b0daedea8163cd8dc24dff36fd3d848630ab97eeb1d3084bbb3",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616a9724.rsa.pub": "10877cce0a935e46ad88cb79e174a2491680508eccda08e92bf04fb9bf37fbc1",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616abc23.rsa.pub": "4a095a9daca86da496a3cd9adcd95ee2197fdbeb84638656d469f05a4d740751",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ac3bc.rsa.pub": "0caf5662fde45616d88cfd7021b7bda269a2fcaf311e51c48945a967a609ec0b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616adfeb.rsa.pub": "ebe717d228555aa58133c202314a451f81e71f174781fd7ff8d8970d6cfa60da",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub": "d11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616db30d.rsa.pub": "40a216cbd163f22e5f16a9e0929de7cde221b9cbae8e36aa368b1e128afe0a31",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-66ba20fe.rsa.pub": "7cf4cb8314e6ccc985b0d7f1aa0c6e0a81e3588f69a41f383af7a63d1ba61793",
+        "etc/apk/keys/build.postmarketos.org.rsa.pub": "b70e6ffc64a652d63aee0c28cb9ecb2ca3b49d759ca7a023bcb854d08780964b",
+        "etc/apk/keys/pmos@local-6ac92760.rsa.pub": "e32c01b7252ea72bba2c462eccd169d3f7513fba4004de2183b05db9d9314160"
+      },
+      "selected_packages": {
+        "device-samsung-gta4l": "1-r23",
+        "linux-samsung-gta4l": "4.19.300-r8",
+        "camera-gta4l": "1.0-r2",
+        "gps-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l-pulseaudio": "1.0-r3",
+        "modemmanager": "1.25.95_git20261005-r3"
+      },
+      "ui_packages": {
+        "postmarketos-ui-xfce4": "0.6.0-r6",
+        "postmarketos-ui-xfce4-openrc": "0.6.0-r6"
+      },
+      "session_type": "x11",
+      "display_manager": "lightdm",
+      "audio_backend": "PulseAudio with the tested internal-card interrupt policy",
+      "desktop_rendering": "software",
+      "formats_userdata": true,
+      "rootfs_runtime_verified": false,
+      "installer_flashing_verified": false,
+      "preserves_partitions": [
+        "recovery",
+        "dtbo",
+        "super",
+        "modem",
+        "EFS",
+        "persist",
+        "bootloader"
+      ],
+      "source_template_sha256": "8cddf22d1c8b0c4fee5f1ead43996f4768dc838d850505d5d0ee96e754933684",
+      "desktop_packages": {
+        "xfce4-session": "4.20.4-r0",
+        "xorg-server": "21.1.25-r0",
+        "onboard": "1.4.4.5-r0"
+      },
+      "session_descriptors": [
+        "usr/share/xsessions/xfce.desktop"
+      ],
+      "ui_overlay_sha256": {},
+      "init_system": "OpenRC"
+    },
+    {
+      "ui": "plasma-mobile",
+      "name": "KDE Plasma Mobile",
+      "build_host": "WSL Ubuntu",
+      "package": "postmarketOS-SM-T505-OrangeFox-plasma-mobile-r5.zip",
+      "bytes": 1373847546,
+      "sha256": "af41d54e9adc1ecb9015047a1ec09b023905793a2f914d2d71c08fd7318d573d",
+      "boot_sha256": "4d4c3e929d9c87fc807840e13ae8fee946eea99d0aaeb2a5a3605491e8a98663",
+      "boot_bytes": 28938256,
+      "kernel_release": 9,
+      "device_release": 23,
+      "embedded_modules_verified": 37,
+      "embedded_apk_database_verified": true,
+      "packaging_schema": 2,
+      "apk_signing_keys_verified": {
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-4a6a0840.rsa.pub": "9c102bcc376af1498d549b77bdbfa815ae86faa1d2d82f040e616b18ef2df2d4",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5243ef4b.rsa.pub": "ebf31683b56410ecc4c00acd9f6e2839e237a3b62b5ae7ef686705c7ba0396a9",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-524d27bb.rsa.pub": "1bb2a846c0ea4ca9d0e7862f970863857fc33c32f5506098c636a62a726a847b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5261cecb.rsa.pub": "12f899e55a7691225603d6fb3324940fc51cd7f133e7ead788663c2b7eecb00c",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub": "73867d92083f2f8ab899a26ccda7ef63dfaa0032a938620eda605558958a8041",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58cbb476.rsa.pub": "9a4cd858d9710963848e6d5f555325dc199d1c952b01cf6e64da2c15deedbd97",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58e4f17d.rsa.pub": "780b3ed41786772cbc7b68136546fa3f897f28a23b30c72dde6225319c44cfff",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5e69ca50.rsa.pub": "59c01c57b446633249f67c04b115dd6787f4378f183dff2bbf65406df93f176d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub": "db0b49163f07ffba64a5ca198bcf1688610b0bd1f0d8d5afeaf78559d73f2278",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-6165ee59.rsa.pub": "207e4696d3c05f7cb05966aee557307151f1f00217af4143c1bcaf33b8df733f",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-61666e3f.rsa.pub": "128d34d4aec39b0daedea8163cd8dc24dff36fd3d848630ab97eeb1d3084bbb3",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616a9724.rsa.pub": "10877cce0a935e46ad88cb79e174a2491680508eccda08e92bf04fb9bf37fbc1",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616abc23.rsa.pub": "4a095a9daca86da496a3cd9adcd95ee2197fdbeb84638656d469f05a4d740751",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ac3bc.rsa.pub": "0caf5662fde45616d88cfd7021b7bda269a2fcaf311e51c48945a967a609ec0b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616adfeb.rsa.pub": "ebe717d228555aa58133c202314a451f81e71f174781fd7ff8d8970d6cfa60da",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub": "d11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616db30d.rsa.pub": "40a216cbd163f22e5f16a9e0929de7cde221b9cbae8e36aa368b1e128afe0a31",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-66ba20fe.rsa.pub": "7cf4cb8314e6ccc985b0d7f1aa0c6e0a81e3588f69a41f383af7a63d1ba61793",
+        "etc/apk/keys/build.postmarketos.org.rsa.pub": "b70e6ffc64a652d63aee0c28cb9ecb2ca3b49d759ca7a023bcb854d08780964b",
+        "etc/apk/keys/pmos@local-6ac92760.rsa.pub": "e32c01b7252ea72bba2c462eccd169d3f7513fba4004de2183b05db9d9314160"
+      },
+      "selected_packages": {
+        "device-samsung-gta4l": "1-r23",
+        "linux-samsung-gta4l": "4.19.300-r8",
+        "camera-gta4l": "1.0-r2",
+        "gps-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l-pulseaudio": "1.0-r3",
+        "modemmanager": "1.25.95_git20261005-r3"
+      },
+      "ui_packages": {
+        "postmarketos-ui-plasma-mobile": "6-r11",
+        "postmarketos-ui-plasma-mobile-openrc": "6-r11",
+        "postmarketos-ui-plasma-mobile-web": "6-r11"
+      },
+      "session_type": "wayland",
+      "display_manager": "tinydm",
+      "desktop_packages": {
+        "plasma-mobile": "6.7.5-r0",
+        "kwin": "6.7.5-r1"
+      },
+      "session_descriptors": [
+        "usr/share/wayland-sessions/plasma-mobile.desktop",
+        "usr/share/wayland-sessions/plasma.desktop"
+      ],
+      "ui_overlay_sha256": {
+        "etc/environment": "3f732ce6c2cd5bc999ef7a99e3b48ffcefcf1f1380fb6b658946994efe70fba2",
+        "etc/profile.d/80-gta4l-rendering.sh": "3bf608b3f37badbcc510797f2b4b2afffa4a0bc8af792815ad7e5e2c7257009f",
+        "usr/share/applications/gta4l-rotation-lock.desktop": "eec2245a7d66b384f3e44e5c47d0a7307b7491c04281d6f6a0d9d6897848b84d"
+      },
+      "audio_backend": "PulseAudio with the tested internal-card interrupt policy",
+      "desktop_rendering": "software",
+      "formats_userdata": true,
+      "rootfs_runtime_verified": false,
+      "installer_flashing_verified": false,
+      "preserves_partitions": [
+        "recovery",
+        "dtbo",
+        "super",
+        "modem",
+        "EFS",
+        "persist",
+        "bootloader"
+      ],
+      "source_template_sha256": "8cddf22d1c8b0c4fee5f1ead43996f4768dc838d850505d5d0ee96e754933684",
+      "init_system": "OpenRC"
+    },
+    {
+      "ui": "plasma-desktop",
+      "name": "KDE Plasma Desktop",
+      "build_host": "WSL Ubuntu",
+      "package": "postmarketOS-SM-T505-OrangeFox-plasma-desktop-r5.zip",
+      "bytes": 1845151927,
+      "sha256": "74f5663301f15a77374640b3b3efeac75be145f749e745441f847cafa204fa2f",
+      "boot_sha256": "4d4c3e929d9c87fc807840e13ae8fee946eea99d0aaeb2a5a3605491e8a98663",
+      "boot_bytes": 28938256,
+      "kernel_release": 9,
+      "device_release": 23,
+      "embedded_modules_verified": 37,
+      "embedded_apk_database_verified": true,
+      "packaging_schema": 2,
+      "apk_signing_keys_verified": {
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-4a6a0840.rsa.pub": "9c102bcc376af1498d549b77bdbfa815ae86faa1d2d82f040e616b18ef2df2d4",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5243ef4b.rsa.pub": "ebf31683b56410ecc4c00acd9f6e2839e237a3b62b5ae7ef686705c7ba0396a9",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-524d27bb.rsa.pub": "1bb2a846c0ea4ca9d0e7862f970863857fc33c32f5506098c636a62a726a847b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5261cecb.rsa.pub": "12f899e55a7691225603d6fb3324940fc51cd7f133e7ead788663c2b7eecb00c",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub": "73867d92083f2f8ab899a26ccda7ef63dfaa0032a938620eda605558958a8041",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58cbb476.rsa.pub": "9a4cd858d9710963848e6d5f555325dc199d1c952b01cf6e64da2c15deedbd97",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58e4f17d.rsa.pub": "780b3ed41786772cbc7b68136546fa3f897f28a23b30c72dde6225319c44cfff",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5e69ca50.rsa.pub": "59c01c57b446633249f67c04b115dd6787f4378f183dff2bbf65406df93f176d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub": "db0b49163f07ffba64a5ca198bcf1688610b0bd1f0d8d5afeaf78559d73f2278",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-6165ee59.rsa.pub": "207e4696d3c05f7cb05966aee557307151f1f00217af4143c1bcaf33b8df733f",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-61666e3f.rsa.pub": "128d34d4aec39b0daedea8163cd8dc24dff36fd3d848630ab97eeb1d3084bbb3",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616a9724.rsa.pub": "10877cce0a935e46ad88cb79e174a2491680508eccda08e92bf04fb9bf37fbc1",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616abc23.rsa.pub": "4a095a9daca86da496a3cd9adcd95ee2197fdbeb84638656d469f05a4d740751",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ac3bc.rsa.pub": "0caf5662fde45616d88cfd7021b7bda269a2fcaf311e51c48945a967a609ec0b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616adfeb.rsa.pub": "ebe717d228555aa58133c202314a451f81e71f174781fd7ff8d8970d6cfa60da",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub": "d11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616db30d.rsa.pub": "40a216cbd163f22e5f16a9e0929de7cde221b9cbae8e36aa368b1e128afe0a31",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-66ba20fe.rsa.pub": "7cf4cb8314e6ccc985b0d7f1aa0c6e0a81e3588f69a41f383af7a63d1ba61793",
+        "etc/apk/keys/build.postmarketos.org.rsa.pub": "b70e6ffc64a652d63aee0c28cb9ecb2ca3b49d759ca7a023bcb854d08780964b",
+        "etc/apk/keys/pmos@local-6ac92760.rsa.pub": "e32c01b7252ea72bba2c462eccd169d3f7513fba4004de2183b05db9d9314160"
+      },
+      "selected_packages": {
+        "device-samsung-gta4l": "1-r23",
+        "linux-samsung-gta4l": "4.19.300-r8",
+        "camera-gta4l": "1.0-r2",
+        "gps-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l-pulseaudio": "1.0-r3",
+        "modemmanager": "1.25.95_git20261005-r3"
+      },
+      "ui_packages": {
+        "postmarketos-ui-plasma-desktop": "5-r1",
+        "postmarketos-ui-plasma-desktop-openrc": "5-r1"
+      },
+      "session_type": "wayland",
+      "display_manager": "sddm",
+      "desktop_packages": {
+        "plasma-workspace": "6.7.5-r0",
+        "kwin": "6.7.5-r1"
+      },
+      "session_descriptors": [
+        "usr/share/wayland-sessions/plasma.desktop"
+      ],
+      "ui_overlay_sha256": {
+        "etc/environment": "3f732ce6c2cd5bc999ef7a99e3b48ffcefcf1f1380fb6b658946994efe70fba2",
+        "etc/profile.d/80-gta4l-rendering.sh": "3bf608b3f37badbcc510797f2b4b2afffa4a0bc8af792815ad7e5e2c7257009f",
+        "usr/share/applications/gta4l-rotation-lock.desktop": "eec2245a7d66b384f3e44e5c47d0a7307b7491c04281d6f6a0d9d6897848b84d"
+      },
+      "audio_backend": "PulseAudio with the tested internal-card interrupt policy",
+      "desktop_rendering": "software",
+      "formats_userdata": true,
+      "rootfs_runtime_verified": false,
+      "installer_flashing_verified": false,
+      "preserves_partitions": [
+        "recovery",
+        "dtbo",
+        "super",
+        "modem",
+        "EFS",
+        "persist",
+        "bootloader"
+      ],
+      "source_template_sha256": "8cddf22d1c8b0c4fee5f1ead43996f4768dc838d850505d5d0ee96e754933684",
+      "init_system": "OpenRC"
+    },
+    {
+      "ui": "gnome-mobile",
+      "name": "GNOME Mobile",
+      "build_host": "WSL Ubuntu",
+      "package": "postmarketOS-SM-T505-OrangeFox-gnome-mobile-r5.zip",
+      "bytes": 1052211403,
+      "sha256": "e91bc82b32789115e4a2a6ffbe9074c102fc75c8bcd8744f5218e4d1823b7a2e",
+      "boot_sha256": "4d4c3e929d9c87fc807840e13ae8fee946eea99d0aaeb2a5a3605491e8a98663",
+      "boot_bytes": 28938256,
+      "kernel_release": 9,
+      "device_release": 23,
+      "embedded_modules_verified": 37,
+      "embedded_apk_database_verified": true,
+      "packaging_schema": 2,
+      "apk_signing_keys_verified": {
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-4a6a0840.rsa.pub": "9c102bcc376af1498d549b77bdbfa815ae86faa1d2d82f040e616b18ef2df2d4",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5243ef4b.rsa.pub": "ebf31683b56410ecc4c00acd9f6e2839e237a3b62b5ae7ef686705c7ba0396a9",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-524d27bb.rsa.pub": "1bb2a846c0ea4ca9d0e7862f970863857fc33c32f5506098c636a62a726a847b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5261cecb.rsa.pub": "12f899e55a7691225603d6fb3324940fc51cd7f133e7ead788663c2b7eecb00c",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub": "73867d92083f2f8ab899a26ccda7ef63dfaa0032a938620eda605558958a8041",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58cbb476.rsa.pub": "9a4cd858d9710963848e6d5f555325dc199d1c952b01cf6e64da2c15deedbd97",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58e4f17d.rsa.pub": "780b3ed41786772cbc7b68136546fa3f897f28a23b30c72dde6225319c44cfff",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5e69ca50.rsa.pub": "59c01c57b446633249f67c04b115dd6787f4378f183dff2bbf65406df93f176d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub": "db0b49163f07ffba64a5ca198bcf1688610b0bd1f0d8d5afeaf78559d73f2278",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-6165ee59.rsa.pub": "207e4696d3c05f7cb05966aee557307151f1f00217af4143c1bcaf33b8df733f",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-61666e3f.rsa.pub": "128d34d4aec39b0daedea8163cd8dc24dff36fd3d848630ab97eeb1d3084bbb3",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616a9724.rsa.pub": "10877cce0a935e46ad88cb79e174a2491680508eccda08e92bf04fb9bf37fbc1",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616abc23.rsa.pub": "4a095a9daca86da496a3cd9adcd95ee2197fdbeb84638656d469f05a4d740751",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ac3bc.rsa.pub": "0caf5662fde45616d88cfd7021b7bda269a2fcaf311e51c48945a967a609ec0b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616adfeb.rsa.pub": "ebe717d228555aa58133c202314a451f81e71f174781fd7ff8d8970d6cfa60da",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub": "d11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616db30d.rsa.pub": "40a216cbd163f22e5f16a9e0929de7cde221b9cbae8e36aa368b1e128afe0a31",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-66ba20fe.rsa.pub": "7cf4cb8314e6ccc985b0d7f1aa0c6e0a81e3588f69a41f383af7a63d1ba61793",
+        "etc/apk/keys/build.postmarketos.org.rsa.pub": "b70e6ffc64a652d63aee0c28cb9ecb2ca3b49d759ca7a023bcb854d08780964b",
+        "etc/apk/keys/pmos@local-6ac92760.rsa.pub": "e32c01b7252ea72bba2c462eccd169d3f7513fba4004de2183b05db9d9314160"
+      },
+      "selected_packages": {
+        "device-samsung-gta4l": "1-r23",
+        "linux-samsung-gta4l": "4.19.300-r8",
+        "camera-gta4l": "1.0-r2",
+        "gps-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l-pulseaudio": "1.0-r3",
+        "modemmanager": "1.25.95_git20261005-r3"
+      },
+      "ui_packages": {
+        "postmarketos-ui-gnome-mobile": "5-r0",
+        "postmarketos-ui-gnome-mobile-openrc": "5-r0"
+      },
+      "session_type": "wayland",
+      "display_manager": "gdm",
+      "desktop_packages": {
+        "gnome-shell-mobile": "48.0-r13",
+        "mutter-mobile": "48.0-r5",
+        "gnome-session": "48.0-r5"
+      },
+      "session_descriptors": [
+        "usr/share/wayland-sessions/gnome-classic.desktop",
+        "usr/share/wayland-sessions/gnome-wayland.desktop",
+        "usr/share/wayland-sessions/gnome.desktop"
+      ],
+      "ui_overlay_sha256": {
+        "etc/environment": "3f732ce6c2cd5bc999ef7a99e3b48ffcefcf1f1380fb6b658946994efe70fba2",
+        "etc/profile.d/80-gta4l-rendering.sh": "3bf608b3f37badbcc510797f2b4b2afffa4a0bc8af792815ad7e5e2c7257009f",
+        "usr/share/applications/gta4l-rotation-lock.desktop": "eec2245a7d66b384f3e44e5c47d0a7307b7491c04281d6f6a0d9d6897848b84d"
+      },
+      "audio_backend": "PulseAudio with the tested internal-card interrupt policy",
+      "desktop_rendering": "software",
+      "formats_userdata": true,
+      "rootfs_runtime_verified": false,
+      "installer_flashing_verified": false,
+      "preserves_partitions": [
+        "recovery",
+        "dtbo",
+        "super",
+        "modem",
+        "EFS",
+        "persist",
+        "bootloader"
+      ],
+      "source_template_sha256": "8cddf22d1c8b0c4fee5f1ead43996f4768dc838d850505d5d0ee96e754933684",
+      "init_system": "OpenRC"
+    },
+    {
+      "ui": "gnome",
+      "name": "GNOME Desktop",
+      "build_host": "WSL Ubuntu",
+      "package": "postmarketOS-SM-T505-OrangeFox-gnome-r5.zip",
+      "bytes": 1049748500,
+      "sha256": "7887e4189f6291af57ab1211277f09b4a5e214ff5a2692c602900ff84c3069da",
+      "boot_sha256": "4d4c3e929d9c87fc807840e13ae8fee946eea99d0aaeb2a5a3605491e8a98663",
+      "boot_bytes": 28938256,
+      "kernel_release": 9,
+      "device_release": 23,
+      "embedded_modules_verified": 37,
+      "embedded_apk_database_verified": true,
+      "packaging_schema": 2,
+      "apk_signing_keys_verified": {
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-4a6a0840.rsa.pub": "9c102bcc376af1498d549b77bdbfa815ae86faa1d2d82f040e616b18ef2df2d4",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5243ef4b.rsa.pub": "ebf31683b56410ecc4c00acd9f6e2839e237a3b62b5ae7ef686705c7ba0396a9",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-524d27bb.rsa.pub": "1bb2a846c0ea4ca9d0e7862f970863857fc33c32f5506098c636a62a726a847b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5261cecb.rsa.pub": "12f899e55a7691225603d6fb3324940fc51cd7f133e7ead788663c2b7eecb00c",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub": "73867d92083f2f8ab899a26ccda7ef63dfaa0032a938620eda605558958a8041",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58cbb476.rsa.pub": "9a4cd858d9710963848e6d5f555325dc199d1c952b01cf6e64da2c15deedbd97",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58e4f17d.rsa.pub": "780b3ed41786772cbc7b68136546fa3f897f28a23b30c72dde6225319c44cfff",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5e69ca50.rsa.pub": "59c01c57b446633249f67c04b115dd6787f4378f183dff2bbf65406df93f176d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub": "db0b49163f07ffba64a5ca198bcf1688610b0bd1f0d8d5afeaf78559d73f2278",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-6165ee59.rsa.pub": "207e4696d3c05f7cb05966aee557307151f1f00217af4143c1bcaf33b8df733f",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-61666e3f.rsa.pub": "128d34d4aec39b0daedea8163cd8dc24dff36fd3d848630ab97eeb1d3084bbb3",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616a9724.rsa.pub": "10877cce0a935e46ad88cb79e174a2491680508eccda08e92bf04fb9bf37fbc1",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616abc23.rsa.pub": "4a095a9daca86da496a3cd9adcd95ee2197fdbeb84638656d469f05a4d740751",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ac3bc.rsa.pub": "0caf5662fde45616d88cfd7021b7bda269a2fcaf311e51c48945a967a609ec0b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616adfeb.rsa.pub": "ebe717d228555aa58133c202314a451f81e71f174781fd7ff8d8970d6cfa60da",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub": "d11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616db30d.rsa.pub": "40a216cbd163f22e5f16a9e0929de7cde221b9cbae8e36aa368b1e128afe0a31",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-66ba20fe.rsa.pub": "7cf4cb8314e6ccc985b0d7f1aa0c6e0a81e3588f69a41f383af7a63d1ba61793",
+        "etc/apk/keys/build.postmarketos.org.rsa.pub": "b70e6ffc64a652d63aee0c28cb9ecb2ca3b49d759ca7a023bcb854d08780964b",
+        "etc/apk/keys/pmos@local-6ac92760.rsa.pub": "e32c01b7252ea72bba2c462eccd169d3f7513fba4004de2183b05db9d9314160"
+      },
+      "selected_packages": {
+        "device-samsung-gta4l": "1-r23",
+        "linux-samsung-gta4l": "4.19.300-r8",
+        "camera-gta4l": "1.0-r2",
+        "gps-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l-pulseaudio": "1.0-r3",
+        "modemmanager": "1.25.95_git20261005-r3"
+      },
+      "ui_packages": {
+        "postmarketos-ui-gnome": "5-r0",
+        "postmarketos-ui-gnome-openrc": "5-r0"
+      },
+      "session_type": "wayland",
+      "display_manager": "gdm",
+      "desktop_packages": {
+        "gnome-shell": "51.0-r0",
+        "mutter": "51.0-r0",
+        "gnome-session": "48.0-r5"
+      },
+      "session_descriptors": [
+        "usr/share/wayland-sessions/gnome-classic.desktop",
+        "usr/share/wayland-sessions/gnome-wayland.desktop",
+        "usr/share/wayland-sessions/gnome.desktop"
+      ],
+      "ui_overlay_sha256": {
+        "etc/environment": "3f732ce6c2cd5bc999ef7a99e3b48ffcefcf1f1380fb6b658946994efe70fba2",
+        "etc/profile.d/80-gta4l-rendering.sh": "3bf608b3f37badbcc510797f2b4b2afffa4a0bc8af792815ad7e5e2c7257009f",
+        "usr/share/applications/gta4l-rotation-lock.desktop": "eec2245a7d66b384f3e44e5c47d0a7307b7491c04281d6f6a0d9d6897848b84d"
+      },
+      "audio_backend": "PulseAudio with the tested internal-card interrupt policy",
+      "desktop_rendering": "software",
+      "formats_userdata": true,
+      "rootfs_runtime_verified": false,
+      "installer_flashing_verified": false,
+      "preserves_partitions": [
+        "recovery",
+        "dtbo",
+        "super",
+        "modem",
+        "EFS",
+        "persist",
+        "bootloader"
+      ],
+      "source_template_sha256": "8cddf22d1c8b0c4fee5f1ead43996f4768dc838d850505d5d0ee96e754933684",
+      "init_system": "OpenRC"
+    },
+    {
+      "ui": "sxmo-de-sway",
+      "name": "Sxmo with Sway",
+      "build_host": "WSL Ubuntu",
+      "package": "postmarketOS-SM-T505-OrangeFox-sxmo-de-sway-r5.zip",
+      "bytes": 722964961,
+      "sha256": "e11713b8d0bc5441228b42b41479d343a0cddc0394058a21ae265db799c594c8",
+      "boot_sha256": "4d4c3e929d9c87fc807840e13ae8fee946eea99d0aaeb2a5a3605491e8a98663",
+      "boot_bytes": 28938256,
+      "kernel_release": 9,
+      "device_release": 23,
+      "embedded_modules_verified": 37,
+      "embedded_apk_database_verified": true,
+      "packaging_schema": 2,
+      "apk_signing_keys_verified": {
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-4a6a0840.rsa.pub": "9c102bcc376af1498d549b77bdbfa815ae86faa1d2d82f040e616b18ef2df2d4",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5243ef4b.rsa.pub": "ebf31683b56410ecc4c00acd9f6e2839e237a3b62b5ae7ef686705c7ba0396a9",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-524d27bb.rsa.pub": "1bb2a846c0ea4ca9d0e7862f970863857fc33c32f5506098c636a62a726a847b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5261cecb.rsa.pub": "12f899e55a7691225603d6fb3324940fc51cd7f133e7ead788663c2b7eecb00c",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58199dcc.rsa.pub": "73867d92083f2f8ab899a26ccda7ef63dfaa0032a938620eda605558958a8041",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58cbb476.rsa.pub": "9a4cd858d9710963848e6d5f555325dc199d1c952b01cf6e64da2c15deedbd97",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-58e4f17d.rsa.pub": "780b3ed41786772cbc7b68136546fa3f897f28a23b30c72dde6225319c44cfff",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-5e69ca50.rsa.pub": "59c01c57b446633249f67c04b115dd6787f4378f183dff2bbf65406df93f176d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-60ac2099.rsa.pub": "db0b49163f07ffba64a5ca198bcf1688610b0bd1f0d8d5afeaf78559d73f2278",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-6165ee59.rsa.pub": "207e4696d3c05f7cb05966aee557307151f1f00217af4143c1bcaf33b8df733f",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-61666e3f.rsa.pub": "128d34d4aec39b0daedea8163cd8dc24dff36fd3d848630ab97eeb1d3084bbb3",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616a9724.rsa.pub": "10877cce0a935e46ad88cb79e174a2491680508eccda08e92bf04fb9bf37fbc1",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616abc23.rsa.pub": "4a095a9daca86da496a3cd9adcd95ee2197fdbeb84638656d469f05a4d740751",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ac3bc.rsa.pub": "0caf5662fde45616d88cfd7021b7bda269a2fcaf311e51c48945a967a609ec0b",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616adfeb.rsa.pub": "ebe717d228555aa58133c202314a451f81e71f174781fd7ff8d8970d6cfa60da",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616ae350.rsa.pub": "d11f6b21c61b4274e182eb888883a8ba8acdbf820dcc7a6d82a7d9fc2fd2836d",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-616db30d.rsa.pub": "40a216cbd163f22e5f16a9e0929de7cde221b9cbae8e36aa368b1e128afe0a31",
+        "etc/apk/keys/alpine-devel@lists.alpinelinux.org-66ba20fe.rsa.pub": "7cf4cb8314e6ccc985b0d7f1aa0c6e0a81e3588f69a41f383af7a63d1ba61793",
+        "etc/apk/keys/build.postmarketos.org.rsa.pub": "b70e6ffc64a652d63aee0c28cb9ecb2ca3b49d759ca7a023bcb854d08780964b",
+        "etc/apk/keys/pmos@local-6ac92760.rsa.pub": "e32c01b7252ea72bba2c462eccd169d3f7513fba4004de2183b05db9d9314160"
+      },
+      "selected_packages": {
+        "device-samsung-gta4l": "1-r23",
+        "linux-samsung-gta4l": "4.19.300-r8",
+        "camera-gta4l": "1.0-r2",
+        "gps-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l": "1.0-r3",
+        "alsa-ucm-gta4l-pulseaudio": "1.0-r3",
+        "modemmanager": "1.25.95_git20261005-r3"
+      },
+      "ui_packages": {
+        "postmarketos-ui-sxmo-de-sway": "1.18.0-r2",
+        "postmarketos-ui-sxmo-de-sway-openrc": "1.18.0-r2"
+      },
+      "session_type": "wayland",
+      "display_manager": "tinydm",
+      "desktop_packages": {
+        "sway": "1.12-r0",
+        "sxmo-utils-sway": "1.18.1-r5"
+      },
+      "session_descriptors": [
+        "usr/share/wayland-sessions/sway.desktop",
+        "usr/share/wayland-sessions/swmo.desktop"
+      ],
+      "ui_overlay_sha256": {
+        "etc/environment": "1b6af75a48c2b0ee37dbbb3319484b172881fb70131ff70ed5ee193063f97dcc",
+        "etc/profile.d/80-gta4l-rendering.sh": "771dd38603ddcb51a8e2cfb9cf52c0ad6dd4d5b6f930963a6f3dba14da6afc8f",
+        "usr/share/applications/gta4l-rotation-lock.desktop": "eec2245a7d66b384f3e44e5c47d0a7307b7491c04281d6f6a0d9d6897848b84d",
+        "etc/sway/config.d/80-gta4l-output.conf": "1915a9efa1c53dd836fc89743bafce9eeba27a401bd9419b8d346030249e40dc"
+      },
+      "audio_backend": "PulseAudio with the tested internal-card interrupt policy",
+      "desktop_rendering": "software",
+      "formats_userdata": true,
+      "rootfs_runtime_verified": false,
+      "installer_flashing_verified": false,
+      "preserves_partitions": [
+        "recovery",
+        "dtbo",
+        "super",
+        "modem",
+        "EFS",
+        "persist",
+        "bootloader"
+      ],
+      "source_template_sha256": "8cddf22d1c8b0c4fee5f1ead43996f4768dc838d850505d5d0ee96e754933684",
+      "init_system": "OpenRC",
+      "seatd_enabled_verified": true
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "xfce4": {"name": "Xfce", "display_manager": "lightdm", "session_type": "x11", "ui_package": "postmarketos-ui-xfce4", "core_packages": ["xfce4-session", "xorg-server", "onboard"]},
+  "plasma-mobile": {"name": "KDE Plasma Mobile", "display_manager": "tinydm", "session_type": "wayland", "ui_package": "postmarketos-ui-plasma-mobile", "core_packages": ["plasma-mobile", "kwin"]},
+  "plasma-desktop": {"name": "KDE Plasma Desktop", "display_manager": "sddm", "session_type": "wayland", "ui_package": "postmarketos-ui-plasma-desktop", "core_packages": ["plasma-workspace", "kwin"]},
+  "gnome-mobile": {"name": "GNOME Mobile", "display_manager": "gdm", "session_type": "wayland", "ui_package": "postmarketos-ui-gnome-mobile", "core_packages": ["gnome-shell-mobile", "mutter-mobile", "gnome-session"]},
+  "gnome": {"name": "GNOME Desktop", "display_manager": "gdm", "session_type": "wayland", "ui_package": "postmarketos-ui-gnome", "core_packages": ["gnome-shell", "mutter", "gnome-session"]},
+  "sxmo-de-sway": {"name": "Sxmo with Sway", "display_manager": "tinydm", "session_type": "wayland", "ui_package": "postmarketos-ui-sxmo-de-sway", "core_packages": ["sway", "sxmo-utils-sway"]}
+}

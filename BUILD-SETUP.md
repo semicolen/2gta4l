@@ -60,3 +60,6 @@ on the package releases and receipts named in those files. Review their
 version and boot-hash guards for the particular installed build. The current
 full installer targets internal userdata and replaces boot; its installation
 sequence and data-erasure boundary are described in `INSTALL.md`.
+
+The six UI candidates use the retained tested boot and module manifest. See
+[UI-BUILDS.md](UI-BUILDS.md) for the isolated build workflow and runtime limits.

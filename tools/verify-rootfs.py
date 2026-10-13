@@ -9,9 +9,11 @@ import argparse
 workspace = Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser()
 parser.add_argument('--report',type=Path,default=workspace/'artifacts/rootfs-verification.json')
+parser.add_argument('--root',type=Path)
+parser.add_argument('--ui',default='xfce4')
 args=parser.parse_args()
 build = Path('/home/pmos/sm-t505-port/work')
-root = build / 'chroot_rootfs_samsung-gta4l'
+root = args.root or build / 'chroot_rootfs_samsung-gta4l'
 versions = list((root / 'lib/modules').iterdir())
 assert len(versions) == 1, 'Unexpected kernel module versions'
 version = versions[0].name
@@ -31,8 +33,25 @@ touch = (root / 'usr/share/mkinitfs/files/gta4l-touch-firmware.files').read_text
 assert touch and all((root / path.lstrip('/')).is_file() for path in touch), 'Touch firmware file list invalid'
 services = ['qrtr-ns', 'gta4l-pd-mapper', 'gta4l-rmtfs', 'gta4l-modem',
             'gta4l-adsp', 'gta4l-ipa', 'gta4l-dbus-services', 'modemmanager',
-            'bluetooth', 'gta4l-bluetooth', 'gta4l-tqftpserv', 'gta4l-wlan', 'networkmanager', 'lightdm',
+            'bluetooth', 'gta4l-bluetooth', 'gta4l-tqftpserv', 'gta4l-wlan', 'networkmanager',
             'gta4l-sensors','iio-sensor-proxy','gta4l-camera']
+profiles=json.loads((workspace/'ui-profiles/profiles.json').read_text())
+assert args.ui in profiles,args.ui
+profile=profiles[args.ui]
+services.append(profile['display_manager'])
+records={}
+for section in (root/'lib/apk/db/installed').read_text().split('\n\n'):
+    values=dict(line.split(':',1) for line in section.splitlines() if ':' in line)
+    if 'P' in values:records[values['P']]=values['V']
+for package in profile['core_packages']:
+    assert package in records,'Missing desktop component: '+package
+assert 'openrc' in records and 'postmarketos-base-openrc' in records
+assert 'systemd' not in records and 'postmarketos-base-systemd' not in records
+assert 'postmarketos-base-ui-audio-backend-pulseaudio' in records
+assert 'pipewire-pulse' not in records
+sessions=root/'usr/share'/('xsessions' if profile['session_type']=='x11' else 'wayland-sessions')
+session_files=sorted(str(path.relative_to(root)) for path in sessions.glob('*.desktop'))
+assert session_files,'No session descriptors for '+args.ui
 for service in services:
     assert (root / 'etc/init.d' / service).is_file(), 'Missing service: ' + service
     assert (root / 'etc/runlevels/default' / service).is_symlink(), 'Disabled service: ' + service
@@ -80,6 +99,9 @@ finally:
         process.kill()
         process.wait(timeout=10)
 report = dict(kernel_release=version, module_count=len(modules), modules=modules,
+              ui=args.ui,
+              desktop_packages={name:records[name] for name in profile['core_packages']},
+              session_descriptors=session_files,
               autoload_modules=loader, touch_initramfs_files=touch,
               enabled_services=services, protection_domain_maps=maps,
               subsystem_helper_lifecycle_check=True,

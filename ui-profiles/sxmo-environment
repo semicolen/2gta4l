@@ -1,0 +1,4 @@
+# The downstream PCM/display stack has no native Mesa GPU acceleration.
+WLR_RENDERER=pixman
+WLR_DRM_NO_MODIFIERS=1
+WLR_NO_HARDWARE_CURSORS=1

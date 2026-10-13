@@ -59,3 +59,6 @@ runtime and suspend remain unverified. Camera recording, generic V4L2/PipeWire
 camera access and microphone/headset routing also remain unverified. LTE modem discovery works,
 but mobile data needs an active plan to validate. Desktop OpenGL uses software
 rendering; the isolated Turnip driver passes hardware Vulkan tests.
+
+The six r5 UI candidates use device r23 and are documented in [UI-BUILDS.md](UI-BUILDS.md).
+The r4 receipts above remain a historical packaging snapshot.
