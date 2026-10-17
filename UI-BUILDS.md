@@ -1,6 +1,6 @@
 # SM-T505 desktop image builds
 
-The r14 recipe is being prepared with audio UCM r4 (verified internal microphone),
+The r14 images include audio UCM r4 (verified internal microphone),
 GPS/ModemManager r5, the on-demand GPS assistance service, and standard PipeWire
 camera sources for GNOME/KDE. GNOME also pins the targeted Snapshot shutter-player
 patch. Its signed package and tablet photo regression pass, including repeated
@@ -9,6 +9,14 @@ verified. Both preserve the tested #11 boot and exact 37 driver modules, include
 the expected package database and signing keys, and pass the rootfs checks.
 They have not yet been flashed for fresh-install QC. Historical r13 installers
 retain the previous stack.
+
+For the user's final package, use GNOME Desktop, the profile tested on the
+tablet. `tools/package-gnome-release.py` stages its unchanged r14 OrangeFox ZIP,
+installation notes, receipts and checksums in
+`artifacts/releases/SM-T505-GNOME-Desktop-r14/`. The embedded first-boot
+configuration is checked before staging. This package retains GDM login with
+the pre-created `tablet` account; it does not enable the separate Nura installer
+profile. See `FIRST-BOOT.md` for the setup decision and installation steps.
 
 | Local r14 installer | Bytes | SHA256 |
 | --- | ---: | --- |
