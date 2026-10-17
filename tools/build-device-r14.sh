@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 python3 "$WORKSPACE/tools/configure-port.py"
 bash "$WORKSPACE/tools/pmb.sh" shutdown
 sh "$WORKSPACE/tools/ensure-wsl-arm64-emulation.sh"

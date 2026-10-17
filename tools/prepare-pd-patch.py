@@ -4,7 +4,7 @@ from pathlib import Path
 import difflib
 
 root = Path(__file__).resolve().parents[1]
-original = Path('/home/pmos/sm-t505-port/downloads/pd-mapper-v1.1.c').read_text()
+original = Path('/home/ark/sm-t505-port/downloads/pd-mapper-v1.1.c').read_text()
 needle = '\tclass_fd = open("/sys/class/remoteproc", O_RDONLY | O_DIRECTORY);'
 insert = r'''	/* Downstream PIL exposes subsystem devices instead of remoteproc. */
 	const char *override = getenv("PD_MAPPER_FW_DIR");

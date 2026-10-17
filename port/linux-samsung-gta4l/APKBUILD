@@ -3,7 +3,7 @@
 
 pkgname=linux-samsung-gta4l
 pkgver=4.19.300
-pkgrel=8
+pkgrel=10
 pkgdesc="Samsung Galaxy Tab A7 10.4 2020 (LTE) kernel fork"
 arch="aarch64"
 _carch="arm64"
@@ -49,6 +49,9 @@ source="
 	plane-resume-state.patch
 	guard-qca-tty.patch
 	restore-bt-module-build.patch
+	pidfd-waitid.patch
+	himax-gesture-keycodes.patch
+	faccessat2.patch
 "
 builddir="$srcdir/$_repository-$_commit"
 _outdir="out"
@@ -106,4 +109,7 @@ f3886bff666e812b72aa4ecd9f3aae262e9732ae7ca3d899af42b875653bc0bce0e5e8ab8c092c1e
 fc2577d3f1782b388cdd6be189bb3b6c52646f3ca1adac7db3fecd1ffd451f246ae1a27ff1e7ef407af0ea6ef5814953019366f17691aec4038824add3fdccfc  plane-resume-state.patch
 b76faa65b4e11b2d32c6bf3bdd955574d0182af039a64a0f3c95c6584abe69b2dcbf0831a013b3659acb1700351c5f3153e81955167e428bc9c6f605fcf1cdfb  guard-qca-tty.patch
 08ddb4d0afbe2a22fc3d1dff7ba2a25ebfbaf85129011f4371e8c275ec59ddd46c82a84e2aea6d3410538205df2e54456ed0d94cc2f7925637be522c78484bc5  restore-bt-module-build.patch
+42482244a5cb53871fc3eb94a5715dc06c23f13f15dc489344dbef6681388d54abdc70c3e82c4406d104b93d28f9b67feb1eb8b60d78b4c28bc97bf839d56085  pidfd-waitid.patch
+42c522bd7cf74d126658fe4340ba85c2fe112fae1faa75b21b9aab422fdf7f0fc48a0645960a1680f1204e86f876bbc0ae40c796154084119b4963c70fc94820  himax-gesture-keycodes.patch
+a18cd90f53af9d575c524ad51e186f198a6ea029de3d95858d306bd70a411e340bcb7c10f25de4b6736edf1bf3c1d8854205ae7f3296282a5a1c675ee32479fd  faccessat2.patch
 "

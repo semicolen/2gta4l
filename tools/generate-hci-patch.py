@@ -4,8 +4,8 @@ from pathlib import Path
 import difflib
 import hashlib
 
-native = Path('/home/pmos/sm-t505-port')
-workspace = Path('/mnt/c/postmarketOS-gta4l')
+native = Path('/home/ark/sm-t505-port')
+workspace = Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os')
 vendor = (native / 'kernel/net/bluetooth/hci_sock.c').read_text()
 upstream_path = native / 'downloads/hci_sock-linux-v4.19.300.c'
 upstream = upstream_path.read_text()

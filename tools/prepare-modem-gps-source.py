@@ -5,8 +5,8 @@ import re
 import tarfile
 import urllib.request
 
-base=Path('/home/pmos/sm-t505-port')
-ws=Path('/mnt/c/postmarketOS-gta4l')
+base=Path('/home/ark/sm-t505-port')
+ws=Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os')
 recipe=(ws/'downloads/gps-integration-reference/modemmanager-APKBUILD').read_text()
 commit=re.search(r'^_commit=(\S+)',recipe,re.M)[1]
 assert commit=='7f0bf17ab518cd78925cf7e53cc0d5c42f88b41a'

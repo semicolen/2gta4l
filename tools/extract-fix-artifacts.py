@@ -4,8 +4,8 @@ import hashlib
 import json
 import tarfile
 
-native = Path('/home/pmos/sm-t505-port')
-workspace = Path('/mnt/c/postmarketOS-gta4l')
+native = Path('/home/ark/sm-t505-port')
+workspace = Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os')
 packages = native / 'work/packages/edge/aarch64'
 output = workspace / 'artifacts/hci-fix'
 output.mkdir(exist_ok=True)

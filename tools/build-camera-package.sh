@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WS='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WS='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 revision=$(sed -n 's/^pkgrel=//p' "$WS/port/camera-gta4l/APKBUILD")
 python3 "$WS/tools/prepare-camera-package.py"
 python3 "$WS/tools/configure-port.py"

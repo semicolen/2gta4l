@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 mkdir -p "$ROOT/stock/modem-files"
 mdir -i "$ROOT/stock/modem.bin" ::
 if [ ! -d "$ROOT/stock/modem-files/image" ]; then

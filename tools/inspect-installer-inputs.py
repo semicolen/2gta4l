@@ -1,7 +1,7 @@
 """Inspect local build inputs without exposing account or Wi-Fi credentials."""
 from pathlib import Path
 import json
-base=Path('/home/pmos/sm-t505-port')
+base=Path('/home/ark/sm-t505-port')
 root=base/'work/chroot_rootfs_samsung-gta4l'
 selected={'linux-samsung-gta4l','device-samsung-gta4l','camera-gta4l','gps-gta4l',
           'rotation-gta4l','sensors-gta4l','iio-sensor-proxy','modemmanager','geoclue',

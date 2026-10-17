@@ -7,7 +7,7 @@ import struct
 import subprocess
 import zipfile
 
-base = Path('/home/pmos/sm-t505-port')
+base = Path('/home/ark/sm-t505-port')
 work = base/'camera-development'
 runtime = work/'runtime-root'
 runtime.mkdir(parents=True, exist_ok=True)

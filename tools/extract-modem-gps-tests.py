@@ -2,7 +2,7 @@
 from pathlib import Path
 import re
 
-ws=Path('/mnt/c/postmarketOS-gta4l')
+ws=Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os')
 text=(ws/'logs/modemmanager-gps-build.log').read_text()
 marker='>>> modemmanager: Building pmos/modemmanager 1.25.95_git20261005-r3 '
 start=text.rfind(marker)

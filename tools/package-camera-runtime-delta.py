@@ -11,7 +11,7 @@ revision = parser.parse_args().revision
 assert 1 <= revision <= 99
 
 workspace = Path(__file__).resolve().parents[1]
-source = Path('/home/pmos/sm-t505-port/camera-development/runtime-root')
+source = Path('/home/ark/sm-t505-port/camera-development/runtime-root')
 out = workspace/'artifacts/camera-development'
 before = json.loads((out/'runtime-r0.json').read_text())['files']
 for earlier in range(1, revision):

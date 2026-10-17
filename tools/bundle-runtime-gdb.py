@@ -3,8 +3,8 @@ from pathlib import Path
 import io
 import tarfile
 
-root = Path('/home/pmos/sm-t505-port/work/chroot_rootfs_samsung-gta4l')
-workspace = Path('/mnt/c/postmarketOS-gta4l')
+root = Path('/home/ark/sm-t505-port/work/chroot_rootfs_samsung-gta4l')
+workspace = Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os')
 names = {'bin/gdb': root / 'usr/bin/gdb'}
 for name in ['libmpfr.so.6', 'libdebuginfod.so.1']:
     names['lib/' + name] = root / 'usr/lib' / name

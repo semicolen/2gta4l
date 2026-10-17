@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
+ROOT=/home/ark/sm-t505-port
 mkdir -p "$ROOT/downloads" "$ROOT/kernel"
 ARCHIVE="$ROOT/downloads/linux-samsung-gta4l-381a5549ee66fa751f632ee0840f5631274209ee.tar.gz"
 if [ ! -f "$ARCHIVE" ]; then

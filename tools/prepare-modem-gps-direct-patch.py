@@ -3,8 +3,8 @@ from pathlib import Path
 import difflib
 import re
 
-ws=Path('/mnt/c/postmarketOS-gta4l')
-source=Path('/home/pmos/sm-t505-port/sources/modemmanager-gps-inspect/ModemManager-7f0bf17ab518cd78925cf7e53cc0d5c42f88b41a/src/mm-shared-qmi.c')
+ws=Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os')
+source=Path('/home/ark/sm-t505-port/sources/modemmanager-gps-inspect/ModemManager-7f0bf17ab518cd78925cf7e53cc0d5c42f88b41a/src/mm-shared-qmi.c')
 old=source.read_text()
 function_start=old.index('static void\nstart_gps_engine (')
 loc_branch=old.index('    /* Otherwise LOC */',function_start)

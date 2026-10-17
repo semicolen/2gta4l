@@ -1,12 +1,12 @@
 pkgname=gps-gta4l
 pkgver=1.0
-pkgrel=3
+pkgrel=5
 pkgdesc="SM-T505 on-demand GPS and desktop location integration"
 url="https://postmarketos.org"
 arch="aarch64"
 license="MIT"
 options="!check"
-depends="qmi-utils modemmanager=1.25.95_git20261005-r3 geoclue"
+depends="qmi-utils modemmanager=1.25.95_git20261005-r5 geoclue"
 source="90-gta4l-gps.conf gta4l-gps-unlock"
 
 package() {

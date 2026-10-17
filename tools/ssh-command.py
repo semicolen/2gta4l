@@ -12,9 +12,12 @@ parser.add_argument('command', type=Path)
 parser.add_argument('output', type=Path)
 parser.add_argument('--user', action='store_true', help='Run as tablet instead of sudo root')
 parser.add_argument('--timeout', type=int, default=40, help='Bound total diagnostic time in seconds (1–120)')
+parser.add_argument('--connect-timeout', type=int, default=4, help='Allow slower startup handshakes (1–30 seconds)')
 args = parser.parse_args()
 if not 1 <= args.timeout <= 120:
     parser.error('--timeout must be between 1 and 120 seconds')
+if not 1 <= args.connect_timeout <= 30:
+    parser.error('--connect-timeout must be between 1 and 30 seconds')
 workspace = Path(__file__).resolve().parents[1]
 login = (workspace / 'artifacts/initial-login.txt').read_text()
 username = re.search(r'^User: (.+)$', login, re.M).group(1)
@@ -26,8 +29,8 @@ if hosts.exists():
 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 try:
     client.connect('172.16.42.1', username=username, password=password,
-                   look_for_keys=False, allow_agent=False, timeout=4,
-                   auth_timeout=8, banner_timeout=8)
+                   look_for_keys=False, allow_agent=False, timeout=args.connect_timeout,
+                   auth_timeout=max(8, args.connect_timeout), banner_timeout=max(8, args.connect_timeout))
     client.save_host_keys(str(hosts))
     command = '/bin/sh -c ' + shlex.quote(args.command.read_text())
     if not args.user:

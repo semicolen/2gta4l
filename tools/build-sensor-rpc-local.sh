@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 python3 "$WORKSPACE/tools/generate-sensor-rpc-patch.py"
 python3 "$WORKSPACE/tools/verify-sensor-rpc-uapi.py"
 python3 "$WORKSPACE/tools/configure-port.py"

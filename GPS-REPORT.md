@@ -1,5 +1,26 @@
 # SM-T505 GPS verification
 
+GNOME Desktop r13 initially exposed an assistance gap: ModemManager r3 reported
+no assistance support although direct QMI returned three HTTPS XTRA servers.
+ModemManager r5 fixes response/indication ordering for both discovery and
+chunked injection; all 38 upstream tests pass. The tablet now reports assistance
+support and accepts orbit data, including through the existing XTRA fallback.
+
+The installed `gps-assistance-gta4l` service watches actual client GPS requests.
+It never enables GPS itself. It downloads only the modem-advertised XTRA file
+over verified HTTPS, caches it privately, and injects it while GPS is requested.
+It preserves standalone satellite positioning and the client-controlled source
+mask. Automatic download and subsequent cache reuse both pass; the modem accepted
+cached data in 0.24 seconds and reports 168 hours of orbit validity.
+
+Coordinate-free window tests observed a first valid fix after 39.46 seconds
+before assistance, 3.06 seconds after manual injection, and 6.12 seconds with
+the automatic service. These are reception samples with warm-start effects,
+not controlled cold-start comparisons or guaranteed Maps timings. Actual
+GeoClue/Maps delivery latency still needs its final check. The assistance service
+starts automatically after a normal reboot. No assistance cache, modem NV or
+factory calibration was erased.
+
 Device release 20 passes satellite reception and desktop location requests,
 including after a normal reboot. At an open window, the post-reboot desktop
 test received a valid GPS position: GGA fix quality 1, ten satellites used,

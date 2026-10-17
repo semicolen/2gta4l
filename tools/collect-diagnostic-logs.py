@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Collect diagnostic boot logs through read-only OrangeFox inspection."""
 from pathlib import Path
-import os
 import hashlib
 import json
 import struct
@@ -10,7 +9,7 @@ import subprocess
 workspace = Path(__file__).resolve().parents[1]
 out = workspace / 'evidence/diagnostic-boot-20261009/system-boot'
 out.mkdir(parents=True, exist_ok=True)
-adb = ['adb', '-s', os.environ['GTA4L_ADB_SERIAL']]
+adb = ['adb', '-s', 'R9WNC1QG0LJ']
 
 def capture(*args):
     return subprocess.check_output(adb + list(args))

@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Read bounded boot/MBR evidence through recovery ADB; never writes device data."""
 from pathlib import Path
-import os
 import hashlib
 import json
 import struct
 import subprocess
 
-adb = ['adb', '-s', os.environ['GTA4L_ADB_SERIAL']]
+adb = ['adb', '-s', 'R9WNC1QG0LJ']
 out = Path(__file__).resolve().parents[1] / 'evidence/bootloop-20261009'
 out.mkdir(parents=True, exist_ok=True)
 def read(node, size, count):

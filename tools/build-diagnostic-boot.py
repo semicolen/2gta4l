@@ -84,7 +84,7 @@ def entry(name, payload, mode):
     record += bytes(-len(record) % 4)
     return record
 
-collector = Path('/home/pmos/sm-t505-port/diagnostics/gta4l-bootlog').read_bytes()
+collector = Path('/home/ark/sm-t505-port/diagnostics/gta4l-bootlog').read_bytes()
 assert collector[:4] == b'\x7fELF' and struct.unpack_from('<H', collector, 18)[0] == 183
 hook = (workspace / 'diagnostics/99-gta4l-diagnostics.sh').read_bytes()
 assert 'gta4l-bootlog' not in names and 'hooks-cleanup/99-gta4l-diagnostics.sh' not in names
@@ -133,7 +133,7 @@ with zipfile.ZipFile(package, 'w', compression=zipfile.ZIP_DEFLATED, compresslev
 with zipfile.ZipFile(package) as archive:
     assert archive.testzip() is None
     assert archive.read('boot.img') == new_boot
-native = Path('/home/pmos/sm-t505-port/diagnostics')
+native = Path('/home/ark/sm-t505-port/diagnostics')
 (native / 'update-binary').write_text(updater)
 subprocess.run(['sh', '-n', str(native / 'update-binary')], check=True)
 subprocess.run(['sh', '-n', str(workspace / 'diagnostics/99-gta4l-diagnostics.sh')], check=True)

@@ -1,7 +1,7 @@
 pkgname=alsa-ucm-gta4l
 pkgver=1.0
-pkgrel=3
-pkgdesc="ALSA speaker routing for Samsung Galaxy Tab A7 LTE (SM-T505)"
+pkgrel=4
+pkgdesc="ALSA speaker and microphone routing for Samsung Galaxy Tab A7 LTE (SM-T505)"
 url="https://github.com/semicolen/2gta4l"
 arch="aarch64"
 license="MIT"
@@ -27,8 +27,8 @@ pulse() {
 }
 
 sha512sums="
-40028320fc9d3a7341a00dfc42933c59634240ae87b62164c56d07152fa7b99f87fae43a76fa1b88c03e9d3532b3721817576c95d2b4b72f5ed1c07d99f897a6  gta4l.conf
-cd96747daf8ff529b2a893f521fbbf9beb2ddc0c8229cdbb4cfcee9f5b0ac2c54682a2e6b77fd6b49099040557d7a53b80e51cdb8401cdbbf0812e0b24b45a5f  HiFi.conf
+b34257696ccdba101e3b6a95728b28e97e2ce7b273f1a74f62d1dc4814f47ad3f14310a5974eda350b31d3292850b0565c89041a0ad7733bb95931e80fa7b290  gta4l.conf
+0822ae52cb9a99d77abcb6d0491f7c920881c578b613f10168b3b15a3e04cbfdd5c774fa123d9acf806e6e07dd1afb0e56004e19bc3d53f0e8fe263183fcedf3  HiFi.conf
 726e2cd6ad4ce08799d41cb9a872c1c24b301c60755f5ed1d5600cb2660ba4e09e7550b70095aaa1e36fa1b5591b33ae7682565cd330571ffd5ce9bae59ca549  90-gta4l-audio.rules
 b63c597b690ae7a34172b3f2ba120963d8125aff4b9d5fd494c8ea6004b65209565b1cc5fcf289d8ec91caca79de3f7a723d5494787096f545a8ac5c9add8f5c  90-gta4l-audio.pa
 "

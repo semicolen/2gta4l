@@ -61,7 +61,7 @@ report = dict(image=a.image.name, sha256=hashlib.sha256(d).hexdigest(), bytes=le
               cmdline=cmdline, checks_passed=True, runtime_verified=False)
 report['verified_kernel_options'] = required_config
 report['device_trees'] = summarize(d[dto:dto+ds])
-stock_trees = summarize(Path('/home/pmos/sm-t505-port/stock/boot/dtb.img').read_bytes())
+stock_trees = summarize(Path('/home/ark/sm-t505-port/stock/boot/dtb.img').read_bytes())
 stock_soc_ids = {tree['qcom,msm-id'][i] for tree in stock_trees if 'qcom,msm-id' in tree
                  for i in range(0, len(tree['qcom,msm-id']), 2)}
 built_soc_ids = {tree['qcom,msm-id'][i] for tree in report['device_trees'] if 'qcom,msm-id' in tree

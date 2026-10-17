@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 BUILDROOT="$ROOT/work/chroot_buildroot_aarch64"
 mounted_native=false
 if ! mountpoint -q "$BUILDROOT/native"; then

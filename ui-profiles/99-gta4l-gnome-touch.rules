@@ -1,0 +1,2 @@
+# GNOME/Mutter needs the same physical 180-degree Himax calibration as KWin.
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="himax-touchscreen", ENV{LIBINPUT_CALIBRATION_MATRIX}="-1 0 1 0 -1 1"

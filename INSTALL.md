@@ -20,17 +20,17 @@ and OrangeFox available for recovery from a failed boot.
    `artifacts/`. The reports verify packaging; they do not prove hardware works.
 2. Boot the tablet's existing OrangeFox recovery. If a previous installation
    failed, save its logs and restart OrangeFox recovery before retrying.
-   Check `adb -s <device-serial> shell id` reports root.
+   Check `adb -s R9WNC1QG0LJ shell id` reports root.
 3. Make the read-only partition backups from PowerShell:
 
    ```powershell
-   python tools\backup-recovery.py --serial <device-serial>
+   python tools\backup-recovery.py --serial R9WNC1QG0LJ
    ```
 
 4. Enable ADB sideload in OrangeFox, then supply the ZIP from PowerShell:
 
    ```powershell
-   adb -s <device-serial> sideload 'C:\postmarketOS-gta4l\artifacts\postmarketOS-SM-T505-OrangeFox-bringup-r4.zip'
+   adb -s R9WNC1QG0LJ sideload 'C:\Users\darya\Documents\ChatGPT\Postmarket os\artifacts\postmarketOS-SM-T505-OrangeFox-bringup-r4.zip'
    ```
 
    The ZIP must remain outside internal userdata throughout installation.

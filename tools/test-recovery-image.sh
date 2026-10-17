@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Test the nested MBR and two filesystems on a disposable WSL loop device.
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 NATIVE="$ROOT/work/chroot_native"
 TEST_DIR="$(mktemp -d "$NATIVE/tmp/gta4l-installer-test.XXXXXX")"
 TEST_PATH="${TEST_DIR#"$NATIVE"}"

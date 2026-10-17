@@ -3,7 +3,7 @@ from pathlib import Path
 import difflib
 
 root = Path(__file__).resolve().parents[1]
-source = Path('/home/pmos/sm-t505-port/kernel/drivers/bluetooth/hci_qca.c').read_text()
+source = Path('/home/ark/sm-t505-port/kernel/drivers/bluetooth/hci_qca.c').read_text()
 needle = '''\tBT_DBG("hu %p qca_open", hu);
 
 \tif (!hci_uart_has_flow_control(hu))'''

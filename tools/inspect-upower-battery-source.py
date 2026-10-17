@@ -2,7 +2,7 @@
 """Fetch the exact installed UPower source into local WSL for inspection."""
 from pathlib import Path
 import hashlib,io,tarfile,urllib.request
-root=Path('/home/pmos/sm-t505-port/sources/upower-battery-audit')
+root=Path('/home/ark/sm-t505-port/sources/upower-battery-audit')
 root.mkdir(parents=True,exist_ok=True)
 archive=root/'upower-v1.91.0.tar.bz2'
 expected='32801d3ee4c5086221a9f12062b0f2e6765b239f68a562c24ef7808999bb34e299e6acd31acf5c414cf41613709c97b20ad64d252e1d8ddf23183576b156cf93'

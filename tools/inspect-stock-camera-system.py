@@ -4,7 +4,7 @@ import hashlib
 import struct
 import subprocess
 
-raw = Path('/home/pmos/sm-t505-port/stock/vendor/super.raw.img')
+raw = Path('/home/ark/sm-t505-port/stock/vendor/super.raw.img')
 with raw.open('rb') as stream:
     stream.seek(12288)
     initial = stream.read(128)

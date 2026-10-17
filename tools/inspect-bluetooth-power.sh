@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-KERNEL=/home/pmos/sm-t505-port/kernel
+KERNEL=/home/ark/sm-t505-port/kernel
 echo '=== UART power pulse ==='
 sed -n '1010,1140p' "$KERNEL/drivers/bluetooth/hci_qca.c"
 echo '=== Version query ==='

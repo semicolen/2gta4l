@@ -1,0 +1,60 @@
+Complete waitid(P_PIDFD) for the already backported pidfd_open API.
+Based on Linux v5.4 kernel/exit.c: retain the pid reference, validate the fd
+and reuse the existing child-wait rules and ownership checks.
+
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -1617,6 +1617,22 @@
+ 	return retval;
+ }
+ 
++/* pidfd_open is backported in this tree; complete its waitid interface. */
++static struct pid *wait_pidfd_get_pid(unsigned int fd)
++{
++	struct fd f = fdget(fd);
++	struct pid *pid;
++
++	if (!f.file)
++		return ERR_PTR(-EBADF);
++	if (f.file->f_op != &pidfd_fops)
++		pid = ERR_PTR(-EBADF);
++	else
++		pid = get_pid(f.file->private_data);
++	fdput(f);
++	return pid;
++}
++
+ static long kernel_waitid(int which, pid_t upid, struct waitid_info *infop,
+ 			  int options, struct rusage *ru)
+ {
+@@ -1645,11 +1661,19 @@
+ 		if (upid <= 0)
+ 			return -EINVAL;
+ 		break;
++	case P_PIDFD:
++		type = PIDTYPE_PID;
++		if (upid < 0)
++			return -EINVAL;
++		pid = wait_pidfd_get_pid(upid);
++		if (IS_ERR(pid))
++			return PTR_ERR(pid);
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
+-	if (type < PIDTYPE_MAX)
++	if (type < PIDTYPE_MAX && which != P_PIDFD)
+ 		pid = find_get_pid(upid);
+ 
+ 	wo.wo_type	= type;
+--- a/include/uapi/linux/wait.h
++++ b/include/uapi/linux/wait.h
+@@ -17,6 +17,7 @@
+ #define P_ALL		0
+ #define P_PID		1
+ #define P_PGID		2
++#define P_PIDFD		3
+ 
+ 
+ #endif /* _UAPI_LINUX_WAIT_H */

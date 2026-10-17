@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-ROOT=/home/pmos/sm-t505-port
+ROOT=/home/ark/sm-t505-port
 echo '=== Binary emulation handlers ==='
 ls -l /proc/sys/fs/binfmt_misc
 for handler in /proc/sys/fs/binfmt_misc/*aarch64*; do

@@ -1,5 +1,65 @@
 # SM-T505 camera development
 
+The live GNOME Desktop installation now has `camera-pipewire-gta4l` 1.0-r0.
+It exposes rear and front 640×480, 10 fps RGBx sources through PipeWire, using
+the existing permission-controlled HAL broker. Normal application discovery,
+automatic stream linking, changing live frames, orientation and hardware release
+when idle pass. The user confirmed both cameras, orientation, colors and photo
+saving in GNOME's standard Camera app. These additions are not in the historical
+r13 installer. The custom app retains full-resolution still capture.
+
+`snapshot` 51.0-r1 fixes the reproduced photo-crash sequence by reusing the GTK
+shutter-sound player. The earlier version faults in GTK rendering after replacing
+that player: two photos reproduce a SIGSEGV, while eight shutter actions survive
+with sound disabled. Native Wayland/EGL selection and the per-app
+`GDK_DISABLE=threads` test did not resolve it.
+
+The patched candidate saves eight consecutive front-camera JPEGs with shutter
+sound enabled and remains running. The user also confirms repeated rear photos
+save without a crash and repeated shutter sounds work, and reports successful
+QR-code scanning. The signed package is installed; all allocated executable code
+and data match the hardware-tested candidate, Cargo audit metadata is retained,
+and the installed app launches with the usual Zink driver. The upstream
+`cargo test` command passes but currently contains zero unit tests; the tablet
+photo checks provide the functional regression evidence. Longer stability is
+still unverified.
+
+Microphone UCM r4 separately passes an eight-second native video/audio test, and
+the user confirms clear voice recording and playback before and after reboot.
+The camera-source supervisor and both sources start automatically after a normal
+reboot. The refreshed GNOME Desktop and Mobile r14 images are built and locally
+verified; their fresh-install QC remains pending. These changes are absent from
+the historical r13 installers.
+
+During Plasma Desktop quality control, camera r5 adds native Wayland output
+orientation to the GTK frontend while retaining the Xfce rotation-cache path
+for X11. The frontend reads the actual `DSI-1` output transform, so it follows
+display orientation rather than independently rotating from sensor data. The
+mirrored front view needs the opposite landscape conversion from the rear view.
+The user confirmed correct front/rear previews, photo saving and preview restart
+with the tested r5 frontend. The signed package contains that byte-exact code;
+the user also confirmed the camera, touch, keyboard, login and rotation after
+a fresh reboot with the signed r5 package. Clean-installer checks remain in
+progress in `UI-QC.md`.
+On 2026-10-14, both camera previews, colors, landscape orientation, photo saving
+and preview restart also pass on the accelerated Plasma Desktop. Closing Camera
+leaves no capture helper or temporary frames; the idle controller stays running.
+
+The same quality check found a misleading stop error after a completed photo.
+Full-resolution PNGs were already saved, but the frontend briefly treated the
+photo helper's successful exit as a failed preview. It now waits for the
+photo-to-preview transition before interpreting preview exit status. These
+changes keep the stock HAL, capture helper, color conversion and firmware path.
+
+GNOME Desktop QC on 2026-10-15 confirms the custom Camera app opens and produces
+images, while generic camera applications did not discover a camera at that time.
+The HAL broker itself exposes a private capture protocol; the new PipeWire adapter
+described above now supplies standard application discovery in the live build.
+After the kernel #10, SensorProxy and Adreno GNOME session fixes, the user confirms
+both moving previews, colors and orientation in portrait/landscape, photo saving
+and preview restart in the custom app. Closing Camera releases the capture helper
+and temporary frames. Those earlier checks predate the PipeWire adapter.
+
 Both physical cameras capture images using the matching stock Android 12 CamX
 HAL in an isolated Bionic runtime. Each camera completed 30 consecutive
 640×480 YUV captures and 15 consecutive captures at its maximum advertised

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Galaxy Tab A7 camera sources
+Exec=/usr/libexec/gta4l-camera-pipewire-session
+OnlyShowIn=GNOME;KDE;
+NoDisplay=true
+X-GNOME-Autostart-Phase=Applications

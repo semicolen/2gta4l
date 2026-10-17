@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+# GTK's native Vulkan presentation fails on this downstream stack. Its GL
+# renderer uses the tested Zink DRI-image presentation path instead.
+export GSK_RENDERER=gl
+if [ "${GTA4L_ZINK_KGSL:-0}" = 1 ]; then
+    # GDM creates the session bus before the GPU wrapper runs. Explicitly
+    # replace its inherited CPU flag when gnome-session exports the environment.
+    export LIBGL_ALWAYS_SOFTWARE=0
+fi
+exec /usr/bin/gnome-session "$@"

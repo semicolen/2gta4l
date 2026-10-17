@@ -1,5 +1,40 @@
 # SM-T505 automatic rotation
 
+Plasma Desktop quality control now confirms native rotation and matching touch
+and keyboard in all four positions. KWin's tablet mode is enabled explicitly;
+the Himax composite device otherwise leaves its automatic tablet detection off.
+Native Wayland uses an identity sensor mount matrix relative to the native panel,
+supplied by a later profile-specific udev rule. The Xfce rule and Xrandr helper
+below retain their existing 180-degree correction. Screen-off/wake also passes
+in Plasma. Startup checks for the corrected desktop installer are tracked in
+`UI-QC.md`; the same native settings have not yet been verified under GNOME.
+
+GNOME Desktop QC on 2026-10-15 found a separate input-driver problem. Mutter 51
+checks pointer capability before touch capability when classifying an input
+device. Four Himax double-finger gesture codes occupied Linux BTN_LEFT through
+BTN_SIDE, so libinput advertised the touchscreen as a mouse as well. Mutter
+therefore had no touchscreen and left panel orientation unmanaged, despite a
+working accelerometer. Kernel #10 remaps those four gestures to KEY_F13 through
+KEY_F16, preserving their distinct events and BTN_TOUCH. Hardware checks confirm
+that libinput now reports keyboard/touch without pointer capability. The kernel
+passes its process-wait API regression and retains identical modules and device
+tree. GNOME's physical touch calibration is supplied separately by its 180-degree
+profile rule; all four orientations still require visible validation.
+
+GNOME also exposed a SensorProxy 3.9 startup race. Synchronous SSC discovery
+dispatches D-Bus while the initial sensor list is being assembled. A client can
+claim the accelerometer before its device is open; the original startup path
+retained the claim but never started sampling for it. The local 3.9-r4 patch
+initializes deferred-invocation storage earlier, guards the claim/release paths
+against an unpublished device and starts polling for existing claims after
+initial open, as the hotplug path already does. All three existing package
+checks pass in WSL. On the tablet, an observer started before the service now
+receives orientation and vertical tilt after discovery. After a clean reboot,
+the user confirms GNOME Desktop rotation and input with the identity native
+sensor matrix, 180-degree physical touch calibration and Adreno compositor.
+Display off/on and input also pass. The r12 GNOME installers are rebuilding;
+GNOME Mobile's visible behavior remains unverified.
+
 Rotation uses the downstream ADSP sensor service through QRTR, libssc and
 iio-sensor-proxy. The tablet reports a Bosch bmi26x accelerometer. Its stock
 firmware mount matrix is empty; the device udev rule supplies the measured

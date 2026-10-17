@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 bash "$WORKSPACE/tools/pmb.sh" chroot -b aarch64 -- /bin/true
 for package in postmarketos-ui-plasma-mobile postmarketos-ui-plasma-desktop; do
     cp -a "$WORKSPACE/ui-profiles/aports/$package/." "$ROOT/sources/pmaports/main/$package/"

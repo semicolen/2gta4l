@@ -3,8 +3,8 @@ from pathlib import Path
 import json
 import subprocess
 
-image=Path('/home/pmos/sm-t505-port/stock/vendor/vendor.img')
-ws=Path('/mnt/c/postmarketOS-gta4l')
+image=Path('/home/ark/sm-t505-port/stock/vendor/vendor.img')
+ws=Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os')
 directories=['/lib64/hw','/lib64','/lib64/camera','/lib/camera','/etc/camera','/etc/init','/etc/vintf/manifest']
 result={}
 for directory in directories:

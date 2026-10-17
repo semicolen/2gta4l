@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 CHROOT="$ROOT/work/chroot_buildroot_aarch64"
 cp "$ROOT/work/log.txt" "$WORKSPACE/logs/modemmanager-gps-build-initial.log"
 python3 "$WORKSPACE/tools/configure-port.py"
 cp -a "$WORKSPACE/port/modemmanager" "$ROOT/sources/pmaports/device/downstream/"
 python3 - <<'PY'
 from pathlib import Path
-p=Path('/home/pmos/sm-t505-port/work/chroot_buildroot_aarch64/home/pmos/build/APKBUILD')
+p=Path('/home/ark/sm-t505-port/work/chroot_buildroot_aarch64/home/pmos/build/APKBUILD')
 s=p.read_text()
 assert 'pkgname=modemmanager\n' in s
 s=s.replace('checkdepends="glib-dev py3-gobject3 py3-dbus"','checkdepends="dbus glib-dev py3-gobject3 py3-dbus"')

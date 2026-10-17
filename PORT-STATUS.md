@@ -41,7 +41,9 @@ and local builds do not write the tablet's partitions.
   blob. Preserve device-specific calibration partitions on the tablet.
 - Use Xfce, OpenRC and software-rendered DRM modesetting for display bring-up.
   An isolated Turnip driver built for the downstream KGSL ABI provides tested
-  Vulkan computation and graphics; desktop OpenGL remains software rendered.
+  Vulkan computation and graphics. Plasma Desktop and GNOME Desktop use the
+  tested private Zink runtime for accelerated composition; Xfce retains its
+  software OpenGL configuration.
 - Build locally in WSL Ubuntu on its native ext4 filesystem.
 
 ## Validation boundary
@@ -85,13 +87,18 @@ QRTR/SMD, UIO modem memory and the root filesystem drivers. The modem holder's
 startup, regular-file rejection and graceful termination were exercised with
 `/dev/null` in the ARM64 build root, without using a tablet subsystem.
 
-The installed tablet now uses kernel #9 and device release 21, applied through
+The historical Xfce installation used kernel #9 and device release 21, applied through
 boot-preserving incremental updates. The historical full installer above does
 not contain these later fixes. A refreshed r4 clean-install candidate now
 contains kernel #9, device r22, camera r2, GPS r3, audio r3 and rotation/sensor integration.
 Its 37 embedded modules and actual APK versions pass local verification;
 the boot image is byte-identical to the tested tablet's boot. The refreshed
 rootfs has not been flashed or boot-tested as a whole; see CURRENT-BUILD.md.
+The current tablet is in desktop QC on GNOME r12 with kernel #10 and device r23.
+After its live GTK OpenGL session correction and reboot, the user confirms
+Settings, Files, Calculator and Terminal open. Rotation and the custom Camera
+also pass. See UI-QC.md for each clean image's results and
+KERNEL-COMPATIBILITY.md for the API backports and pending kernel #11 candidate.
 The latest WLAN startup and device APKs were
 built locally in WSL and verified on one normal reboot; the kernel boot image
 remained unchanged during the WLAN update. The subsequent Bluetooth update
@@ -110,12 +117,12 @@ tests now establish the partial results below.
 | Display and touch | Vendor SDE/Himax and stock touch firmware | Kernel #8 restores SSPP plane state on wake; physical login and three-second DPMS wake verified; three additional cycles completed, Xfce and touch confirmed afterward; suspend and long idle unverified |
 | Wi-Fi | qcacld/ICNSS and stock WLAN firmware/config | Device r13 initializes matching stock board data automatically; saved network reconnects before login after one reboot; DHCP, DNS, Wi-Fi-bound IP/hostname pings and certificate-validated HTTPS pass; both-band scanning works; stock MAC provisioning, suspend, and sustained throughput unverified |
 | LTE/mobile data | QRTR, IPA/RMNET, signed modem firmware | Automatic IPA creates rmnet_ipa0 and ModemManager exposes the Qualcomm modem; device r11 orders D-Bus providers before clients, with supervised Polkit and ModemManager verified after one normal reboot; mobile data is user-confirmed working on 2026-10-13 after inserting a phone SIM; earlier limited/searching service used an experimental SIM with no data plan; calls, SMS and data reconnection after reboot remain unverified; see LTE-REPORT.md |
-| Speakers, microphone, headset | Vendor audio modules, DSP firmware, stock FS1801 preset, and device-specific UCM | Audio r3 fixes rough startup with interrupt scheduling; 48/44.1 kHz tests start from idle and finish on time after an audio-server restart without ALSA underruns; user confirms smooth tones and incoming Bluetooth audio; idle PCM shutdown passes; earlier route/volume-key checks pass; normal reboot with r3, extended playback and microphone/headset/call routing unverified; see AUDIO-REPORT.md |
+| Speakers, microphone, headset | Vendor audio modules, DSP firmware, stock FS1801 preset, and device-specific UCM | Audio r3 fixes rough playback startup with interrupt scheduling; tones, incoming Bluetooth audio and volume keys pass. UCM r4 adds the physical mono 48 kHz microphone; direct/desktop acoustic tests and a native video with an audio track pass. The user confirms clear voice recording/playback before and after reboot. Headset/call routing, extended quality and system suspend remain unverified; see AUDIO-REPORT.md |
 | Bluetooth | Stock WCN3988 firmware, vendor power, GENI UART/H4, BNEP/HIDP/UHID | Kernel #9/device r15 initialize the radio automatically with the stock address; paired BLE RAPOO mouse reconnects after reboot and the user confirms pointer/clicks; laptop PAN DHCP and Bluetooth-bound DNS/HTTPS pass; incoming audio is audible and smooth with audio r3; classic HIDP socket tests pass, but physical classic HID, Bluetooth transmission/headsets, power saving and suspend remain unverified |
-| GPU acceleration | Downstream KGSL and stock GPU firmware | Turnip KGSL verifies 4096 compute results as root and tablet; 300 Vulkan graphics frames pass using CPU-copy X11 presentation; user confirmed rotating cube on Xfce with #8; physical-device Vulkan 1.0.354; desktop GL remains llvmpipe |
-| Cameras | Matching stock CamX HAL runs in isolated Bionic userspace | Rear HI846 and front GC5035 pass 640×480 preview and full-size capture at 3264×2448 / 2592×1944; r2 corrects chroma order; native colors, full-photo saving and preview restart pass; both complete native photo paths also pass after reboot; cancellation and cleanup pass; recording, generic V4L2/PipeWire access and suspend remain unverified; see CAMERA-REPORT.md |
+| GPU acceleration | Downstream KGSL and stock GPU firmware | Turnip KGSL verifies 4096 compute results as root and tablet; physical-device Vulkan 1.0.354; private Mesa 26.0.8-r3 Zink verifies shader readback, GBM sharing and native Wayland presentation; Plasma KWin and GNOME Shell use Adreno after reboot, with physical wake, rotation, input and custom-camera checks; GNOME GTK apps pass after selecting OpenGL; native GTK Vulkan, a Firefox GPU fault, Plasma rotation artifacts above 100% scaling and long stability remain unresolved; Xfce retains software GL; see GPU-REPORT.md |
+| Cameras | Matching stock CamX HAL runs in isolated Bionic userspace | Rear HI846 and front GC5035 pass 640×480 preview and full-size capture at 3264×2448 / 2592×1944 in the custom app. The live GNOME PipeWire adapter exposes both standard 640×480/10 fps sources and starts automatically after reboot; the user passes standard Camera previews, orientation, colors, saving and clear video voice recording. Snapshot r1 fixes the reproduced shutter-player/photo crash sequence; eight front JPEGs and repeated rear photos with sound pass, and QR scanning is user-confirmed. Long recording stability, generic V4L2 access and suspend remain unverified; see CAMERA-REPORT.md |
 | Rotation | Downstream ADSP/SSC, Bosch bmi26x and stock factory registry | Device r16 starts read-only private registry serving and SensorProxy automatically; Xfce rotation/touch work in all four positions, startup passes one normal reboot, and patched lock-screen resizing/unlocking is user-confirmed; rotation lock control passes |
-| GPS and other sensors | Downstream QMI LOC v2 and sensor interfaces retained | Device r20 prepares GPS immediately before a requested LOC session using direct QMI; valid window fixes, raw coordinates and NMEA verified; GeoClue receives positions before and after reboot (ten satellites, HDOP 0.6 after reboot), and gathering stops when its client exits; 38 ModemManager tests pass; assisted GPS, suspend, power consumption and remaining sensors unverified; see GPS-REPORT.md |
+| GPS and other sensors | Downstream QMI LOC v2 and sensor interfaces retained | Standalone and GeoClue fixes pass, including after reboot. ModemManager r5 repairs assistance discovery/injection ordering and passes 38 upstream tests. The new client-triggered service loads orbit assistance automatically, reuses its private cache and starts after reboot without enabling GPS itself. A window test acquired a fix in 6.12 seconds; this is not a controlled cold-start or Maps latency guarantee. App delivery latency, suspend, power consumption and remaining sensors need checks; see GPS-REPORT.md |
 | Battery, charging, suspend | Stock SMB5/QG/CW2017 vendor drivers retained | Percentage and USB power reporting checked; 500 mA computer input gives about 35–38 mA net charge with the screen on and 472 mA off; growing desktop charge estimates reproduced from net power; JEITA/step charging enabled and temperature-protection bypass disabled; wall charging, full-charge termination, runtime, thermal cutoff and suspend unverified; see BATTERY-REPORT.md |
 
 The user subsequently completed installation and reported a boot loop.

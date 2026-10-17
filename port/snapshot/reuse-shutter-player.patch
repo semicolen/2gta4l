@@ -1,0 +1,29 @@
+--- a/src/widgets/camera.rs
++++ b/src/widgets/camera.rs
+@@ -488,13 +488,22 @@
+     }
+ 
+     fn play_shutter_sound(&self) {
+-        // If we don't hold a reference to it there is a condition race which
+-        // will cause the sound to play only sometimes.
++        // Reuse the player instead of destroying a media playback context
++        // while the viewfinder's renderer is active. Retaining it also keeps
++        // the sound alive until playback finishes.
++        let imp = self.imp();
++        let mut players = imp.players.borrow_mut();
++        if let Some(player) = players.as_ref() {
++            player.pause();
++            player.seek(0);
++            player.play();
++            return;
++        }
++
+         let resource = "/org/gnome/Snapshot/sounds/camera-shutter.wav";
+         let player = gtk::MediaFile::for_resource(resource);
+         player.play();
+-
+-        self.imp().players.replace(Some(player));
++        players.replace(player);
+     }
+ 
+     pub fn set_countdown(&self, countdown: u32) {

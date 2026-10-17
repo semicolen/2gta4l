@@ -12,7 +12,7 @@ parser.add_argument('--report',type=Path,default=workspace/'artifacts/rootfs-ver
 parser.add_argument('--root',type=Path)
 parser.add_argument('--ui',default='xfce4')
 args=parser.parse_args()
-build = Path('/home/pmos/sm-t505-port/work')
+build = Path('/home/ark/sm-t505-port/work')
 root = args.root or build / 'chroot_rootfs_samsung-gta4l'
 versions = list((root / 'lib/modules').iterdir())
 assert len(versions) == 1, 'Unexpected kernel module versions'
@@ -49,6 +49,72 @@ assert 'openrc' in records and 'postmarketos-base-openrc' in records
 assert 'systemd' not in records and 'postmarketos-base-systemd' not in records
 assert 'postmarketos-base-ui-audio-backend-pulseaudio' in records
 assert 'pipewire-pulse' not in records
+assert 'polkit-elogind' in records and 'polkit-elogind-libs' in records
+assert 'polkit-noelogind-libs' not in records
+if root.is_relative_to(build.parent/'ui-work'):
+    services.append('gta4l-gps-assistance')
+    assert records['gps-gta4l']=='1.0-r5' and records['modemmanager']=='1.25.95_git20261005-r5'
+    assert records['gps-assistance-gta4l']=='1.0-r0' and records['gps-assistance-gta4l-openrc']=='1.0-r0'
+    assert records['alsa-ucm-gta4l']=='1.0-r4' and records['alsa-ucm-gta4l-pulseaudio']=='1.0-r4'
+    assert (root/'usr/libexec/gta4l-gps-assistance.py').read_bytes()==(workspace/'port/gps-assistance-gta4l/gta4l-gps-assistance.py').read_bytes()
+    assert (root/'etc/init.d/gta4l-gps-assistance').read_bytes()==(workspace/'port/gps-assistance-gta4l/gta4l-gps-assistance.initd').read_bytes()
+    assert (root/'usr/share/alsa/ucm2/Qualcomm/gta4l/HiFi.conf').read_bytes()==(workspace/'port/alsa-ucm-gta4l/HiFi.conf').read_bytes()
+    if args.ui in ('gnome','gnome-mobile','plasma-mobile','plasma-desktop'):
+        assert records['camera-pipewire-gta4l']=='1.0-r0'
+        assert (root/'usr/libexec/gta4l-camera-pipewire-session').read_bytes()==(workspace/'port/camera-pipewire-gta4l/gta4l-camera-pipewire-session.py').read_bytes()
+        assert (root/'etc/wireplumber/wireplumber.conf.d/60-gta4l-camera.conf').read_bytes()==(workspace/'port/camera-pipewire-gta4l/60-gta4l-camera.conf').read_bytes()
+    if args.ui in ('gnome','gnome-mobile'):
+        import hashlib
+        assert records['snapshot']=='51.0-r1'
+        camera_audit=json.loads((workspace/'artifacts/snapshot-shutter-r1-audit.json').read_text())
+        native=next(p for p in camera_audit['packages'] if p['name']=='snapshot')
+        assert camera_audit['hardware_tested_candidate_allocated_code_and_data_identical']
+        assert hashlib.sha256((root/native['executable']).read_bytes()).hexdigest()==native['executable_sha256']
+    assert records['linux-samsung-gta4l']=='4.19.300-r10'
+    assert all(records[name]=='3.9-r4' for name in ('iio-sensor-proxy','iio-sensor-proxy-openrc','iio-sensor-proxy-udev'))
+    assert records['camera-gta4l']=='1.0-r5'
+    assert 'wayland-utils' in records
+    assert (root/'usr/bin/gta4l-camera').read_bytes()==(workspace/'port/camera-gta4l/gta4l-camera.py').read_bytes()
+    compat=json.loads((root/'etc/gta4l-ui-compat.json').read_text())
+    assert compat['ui']==args.ui and compat['polkit_provider']=='elogind'
+    if args.ui in ('plasma-mobile','plasma-desktop'):
+        assert (root/'etc/skel/.config/kcminputrc').read_bytes()==(workspace/'ui-profiles/plasma-kcminputrc').read_bytes()
+        assert (root/'etc/skel/.config/kwinrc').read_bytes()==(workspace/'ui-profiles/plasma-kwinrc').read_bytes()
+    if args.ui in ('plasma-mobile','plasma-desktop','gnome-mobile','gnome'):
+        assert (root/'etc/udev/rules.d/82-gta4l-wayland-sensors.rules').read_bytes()==(workspace/'ui-profiles/82-gta4l-wayland-sensors.rules').read_bytes()
+    if args.ui in ('gnome','gnome-mobile'):
+        assert compat['gnome_touch_calibration'] is True
+        assert compat['gnome_adreno_rendering'] is True
+        assert compat['gnome_gtk_opengl'] is True
+        wrapper=root/'usr/bin/gta4l-gnome-session'
+        assert wrapper.read_bytes()==(workspace/'ui-profiles/gta4l-gnome-session').read_bytes()
+        assert wrapper.stat().st_uid==0 and wrapper.stat().st_mode & 0o777==0o755
+        assert records['mesa-zink-kgsl-gta4l']=='26.0.8-r3'
+        assert (root/'etc/profile.d/80-gta4l-rendering.sh').read_bytes()==(workspace/'ui-profiles/gnome-rendering-profile.sh').read_bytes()
+        assert (root/'usr/bin/gta4l-zink-run').read_bytes()==(workspace/'port/mesa-zink-kgsl-gta4l/gta4l-zink-run').read_bytes()
+        assert (root/'usr/lib/gta4l-zink/lib/libgallium-26.0.8.so').is_file()
+        assert 'Exec=/usr/bin/gta4l-zink-run /usr/bin/gta4l-gnome-session' in (root/'usr/share/wayland-sessions/gnome.desktop').read_text()
+        assert 'gta4l-zink-run' not in (root/'usr/share/wayland-sessions/gnome-gta4l-software.desktop').read_text()
+        assert 'Exec=/usr/bin/gta4l-gnome-session' in (root/'usr/share/wayland-sessions/gnome-gta4l-software.desktop').read_text()
+        calibration=root/'etc/udev/rules.d/99-gta4l-gnome-touch.rules'
+        assert calibration.read_bytes()==(workspace/'ui-profiles/99-gta4l-gnome-touch.rules').read_bytes()
+        assert calibration.stat().st_uid==0 and calibration.stat().st_mode & 0o777 == 0o644
+    if args.ui=='plasma-desktop':
+        assert records['mesa-zink-kgsl-gta4l']=='26.0.8-r3'
+        assert compat['plasma_adreno_rendering'] is True
+        assert (root/'etc/profile.d/80-gta4l-rendering.sh').read_bytes()==(workspace/'ui-profiles/plasma-rendering-profile.sh').read_bytes()
+        assert (root/'etc/skel/.config/plasma-workspace/env/80-gta4l-zink.sh').read_bytes()==(workspace/'ui-profiles/plasma-zink-environment.sh').read_bytes()
+        assert (root/'usr/bin/gta4l-zink-run').read_bytes()==(workspace/'port/mesa-zink-kgsl-gta4l/gta4l-zink-run').read_bytes()
+        assert (root/'usr/lib/gta4l-zink/lib/libgallium-26.0.8.so').is_file()
+        assert 'Exec=/usr/bin/gta4l-zink-run /usr/lib/libexec/plasma-dbus-run-session-if-needed /usr/bin/startplasma-wayland' in (root/'usr/share/wayland-sessions/plasma.desktop').read_text()
+        assert 'gta4l-zink-run' not in (root/'usr/share/wayland-sessions/plasma-gta4l-software.desktop').read_text()
+        assert 'Session=/usr/share/wayland-sessions/plasma.desktop' in (root/'var/lib/sddm/state.conf').read_text()
+        sddm=next(line.split(':') for line in (root/'etc/passwd').read_text().splitlines() if line.startswith('sddm:'))
+        target=root/sddm[5].lstrip('/')/'.config/kcminputrc'
+        assert target.read_bytes()==(workspace/'ui-profiles/plasma-kcminputrc').read_bytes()
+        assert target.stat().st_uid==int(sddm[2]) and target.stat().st_gid==int(sddm[3])
+    if args.ui in ('plasma-mobile','gnome-mobile','gnome'):
+        assert not (root/'etc/runlevels/default/usb-signaller').exists()
 sessions=root/'usr/share'/('xsessions' if profile['session_type']=='x11' else 'wayland-sessions')
 session_files=sorted(str(path.relative_to(root)) for path in sessions.glob('*.desktop'))
 assert session_files,'No session descriptors for '+args.ui
@@ -100,6 +166,7 @@ finally:
         process.wait(timeout=10)
 report = dict(kernel_release=version, module_count=len(modules), modules=modules,
               ui=args.ui,
+              desktop_rendering='Adreno 610 via Zink/Turnip' if args.ui in ('plasma-desktop','gnome','gnome-mobile') else 'software',
               desktop_packages={name:records[name] for name in profile['core_packages']},
               session_descriptors=session_files,
               autoload_modules=loader, touch_initramfs_files=touch,

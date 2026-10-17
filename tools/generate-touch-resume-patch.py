@@ -5,7 +5,7 @@ import difflib
 
 workspace = Path(__file__).resolve().parents[1]
 relative = 'drivers/input/touchscreen/hxchipset/himax_platform.c'
-original = (Path('/home/pmos/sm-t505-port/kernel') / relative).read_text()
+original = (Path('/home/ark/sm-t505-port/kernel') / relative).read_text()
 start = original.index('int drm_notifier_callback(')
 old = '''#ifdef HX_CONTAINER_SPEED_UP
 \t\t\tqueue_delayed_work(ts->ts_int_workqueue,

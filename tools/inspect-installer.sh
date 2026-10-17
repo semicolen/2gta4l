@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -eu
-ROOT=/home/pmos/sm-t505-port
+ROOT=/home/ark/sm-t505-port
 mkdir -p "$ROOT/sources/recovery-installer"
 if [ ! -f "$ROOT/sources/recovery-installer/update-binary" ]; then
     curl -fL --retry 3 https://gitlab.com/postmarketos/postmarketos-android-recovery-installer/-/archive/1.0.7/postmarketos-android-recovery-installer-1.0.7.tar.gz -o "$ROOT/downloads/recovery-installer.tar.gz"

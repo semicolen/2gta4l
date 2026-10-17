@@ -4,8 +4,8 @@ from pathlib import Path
 import io
 import tarfile
 
-root = Path('/home/pmos/sm-t505-port/work/chroot_rootfs_samsung-gta4l')
-workspace = Path('/mnt/c/postmarketOS-gta4l')
+root = Path('/home/ark/sm-t505-port/work/chroot_rootfs_samsung-gta4l')
+workspace = Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os')
 names = {
     'bin/strace': root / 'usr/bin/strace',
     'lib/libdw.so.1': root / 'usr/lib/libdw.so.1',

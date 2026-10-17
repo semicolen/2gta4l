@@ -8,7 +8,7 @@ import json
 root = Path(__file__).resolve().parents[1]
 target = root / 'evidence/stock-audio'
 target.mkdir(exist_ok=True)
-image = Path('/home/pmos/sm-t505-port/stock/vendor/vendor.img')
+image = Path('/home/ark/sm-t505-port/stock/vendor/vendor.img')
 names = ['mixer_paths_qrd.xml', 'audio_platform_info_qrd.xml',
          'mixer_paths.xml', 'wt_cust_audio.xml']
 report = {}

@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-KERNEL=/home/pmos/sm-t505-port/kernel
+KERNEL=/home/ark/sm-t505-port/kernel
 echo '=== FSM sources ==='
 rg --files "$KERNEL/techpack/audio" | rg '/fsm|fs16'
 echo '=== Samsung audio DT paths ==='

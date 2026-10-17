@@ -2,7 +2,7 @@
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
-kernel = Path('/home/pmos/sm-t505-port/kernel/drivers/char/adsprpc_shared.h')
+kernel = Path('/home/ark/sm-t505-port/kernel/drivers/char/adsprpc_shared.h')
 reference = kernel.read_text()
 start = reference.index('#define remote_arg64_t')
 end = reference.index('struct fastrpc_ioctl_munmap_fd', start)

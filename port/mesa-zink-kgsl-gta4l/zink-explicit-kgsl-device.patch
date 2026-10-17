@@ -1,0 +1,18 @@
+--- a/src/gallium/drivers/zink/zink_screen.c
++++ b/src/gallium/drivers/zink/zink_screen.c
+@@ -3872,6 +3872,15 @@ zink_render_rdev(int fd, int64_t *dev_major, int64_t *dev_minor)
+ {
+    int ret = 0;
+    *dev_major = *dev_minor = -1;
++   /* The downstream display DRM node and the Turnip KGSL device use
++    * separate kernel interfaces. An explicitly selected KGSL ICD cannot
++    * match the display node through VkPhysicalDeviceDrmPropertiesEXT.
++    * Opt in only for isolated KGSL tests; normal DRM selection is intact.
++    * This changes device selection, not advertised Vulkan capabilities.
++    */
++   if (debug_get_bool_option("GTA4L_ZINK_KGSL", false))
++      return 0;
++
+ #ifdef HAVE_LIBDRM
+    struct stat stx;
+    drmDevicePtr dev;

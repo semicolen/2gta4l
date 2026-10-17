@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-BASE=/home/pmos/sm-t505-port
-WS='/mnt/c/postmarketOS-gta4l'
+BASE=/home/ark/sm-t505-port
+WS='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 NATIVE="$BASE/work/chroot_native"
 BUILD="$NATIVE/tmp/gta4l-camera-build"
 RUNTIME="$BASE/camera-development/runtime-root"

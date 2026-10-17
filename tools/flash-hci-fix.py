@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Install the already-validated, boot-only HCI update through OrangeFox."""
 from pathlib import Path
-import os
 import hashlib
 import json
 import subprocess
@@ -13,7 +12,7 @@ kind = parser.parse_args().kind
 
 root = Path(__file__).resolve().parents[1]
 evidence = root / 'evidence/diagnostic-boot-20261009'
-adb = ['adb', '-s', os.environ['GTA4L_ADB_SERIAL']]
+adb = ['adb', '-s', 'R9WNC1QG0LJ']
 report = json.loads((root / f'artifacts/{kind}-verification.json').read_text())
 package = root / f'artifacts/postmarketOS-SM-T505-OrangeFox-{kind}.zip'
 assert hashlib.sha256(package.read_bytes()).hexdigest() == report['package_sha256']
@@ -33,7 +32,7 @@ after = run('exec-out', 'head', '-c', str(report['boot_bytes']), '/dev/block/by-
 assert hashlib.sha256(after).hexdigest() == report['boot_sha256'], 'Readback failed; stay in recovery'
 run('pull', '/tmp/recovery.log', str(evidence / f'{kind}-recovery.log'))
 (evidence / f'{kind}-readback.json').write_text(json.dumps({
-    'serial': os.environ['GTA4L_ADB_SERIAL'],
+    'serial': 'R9WNC1QG0LJ',
     'boot_bytes': len(after),
     'boot_sha256': hashlib.sha256(after).hexdigest(),
     'matches_built_image': True,

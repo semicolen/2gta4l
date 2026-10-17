@@ -1,0 +1,31 @@
+pkgname=camera-pipewire-gta4l
+pkgver=1.0
+pkgrel=0
+pkgdesc="Standard PipeWire camera sources for the SM-T505 stock-HAL broker"
+url="https://postmarketos.org"
+arch="aarch64"
+license="MIT"
+options="!check"
+depends="camera-gta4l=1.0-r5 pipewire wireplumber python3"
+makedepends="pipewire-dev wayland-dev"
+source="gta4l-camera-pipewire.c gta4l-camera-pipewire-session.py
+    gta4l-camera-pipewire.desktop 60-gta4l-camera.conf"
+
+build() {
+    cc -O2 -Wall -Wextra -Werror -pthread "$srcdir/gta4l-camera-pipewire.c" \
+        -o gta4l-camera-pipewire $(pkg-config --cflags --libs libpipewire-0.3 wayland-client)
+}
+
+package() {
+    install -Dm755 gta4l-camera-pipewire "$pkgdir/usr/libexec/gta4l-camera-pipewire"
+    install -Dm755 "$srcdir/gta4l-camera-pipewire-session.py" "$pkgdir/usr/libexec/gta4l-camera-pipewire-session"
+    install -Dm644 "$srcdir/gta4l-camera-pipewire.desktop" "$pkgdir/etc/xdg/autostart/gta4l-camera-pipewire.desktop"
+    install -Dm644 "$srcdir/60-gta4l-camera.conf" "$pkgdir/etc/wireplumber/wireplumber.conf.d/60-gta4l-camera.conf"
+}
+
+sha512sums="
+e37b6c2343452d6934ba1b963300056607a111843d5b0755e9a94a90b348e8c748432d50f2e0ebac6a536f496aa9f20ce33c0293ba240d723e1b455923896fa4  gta4l-camera-pipewire.c
+e87c9b45456f8d56bc8495b29153334c9b1a1aa090555900ae87369a4d63634c3161cf0fd45ba6f7df1e860a502fe2f31a0a95676478e5cc353ba831c12777e1  gta4l-camera-pipewire-session.py
+75b6fcfd54336940025aa4245a69121ec20420e0bf41723bf1b56e0afb0876e634b13a1b251f2dc4ca7e51dd095a9a1bea5cd50bf1516a102b50f4e5459cbc38  gta4l-camera-pipewire.desktop
+db3f95e6e55256f2cdcfcde5b47434ee6f54eb794bdd1c0881bcd292a3e76f00e59dd6f30a5965040460c229589d8f007b95ba9c00971b5f01811c75ffa82967  60-gta4l-camera.conf
+"

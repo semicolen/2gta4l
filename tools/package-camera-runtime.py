@@ -5,7 +5,7 @@ import json
 import tarfile
 
 workspace = Path(__file__).resolve().parents[1]
-source = Path('/home/pmos/sm-t505-port/camera-development/runtime-root')
+source = Path('/home/ark/sm-t505-port/camera-development/runtime-root')
 out = workspace/'artifacts/camera-development'
 out.mkdir(exist_ok=True)
 archive = out/'camera-runtime-r0.tar.gz'

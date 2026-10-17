@@ -3,7 +3,7 @@
 from pathlib import Path
 import re,shutil
 workspace=Path(__file__).resolve().parents[1]
-source=Path('/home/pmos/sm-t505-port/sources/pmaports/main')
+source=Path('/home/ark/sm-t505-port/sources/pmaports/main')
 target=workspace/'ui-profiles/aports'
 for name in ('postmarketos-ui-plasma-mobile','postmarketos-ui-plasma-desktop'):
     destination=target/name

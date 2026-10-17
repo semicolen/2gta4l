@@ -3,8 +3,8 @@ from pathlib import Path
 import subprocess
 import tarfile
 
-stock = Path('/mnt/c/stock-firmware/SM-T505')
-target = Path('/home/pmos/sm-t505-port/stock')
+stock = Path('/mnt/c/Users/darya/Downloads/Samfw/SAMFW.COM_SM-T505_NEE_T505XXS8CXG1_fac')
+target = Path('/home/ark/sm-t505-port/stock')
 archive = next(stock.glob('BL_*.tar.md5'))
 with tarfile.open(archive) as tar:
     print([(m.name, m.size) for m in tar.getmembers()], flush=True)

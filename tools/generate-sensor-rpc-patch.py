@@ -3,7 +3,7 @@ import tarfile
 import difflib
 
 root = Path(__file__).resolve().parents[1]
-archive = Path('/home/pmos/sm-t505-port/downloads/hexagonrpc-da7a3742ab8d5273a281b70ee11f16fb2cb6a690.tar.gz')
+archive = Path('/home/ark/sm-t505-port/downloads/hexagonrpc-da7a3742ab8d5273a281b70ee11f16fb2cb6a690.tar.gz')
 patch = []
 replacements = {
     'libhexagonrpc/hexagonrpc.c': (

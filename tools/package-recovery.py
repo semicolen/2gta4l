@@ -24,9 +24,9 @@ with zipfile.ZipFile(a.source) as z:
     if len(names) != len(set(names)):
         raise SystemExit('Duplicate entries in source ZIP')
     original = z.read('META-INF/com/google/android/update-binary')
-    if original != Path('/home/pmos/sm-t505-port/sources/recovery-installer/update-binary').read_bytes():
+    if original != Path('/home/ark/sm-t505-port/sources/recovery-installer/update-binary').read_bytes():
         raise SystemExit('Recovery installer differs from the audited upstream source')
-    upstream = Path('/home/pmos/sm-t505-port/sources/recovery-installer')
+    upstream = Path('/home/ark/sm-t505-port/sources/recovery-installer')
     patched = {}
     for name in ['pmos_install', 'pmos_install_functions']:
         data = z.read('chroot/bin/' + name)
@@ -61,7 +61,7 @@ with zipfile.ZipFile(a.source) as z:
             if found_boot and found_loader:
                 break
     assert found_boot and found_loader, 'ZIP lacks verified kernel or module list'
-stage = Path('/home/pmos/sm-t505-port/recovery-stage')
+stage = Path('/home/ark/sm-t505-port/recovery-stage')
 meta = stage / 'META-INF/com/google/android'
 meta.mkdir(parents=True, exist_ok=True)
 (meta / 'update-binary.pmos').write_bytes(original)

@@ -1,10 +1,33 @@
-# SM-T505 downstream speaker bring-up
+# SM-T505 downstream audio
+
+## Internal microphone — 17 October 2026
+
+`alsa-ucm-gta4l` 1.0-r4 adds the physical internal microphone to the desktop
+PulseAudio card. The matching stock QRD `amic1` route uses SoundWire microphone
+channel 0, ADC1 at its stock value 10, decimator 2, and TX_CDC_DMA_TX_3 into
+MultiMedia1. Capture uses mono S16_LE at 48 kHz and unity digital capture gain.
+The shared frontend needs its complete codec route enabled during UCM probing;
+connecting only the backend caused DSP `ADSP_EBADPARAM` and rejected the card.
+Speaker routing, amplifier protection and interrupt scheduling remain intact.
+
+The installed signed packages match the local sources, and the update preserved
+the boot image and every other installed package. Both direct ALSA and desktop
+capture recorded four quiet acoustic test pulses above background noise.
+An eight-second video saved by GNOME Camera contains one video stream and one
+audio stream; decoding its audio reproduces those pulses. The user then recorded
+speech and confirmed that voice is audible and clear on playback. The source
+suspends after recording. A normal reboot preserves the physical default input,
+and the user confirms recording and clear voice playback again after logging in.
+
+The earlier speaker-only r3 configuration exposed a speaker monitor but no physical
+recording source, which explains silent camera videos. Headset and call-microphone
+routing remain unverified.
 
 The tablet plays speaker audio through ALSA and Xfce's PulseAudio server.
 Audio release 1.0-r3 also fixes the reproduced rough playback startup. The
 user confirms smooth startup with test tones and incoming Bluetooth audio.
-Microphone, headset/call routing, extended audio quality and suspend remain
-unverified.
+The internal microphone is verified above. Headset/call routing, extended audio
+quality and system suspend remain unverified.
 
 ## Startup timing repair — 12 October 2026
 

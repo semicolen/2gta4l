@@ -9,7 +9,7 @@ workspace = Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser()
 parser.add_argument('--report',type=Path,default=workspace/'artifacts/initramfs-verification.json')
 args=parser.parse_args()
-root = Path('/home/pmos/sm-t505-port/work/chroot_rootfs_samsung-gta4l')
+root = Path('/home/ark/sm-t505-port/work/chroot_rootfs_samsung-gta4l')
 data = gzip.decompress((root / 'boot/initramfs').read_bytes())
 entries = {}
 offset = 0

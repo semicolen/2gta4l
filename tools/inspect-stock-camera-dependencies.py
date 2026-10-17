@@ -8,7 +8,7 @@ import subprocess
 root = Path(__file__).resolve().parents[1]
 target = root / 'evidence/stock-camera'
 target.mkdir(exist_ok=True)
-image = Path('/home/pmos/sm-t505-port/stock/vendor/vendor.img')
+image = Path('/home/ark/sm-t505-port/stock/vendor/vendor.img')
 selected = [
     '/lib64/hw/camera.qcom.so', '/lib64/hw/com.qti.chi.override.so',
     '/lib64/camera/com.qti.sensor.n19_hi846_back_txd.so',

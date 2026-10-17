@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
+ROOT=/home/ark/sm-t505-port
 cd "$ROOT/kernel"
 ls -la techpack
 rg -n 'techpack|CONFIG_DRM_MSM|KBUILD_EXTMOD|external|qcacld|audio-kernel|display-drivers' AndroidKernel.mk Android.mk Kbuild Makefile arch/arm64/configs/gta4l_eur_open_defconfig drivers/gpu/drm/msm/Kconfig || true

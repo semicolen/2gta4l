@@ -1,0 +1,235 @@
+Handle each LOC orbit-injection chunk indication in either response order.
+Preserve bounds, fallback and serial transfer; never advance before acknowledgement.
+
+--- a/src/mm-shared-qmi.c
++++ b/src/mm-shared-qmi.c
+@@ -7251,6 +7251,10 @@
+     guint         timeout_id;
+     goffset       i;
+     gulong        n_part;
++    gboolean      response_received;
++    gboolean      indication_received;
++    GError       *indication_error;
++    void        (*next_part) (GTask *task);
+ } InjectAssistanceDataContext;
+ 
+ static void
+@@ -7263,6 +7267,7 @@
+             g_signal_handler_disconnect (ctx->client, ctx->indication_id);
+         g_object_unref (ctx->client);
+     }
++    g_clear_error (&ctx->indication_error);
+     g_free (ctx->data);
+     g_slice_free (InjectAssistanceDataContext, ctx);
+ }
+@@ -7289,6 +7294,77 @@
+     return G_SOURCE_REMOVE;
+ }
+ 
++/* The command callback retains the task until its reply is validated.
++ * An early indication only caches its result; it cannot advance the transfer. */
++static void
++loc_injection_clear_wait (InjectAssistanceDataContext *ctx)
++{
++    if (ctx->timeout_id) {
++        g_source_remove (ctx->timeout_id);
++        ctx->timeout_id = 0;
++    }
++    if (ctx->indication_id) {
++        g_signal_handler_disconnect (ctx->client, ctx->indication_id);
++        ctx->indication_id = 0;
++    }
++}
++
++static void
++loc_injection_consume (GTask *task)
++{
++    InjectAssistanceDataContext *ctx = g_task_get_task_data (task);
++
++    if (!ctx->response_received || !ctx->indication_received)
++        return;
++    loc_injection_clear_wait (ctx);
++    if (ctx->indication_error) {
++        g_task_return_error (task, g_steal_pointer (&ctx->indication_error));
++        g_object_unref (task);
++        return;
++    }
++    ctx->next_part (task);
++}
++
++static void
++loc_injection_indicated (GTask *task, GError *error)
++{
++    InjectAssistanceDataContext *ctx = g_task_get_task_data (task);
++
++    if (ctx->indication_received) {
++        g_clear_error (&error);
++        return;
++    }
++    ctx->indication_received = TRUE;
++    ctx->indication_error = error;
++    loc_injection_consume (task);
++}
++
++static void
++loc_injection_acknowledged (GTask *task)
++{
++    InjectAssistanceDataContext *ctx = g_task_get_task_data (task);
++
++    ctx->response_received = TRUE;
++    if (!ctx->indication_received)
++        ctx->timeout_id = g_timeout_add_seconds (10,
++            (GSourceFunc)loc_location_inject_data_indication_timed_out, task);
++    loc_injection_consume (task);
++}
++
++static void
++loc_injection_subscribe (GTask *task, const gchar *signal, GCallback callback,
++                        void (*next_part) (GTask *task))
++{
++    InjectAssistanceDataContext *ctx = g_task_get_task_data (task);
++
++    g_assert (!ctx->indication_id && !ctx->timeout_id);
++    ctx->response_received = FALSE;
++    ctx->indication_received = FALSE;
++    g_clear_error (&ctx->indication_error);
++    ctx->next_part = next_part;
++    ctx->indication_id = g_signal_connect (ctx->client, signal, callback, task);
++}
++
+ static void inject_xtra_data_next (GTask *task);
+ 
+ static void
+@@ -7296,7 +7372,6 @@
+                                              QmiIndicationLocInjectXtraDataOutput *output,
+                                              GTask                                *task)
+ {
+-    InjectAssistanceDataContext *ctx;
+     QmiLocIndicationStatus       status;
+     GError                      *error = NULL;
+ 
+@@ -7308,21 +7383,7 @@
+     mm_error_from_qmi_loc_indication_status (status, &error);
+ 
+ out:
+-    if (error) {
+-        g_task_return_error (task, error);
+-        g_object_unref (task);
+-        return;
+-    }
+-
+-    ctx = g_task_get_task_data (task);
+-
+-    g_source_remove (ctx->timeout_id);
+-    ctx->timeout_id = 0;
+-
+-    g_signal_handler_disconnect (ctx->client, ctx->indication_id);
+-    ctx->indication_id = 0;
+-
+-    inject_xtra_data_next (task);
++    loc_injection_indicated (task, error);
+ }
+ 
+ static void
+@@ -7331,10 +7392,7 @@
+                         GTask        *task)
+ {
+     QmiMessageLocInjectXtraDataOutput *output;
+-    InjectAssistanceDataContext       *ctx;
+     GError                            *error = NULL;
+-
+-    ctx = g_task_get_task_data (task);
+ 
+     output = qmi_client_loc_inject_xtra_data_finish (client, res, &error);
+     if (!output || !qmi_message_loc_inject_xtra_data_output_get_result (output, &error)) {
+@@ -7343,15 +7401,7 @@
+         goto out;
+     }
+ 
+-    /* The task ownership is shared between signal and timeout; the one which is
+-     * scheduled first will cancel the other. */
+-    ctx->indication_id = g_signal_connect (ctx->client,
+-                                           "inject-xtra-data",
+-                                           G_CALLBACK (loc_location_inject_xtra_data_indication_cb),
+-                                           task);
+-    ctx->timeout_id = g_timeout_add_seconds (10,
+-                                             (GSourceFunc)loc_location_inject_data_indication_timed_out,
+-                                             task);
++    loc_injection_acknowledged (task);
+ out:
+     if (output)
+         qmi_message_loc_inject_xtra_data_output_unref (output);
+@@ -7405,6 +7455,8 @@
+ 
+     mm_obj_dbg (self, "injecting xtra data: %" G_GSIZE_FORMAT " bytes (%u/%u)",
+                 count, (guint) ctx->n_part, (guint) ctx->total_parts);
++    loc_injection_subscribe (task, "inject-xtra-data",
++        G_CALLBACK (loc_location_inject_xtra_data_indication_cb), inject_xtra_data_next);
+     qmi_client_loc_inject_xtra_data (ctx->client,
+                                      input,
+                                      10,
+@@ -7438,7 +7490,6 @@
+                                                          QmiIndicationLocInjectPredictedOrbitsDataOutput *output,
+                                                          GTask                                           *task)
+ {
+-    InjectAssistanceDataContext *ctx;
+     QmiLocIndicationStatus       status;
+     GError                      *error = NULL;
+ 
+@@ -7450,21 +7501,7 @@
+     mm_error_from_qmi_loc_indication_status (status, &error);
+ 
+ out:
+-    if (error) {
+-        g_task_return_error (task, error);
+-        g_object_unref (task);
+-        return;
+-    }
+-
+-    ctx = g_task_get_task_data (task);
+-
+-    g_source_remove (ctx->timeout_id);
+-    ctx->timeout_id = 0;
+-
+-    g_signal_handler_disconnect (ctx->client, ctx->indication_id);
+-    ctx->indication_id = 0;
+-
+-    inject_assistance_data_next (task);
++    loc_injection_indicated (task, error);
+ }
+ 
+ static void
+@@ -7483,6 +7520,7 @@
+         /* Try with InjectXtra if InjectPredictedOrbits is unsupported */
+         if (g_error_matches (error, QMI_PROTOCOL_ERROR, QMI_PROTOCOL_ERROR_NOT_SUPPORTED)) {
+             g_error_free (error);
++            loc_injection_clear_wait (ctx);
+             inject_xtra_data (task);
+             goto out;
+         }
+@@ -7492,15 +7530,7 @@
+         goto out;
+     }
+ 
+-    /* The task ownership is shared between signal and timeout; the one which is
+-     * scheduled first will cancel the other. */
+-    ctx->indication_id = g_signal_connect (ctx->client,
+-                                           "inject-predicted-orbits-data",
+-                                           G_CALLBACK (loc_location_inject_predicted_orbits_data_indication_cb),
+-                                           task);
+-    ctx->timeout_id = g_timeout_add_seconds (10,
+-                                             (GSourceFunc)loc_location_inject_data_indication_timed_out,
+-                                             task);
++    loc_injection_acknowledged (task);
+ out:
+     if (output)
+         qmi_message_loc_inject_predicted_orbits_data_output_unref (output);
+@@ -7558,6 +7588,8 @@
+ 
+     mm_obj_dbg (self, "injecting predicted orbits data: %" G_GSIZE_FORMAT " bytes (%u/%u)",
+                 count, (guint) ctx->n_part, (guint) ctx->total_parts);
++    loc_injection_subscribe (task, "inject-predicted-orbits-data",
++        G_CALLBACK (loc_location_inject_predicted_orbits_data_indication_cb), inject_assistance_data_next);
+     qmi_client_loc_inject_predicted_orbits_data (ctx->client,
+                                                  input,
+                                                  10,

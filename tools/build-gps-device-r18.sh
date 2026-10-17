@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 cp "$ROOT/work/chroot_buildroot_aarch64/home/pmos/build/src/ModemManager-7f0bf17ab518cd78925cf7e53cc0d5c42f88b41a/output/meson-logs/testlog.txt" "$WORKSPACE/logs/modemmanager-gps-tests.log"
 python3 "$WORKSPACE/tools/configure-port.py"
 bash "$WORKSPACE/tools/pmb.sh" shutdown

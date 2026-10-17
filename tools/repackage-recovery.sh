@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Reuse the locally built kernel/rootfs while updating only recovery scripts.
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 python3 "$WORKSPACE/tools/check-recovery-preflight.py"
 python3 "$WORKSPACE/tools/test-recovery-installer.py"
 bash "$WORKSPACE/tools/test-recovery-image.sh"

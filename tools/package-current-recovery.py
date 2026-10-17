@@ -2,7 +2,7 @@
 """Combine the current local rootfs with the exact hardware-tested #9 boot."""
 from pathlib import Path
 import copy,hashlib,io,json,struct,subprocess,tarfile,tempfile,zipfile
-workspace=Path(__file__).resolve().parents[1];base=Path('/home/pmos/sm-t505-port')
+workspace=Path(__file__).resolve().parents[1];base=Path('/home/ark/sm-t505-port')
 artifacts=workspace/'artifacts';root=base/'work/chroot_rootfs_samsung-gta4l'
 stable=(artifacts/'boot-bluetooth-fix.img').read_bytes()
 stable_hash='4d4c3e929d9c87fc807840e13ae8fee946eea99d0aaeb2a5a3605491e8a98663'

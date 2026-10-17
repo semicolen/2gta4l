@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
+ROOT=/home/ark/sm-t505-port
 SRC="$ROOT/sources/polkit-inspect"
 mkdir -p "$SRC"
 if [ ! -f "$SRC/polkit-127.tar.gz" ]; then

@@ -1,0 +1,18 @@
+#!/sbin/openrc-run
+description="Load orbit assistance while a location client requests GNSS"
+supervisor=supervise-daemon
+command=/usr/bin/python3
+command_args="/usr/libexec/gta4l-gps-assistance.py"
+respawn_delay=5
+respawn_max=5
+respawn_period=60
+output_log=/var/log/gta4l/gps-private/assistance.log
+error_log=/var/log/gta4l/gps-private/assistance.log
+
+depend() {
+    need dbus modemmanager
+}
+
+start_pre() {
+    checkpath --directory --mode 0700 --owner root:root /var/log/gta4l/gps-private
+}

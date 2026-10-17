@@ -4,21 +4,23 @@ Local port based on [semicolen/2gta4l](https://github.com/semicolen/2gta4l/tree/
 using the matching stock `T505XXS8CXG1` firmware and
 [OrangeFox SM-T505](https://github.com/semicolen/orangefoxrecovery-sm505).
 See [PORT-STATUS.md](PORT-STATUS.md) for the current validation boundary.
-See [CURRENT-BUILD.md](CURRENT-BUILD.md) for the refreshed local OrangeFox r4
-clean-install candidate and checksums. Its rootfs has not been flashed.
-
-This branch publishes the current source recipes, patches, runtime helpers,
-OrangeFox installer code and hardware reports. The original three package
-directories now live under `port/` alongside the additional device packages.
-Build receipts and pinned upstream revisions are under `validation/`.
-Compiled images, stock firmware/runtime archives, credentials and raw device
-captures are local inputs/outputs. See [BUILD-SETUP.md](BUILD-SETUP.md) before
-using the developer scripts in a new workspace.
+See [UI-BUILDS.md](UI-BUILDS.md) for the local desktop installers and
+[UI-QC.md](UI-QC.md) for clean-install and tablet checks. The older r4 snapshot
+is documented separately in [CURRENT-BUILD.md](CURRENT-BUILD.md).
 
 **This is bring-up work. Full device functionality is not established by a
-successful build.** Automatic graphical login, Xfce and calibrated touch work.
-An isolated Turnip KGSL driver passes hardware Vulkan compute and graphics tests;
-desktop OpenGL remains software rendered. Bounded display wake tests pass.
+successful build.** Graphical login, Xfce and calibrated touch work.
+An isolated Turnip KGSL driver passes hardware Vulkan compute and graphics tests.
+Plasma Desktop also passes accelerated KWin composition through Zink on Adreno
+610 after reboot, with physical wake, rotation, touch, keyboard and camera checks.
+GNOME Desktop also passes an accelerated compositor reboot, rotation, input,
+display wake, Wi-Fi, audio and custom-camera checks after the kernel #10 and
+SensorProxy startup fixes. Refreshed clean installers are tracked in UI-QC.md.
+The fresh GNOME install also needs the GTK OpenGL session correction: after
+reboot, Settings, Files, Calculator and Terminal are user-confirmed working.
+Native GTK Vulkan presentation and a separately observed Firefox GPU fault
+remain unresolved; see [GPU-REPORT.md](GPU-REPORT.md).
+Xfce retains software OpenGL. Bounded display wake tests pass.
 Wi-Fi initializes and reconnects automatically, with DHCP, DNS, ping, and
 certificate-validated HTTPS verified after reboot. Speaker playback now passes
 ALSA and desktop audio tests. Audio r3 fixes rough startup with interrupt
@@ -32,10 +34,19 @@ requests pass after reboot, with gathering stopped when the client closes.
 Rear/front camera preview and lens switching work at 640×480,
 including preview rotation in all four positions. Camera r2 captures full-size
 3264×2448 rear and 2592×1944 front photos and corrects chroma order. Native
-photo saving, preview restart and correct colors pass. Mobile data is
+photo saving, preview restart and correct colors pass. Camera r5 adds verified
+native Wayland orientation handling for Plasma Desktop and GNOME Desktop.
+The live GNOME build also exposes both cameras through standard PipeWire sources
+at 640×480, 10 fps. Standard Camera previews, colors, orientation and saving pass.
+Snapshot r1 fixes the reproduced shutter-sound/photo crash sequence; eight front
+photos and repeated rear photos with sound pass. QR scanning is user-confirmed.
+Audio UCM r4 adds a physical microphone: saved-video audio and clear recorded
+speech pass, including after reboot. The automatic GPS orbit-assistance service
+also starts after reboot; app-level location latency still needs a final check.
+These additions are not in the historical r13 installers. Mobile data is
 user-confirmed working with a phone SIM; see [LTE-REPORT.md](LTE-REPORT.md).
-Camera recording, microphone/headset routing, charging, suspend and remaining
-sensors need further work.
+Long camera-recording stability, headset/call routing, charging, suspend and
+remaining sensors need further work.
 
 ## Merge info ##
 This repo is not eligible to be merged to Nura (Formerly known as postmarket os) due to the ai policy seen [here](https://docs.nura.eco/policies-and-processes/development/ai-policy.html).
@@ -45,17 +56,20 @@ Do not intentionally upload it, merge it or contribute code with the fact stated
 
 - `port/`: downstream device, kernel and local firmware APKBUILDs.
 - `tools/`: WSL setup, firmware extraction, build and verification helpers.
-- `validation/`: public packaging receipts and pinned source revisions.
 - `evidence/`: private local ADB/stock observations; excluded from Git.
 - `firmware-local/`: locally extracted proprietary firmware; excluded from Git.
 - `artifacts/`: generated images, source manifest and backups; excluded from Git.
-- Native WSL sources and build chroots: `/home/pmos/sm-t505-port`.
+- Native WSL sources and build chroots: `/home/ark/sm-t505-port`.
 
 Kernel: Linux 4.19.300, pinned LineageOS commit
 `381a5549ee66fa751f632ee0840f5631274209ee`. Vendor display, camera, GPU, charger,
 thermal, storage, touchscreen and networking drivers are retained. Loadable
 audio and WLAN modules are included in the kernel package. The desktop starts
-with Xfce/OpenRC and DRM modesetting; desktop OpenGL uses software rendering.
+with OpenRC; Xfce uses software-rendered DRM modesetting, while Plasma Desktop
+and the refreshed GNOME profiles select the private GPU runtime. GNOME Mobile
+still requires its own tablet QC.
+Kernel/userspace API backports and their validation are described in
+[KERNEL-COMPATIBILITY.md](KERNEL-COMPATIBILITY.md).
 See [GPU-REPORT.md](GPU-REPORT.md) and
 [DISPLAY-RESUME-REPORT.md](DISPLAY-RESUME-REPORT.md) for bounded hardware results.
 See [WIFI-REPORT.md](WIFI-REPORT.md) for Wi-Fi startup and authorization evidence.
@@ -74,10 +88,10 @@ firmware directory is read only. No cloud builds are used.
 The helper scripts currently use this machine's paths. Run from PowerShell:
 
 ```powershell
-wsl -d Ubuntu -u root --exec bash '/mnt/c/postmarketOS-gta4l/tools/pmb.sh' status
-wsl -d Ubuntu --exec python3 '/mnt/c/postmarketOS-gta4l/tools/configure-port.py'
-wsl -d Ubuntu -u root --exec bash '/mnt/c/postmarketOS-gta4l/tools/sync-port.sh' build --lax linux-samsung-gta4l --arch aarch64
-wsl -d Ubuntu -u root --exec bash '/mnt/c/postmarketOS-gta4l/tools/build-image.sh'
+wsl -d Ubuntu -u root --exec bash '/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os/tools/pmb.sh' status
+wsl -d Ubuntu --exec python3 '/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os/tools/configure-port.py'
+wsl -d Ubuntu -u root --exec bash '/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os/tools/sync-port.sh' build --lax linux-samsung-gta4l --arch aarch64
+wsl -d Ubuntu -u root --exec bash '/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os/tools/build-image.sh'
 ```
 
 `--as-root` is confined to this dedicated pmbootstrap workspace and avoids
@@ -101,7 +115,7 @@ a phone SIM. Persistent modem storage writes remain unverified.
 
 ## Installation target
 
-The selected target is **internal userdata + boot through OrangeFox**. (Via this OrangeFox recovery [here](https://github.com/semicolen/orangefoxrecovery-sm505)) This
+The selected target is **internal userdata + boot through OrangeFox**. This
 replaces existing Android user data. Recovery, dynamic super partitions,
 bootloader, modem partitions and device calibration partitions are not
 installation targets. The device package disables pmbootstrap fastboot
@@ -150,9 +164,12 @@ the display active transition; its first physical DPMS wake test passes. Rebuild
 kernel and guarded update locally with:
 
 ```powershell
-wsl -d Ubuntu -u root --exec bash '/mnt/c/postmarketOS-gta4l/tools/build-plane-resume-kernel-fix.sh'
-wsl -d Ubuntu -u root --exec python3 '/mnt/c/postmarketOS-gta4l/tools/build-plane-resume-boot-update.py'
+wsl -d Ubuntu -u root --exec bash '/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os/tools/build-plane-resume-kernel-fix.sh'
+wsl -d Ubuntu -u root --exec python3 '/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os/tools/build-plane-resume-boot-update.py'
 ```
+
+See [UI-BUILDS.md](UI-BUILDS.md) for the six separate WSL-built desktop installer
+candidates and their verification limits.
 
 The current tablet runs kernel #9 (`4.19.300-r8`) and device r21. It retains
 the display repairs and adds guarded WCN3988 initialization, BNEP/HIDP modules,
@@ -160,8 +177,6 @@ and HIDRAW. Its first normal boot and Bluetooth PAN internet test pass. Build
 the Bluetooth kernel package set and boot-only update locally with:
 
 ```powershell
-wsl -d Ubuntu -u root --exec bash '/mnt/c/postmarketOS-gta4l/tools/build-bluetooth-port-update.sh'
-wsl -d Ubuntu -u root --exec python3 '/mnt/c/postmarketOS-gta4l/tools/build-bluetooth-boot-update.py'
+wsl -d Ubuntu -u root --exec bash '/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os/tools/build-bluetooth-port-update.sh'
+wsl -d Ubuntu -u root --exec python3 '/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os/tools/build-bluetooth-boot-update.py'
 ```
-
-See [UI-BUILDS.md](UI-BUILDS.md) for six local desktop installer candidates.

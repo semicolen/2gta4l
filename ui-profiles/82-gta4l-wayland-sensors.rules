@@ -1,0 +1,3 @@
+# Native Wayland rotation uses the sensor axes relative to the native panel.
+# The Xorg helper's 180-degree mount correction does not apply in this session.
+SUBSYSTEM=="fastrpc", KERNEL=="adsprpc-smd", ENV{ACCEL_MOUNT_MATRIX}="1,0,0;0,1,0;0,0,1"

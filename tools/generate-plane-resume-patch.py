@@ -5,7 +5,7 @@ import difflib
 
 workspace = Path(__file__).resolve().parents[1]
 relative = 'techpack/display/msm/sde/sde_plane.c'
-original = (Path('/home/pmos/sm-t505-port/kernel') / relative).read_text()
+original = (Path('/home/ark/sm-t505-port/kernel') / relative).read_text()
 old = '''\t/* force reprogramming of all the parameters, if the flag is set */
 \tif (psde->revalidate) {
 '''

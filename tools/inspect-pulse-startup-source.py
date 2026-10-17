@@ -2,7 +2,7 @@
 """Save official PulseAudio 17.0 source for the downstream timing audit."""
 from pathlib import Path
 import hashlib,io,tarfile,urllib.request
-root=Path('/home/pmos/sm-t505-port/sources/pulseaudio-startup-audit')
+root=Path('/home/ark/sm-t505-port/sources/pulseaudio-startup-audit')
 root.mkdir(parents=True,exist_ok=True)
 archive=root/'pulseaudio-v17.0.tar.bz2'
 if not archive.exists():

@@ -8,7 +8,7 @@ import tarfile
 root = Path(__file__).resolve().parents[1]
 target = root / 'firmware-local/sensor-files'
 target.mkdir(parents=True, exist_ok=True)
-vendor = Path('/home/pmos/sm-t505-port/stock/vendor/vendor.img')
+vendor = Path('/home/ark/sm-t505-port/stock/vendor/vendor.img')
 persist = root / 'artifacts/backups/20261009-214946/persist.img'
 assert persist.is_file()
 

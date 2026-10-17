@@ -3,7 +3,7 @@
 from pathlib import Path
 import json,re,subprocess,sys
 workspace=Path(__file__).resolve().parents[1]
-base=Path('/home/pmos/sm-t505-port')
+base=Path('/home/ark/sm-t505-port')
 tools=workspace/'tools'
 login=(workspace/'artifacts/initial-login.txt').read_text()
 build_password=re.search(r'^Password: (.+)$',login,re.M)[1]

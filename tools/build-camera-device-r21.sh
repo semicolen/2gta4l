@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WS='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WS='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 bash "$WS/tools/build-camera-package.sh"
 bash "$WS/tools/sync-port.sh" build --lax device-samsung-gta4l --arch aarch64 --force
 cp "$ROOT/work/log.txt" "$WS/logs/camera-device-r21-build.log"

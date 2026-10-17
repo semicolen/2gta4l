@@ -1,12 +1,12 @@
 pkgname=camera-gta4l
 pkgver=1.0
-pkgrel=2
+pkgrel=5
 pkgdesc="SM-T505 stock HAL camera preview and photo capture"
 url="https://postmarketos.org"
 arch="aarch64"
 license="proprietary"
 options="!strip !check !archcheck !tracedeps"
-depends="python3 py3-gobject3 gtk+3.0 firmware-samsung-gta4l"
+depends="python3 py3-gobject3 gtk+3.0 wayland-utils firmware-samsung-gta4l"
 makedepends="clang lld"
 subpackages="$pkgname-openrc"
 source="gta4l-camera-runtime-T505XXS8CXG1.tar.gz
@@ -41,12 +41,12 @@ package() {
 }
 
 sha512sums="
-f083749508c7485ca52e38b15b41dbe41b1bfff75b7753b100a85e9a04d52ef8458281acad1f1e7fd515f5f4314bfaa0047bd3bc0026b0932ea90e06d3118a5a  gta4l-camera-runtime-T505XXS8CXG1.tar.gz
+c1876d6721db021758a499078d2130ece20ce01a1c2dc3e0e941ca65640807ad4d243b529c05361a0bb2463e032ad695bbc5212b9443b0583bc1c94ad4adfbda  gta4l-camera-runtime-T505XXS8CXG1.tar.gz
 7b71899259476bc83181545c91e883133c9198bfd152b3cbbd8f2ce3603fff40175e1fd78aa89aed46ede31de51091586f55e94c555d19097d5f2599e98b26f1  camera-hal-enumerate.c
 20840f6e56bb1c7049a261f4bec1956d2306472c9e0bac889851eb66804fa695af3d3fb22b44d1d654d160fe080fec4e45deee3178f72893741e504a37f0d47d  camera-buffer.h
 ca5297348dc17e004fd775ff063747df6fcbf432e29678b8d2e7352c78127eaa17e84926eca4db176a0a263a5e2193f66d179120be6fa2f5d5e6feeecf5031ff  gta4l-camera-run
 6e1cb30e922748d1bc928cd0964ea9758da06fdd9d53ac8cda68826e0b5b52b19b71e4f2a4f5516b2616dad74d8c1ce1c70f4d120ddcac944ba67d673ea10a5a  gta4l-camera-service.py
-ad2b241daef47055ef4600430cf77bdb279a30c182b99609dc62f4dcfc1c16d37bc0d120a54b0e019de2728cc58fd3d0a9fae0e1d9e74d554dc73f5cef0bb91e  gta4l-camera.py
+96960ed302ffdc3cd18815f31b3a1484edabc20996381b1f6a1c61c3e7a744f757058d68af677ca5bba7b8c29062591927def40f7dc5657628fc6ff1884289a5  gta4l-camera.py
 f19d1097ddabec9a11497afcbeacf700941f03f74dde6592027515688f133dca404ba5f9daed8652f8c9ac43782d27fbed7c1dfdec46f590a193eaa88bc60e9f  gta4l-camera.desktop
 4318b2bf6c354d1d71bcb7a2d35be75f01ce3f560d85b09a3aa0b803e6d8b0156ae4b1c32c0767e8d66de40e835363423ba0fe7d693f02b564de8e8677380c40  gta4l-camera.initd
 "

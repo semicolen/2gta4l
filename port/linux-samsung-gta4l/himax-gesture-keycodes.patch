@@ -1,0 +1,20 @@
+Map vendor double-finger gestures away from Linux mouse-button key codes.
+The four gestures retain distinct function-key events; touch and wake remain intact.
+
+--- a/drivers/input/touchscreen/hxchipset/himax_common.h
++++ b/drivers/input/touchscreen/hxchipset/himax_common.h
+@@ -285,10 +285,10 @@
+ #define HX_KEY_V_RIGHT				269
+ #define HX_KEY_F_RIGHT				270
+ #define HX_KEY_F_LEFT					271
+-#define HX_KEY_DF_UP					272
+-#define HX_KEY_DF_DOWN				273
+-#define HX_KEY_DF_LEFT				274
+-#define HX_KEY_DF_RIGHT				275
++#define HX_KEY_DF_UP					KEY_F13
++#define HX_KEY_DF_DOWN				KEY_F14
++#define HX_KEY_DF_LEFT				KEY_F15
++#define HX_KEY_DF_RIGHT				KEY_F16
+ #endif
+ 
+ #if defined(HX_FIX_TOUCH_INFO)

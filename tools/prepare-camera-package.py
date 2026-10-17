@@ -2,7 +2,7 @@
 from pathlib import Path
 import hashlib,json,shutil,tarfile
 root=Path(__file__).resolve().parents[1]
-runtime=Path('/home/pmos/sm-t505-port/camera-development/runtime-root')
+runtime=Path('/home/ark/sm-t505-port/camera-development/runtime-root')
 out=root/'firmware-local'
 archive=out/'gta4l-camera-runtime-T505XXS8CXG1.tar.gz'
 files={}

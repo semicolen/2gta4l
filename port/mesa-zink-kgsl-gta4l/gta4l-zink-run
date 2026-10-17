@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+test "$#" -gt 0 || { echo 'Usage: gta4l-zink-run COMMAND [ARGS...]' >&2; exit 2; }
+test -r /dev/kgsl-3d0
+test -r /usr/share/gta4l-kgsl/freedreno_icd.aarch64.json
+unset LIBGL_ALWAYS_SOFTWARE D3D_ALWAYS_SOFTWARE QT_QUICK_BACKEND
+export VK_DRIVER_FILES=/usr/share/gta4l-kgsl/freedreno_icd.aarch64.json
+export GALLIUM_DRIVER=zink MESA_LOADER_DRIVER_OVERRIDE=zink GTA4L_ZINK_KGSL=1
+# Kopper's native Vulkan Wayland swapchain crashes on this downstream stack.
+# The DRI image path renders and presents through the tested dma-buf interface.
+export LIBGL_KOPPER_DISABLE="${LIBGL_KOPPER_DISABLE:-true}"
+export LIBGL_DRIVERS_PATH=/usr/lib/gta4l-zink/lib/dri
+export LD_LIBRARY_PATH="/usr/lib/gta4l-zink/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+exec "$@"

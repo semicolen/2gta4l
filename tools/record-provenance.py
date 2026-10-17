@@ -6,8 +6,8 @@ import subprocess
 import re
 import shutil
 
-root = Path('/home/pmos/sm-t505-port')
-workspace = Path('/mnt/c/postmarketOS-gta4l')
+root = Path('/home/ark/sm-t505-port')
+workspace = Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os')
 report = {'device': 'SM-T505', 'stock_version': 'T505XXS8CXG1',
           'kernel_commit': '381a5549ee66fa751f632ee0840f5631274209ee',
           'runtime_verified': False, 'build_host': 'WSL Ubuntu', 'sources': {}}

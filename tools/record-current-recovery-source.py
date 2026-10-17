@@ -1,7 +1,7 @@
 """Mark a completed local source ZIP; packaging requires this exact hash."""
 from pathlib import Path
 import hashlib,json,zipfile
-base=Path('/home/pmos/sm-t505-port');workspace=Path(__file__).resolve().parents[1]
+base=Path('/home/ark/sm-t505-port');workspace=Path(__file__).resolve().parents[1]
 source=base/'work/chroot_buildroot_aarch64/var/lib/postmarketos-android-recovery-installer/pmos-samsung-gta4l.zip'
 with zipfile.ZipFile(source) as archive:
     assert len(archive.namelist())==len(set(archive.namelist()))

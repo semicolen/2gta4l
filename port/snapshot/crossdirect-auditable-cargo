@@ -1,0 +1,24 @@
+#!/bin/sh
+# SPDX-License-Identifier: MIT
+# crossdirect's ordinary cargo wrapper does not recognize the auditable command.
+set -eu
+if [ "${1:-}" != auditable ]; then
+    exec /native/usr/lib/crossdirect/aarch64/cargo "$@"
+fi
+shift
+operation=${1:?Missing cargo operation}
+shift
+case "$operation" in build) ;; *) echo "Unsupported auditable operation" >&2; exit 2 ;; esac
+native_version=$(LD_LIBRARY_PATH=/native/lib:/native/usr/lib /native/usr/bin/rustc -V)
+target_version=$(/usr/bin/rustc -V)
+[ "$native_version" = "$target_version" ] || { echo "Rust compiler versions differ" >&2; exit 1; }
+triplet=$(/usr/bin/rustc -vV | sed -n 's/^host: //p')
+case "$triplet" in aarch64-alpine-linux-musl|aarch64-unknown-linux-musl) ;; *) echo "Unexpected Rust target: $triplet" >&2; exit 1 ;; esac
+export RUSTC=/native/usr/lib/crossdirect/aarch64/rustc
+export CARGO_BUILD_TARGET=$triplet
+/usr/bin/cargo auditable "$operation" --target="$triplet" "$@"
+# Meson expects its final executable directly under the release directory.
+# Leave the earlier compilation cache intact and copy only the finished binary.
+target_dir=${CARGO_TARGET_DIR:?Meson must supply a target directory}
+mkdir -p "$target_dir/release"
+cp "$target_dir/$triplet/release/snapshot" "$target_dir/release/snapshot"

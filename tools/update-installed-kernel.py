@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Keep installed APKs and /boot consistent with the verified HCI boot image."""
 from pathlib import Path
-import os
 import hashlib
 import json
 import struct
@@ -16,7 +15,7 @@ args = parser.parse_args()
 
 root = Path(__file__).resolve().parents[1]
 evidence = root / 'evidence/diagnostic-boot-20261009'
-adb = ['adb', '-s', os.environ['GTA4L_ADB_SERIAL']]
+adb = ['adb', '-s', 'R9WNC1QG0LJ']
 report = json.loads((root / f'artifacts/{args.kind}-verification.json').read_text())
 
 def run(*args, **kwargs):

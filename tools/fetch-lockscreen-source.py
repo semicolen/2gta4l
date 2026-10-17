@@ -5,7 +5,7 @@ import re
 import tarfile
 import urllib.request
 
-base = Path('/home/pmos/sm-t505-port')
+base = Path('/home/ark/sm-t505-port')
 folder = base/'sources/lockscreen-inspect'
 folder.mkdir(parents=True, exist_ok=True)
 recipe = urllib.request.urlopen('https://raw.githubusercontent.com/alpinelinux/aports/master/community/xfce4-screensaver/APKBUILD', timeout=30).read().decode()

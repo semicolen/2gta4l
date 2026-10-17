@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Package one unmounted local UI rootfs with the tested kernel #9 boot."""
+"""Package one unmounted local UI rootfs with the tested kernel #11 boot."""
 from pathlib import Path
 import argparse,hashlib,json,os,shutil,struct,subprocess,sys,tarfile,tempfile,zipfile
+from ui_build_recipe import PACKAGE_REVISION, PACKAGING_SCHEMA, fingerprint, tested_kernel
 workspace=Path(__file__).resolve().parents[1]
-base=Path('/home/pmos/sm-t505-port')
+base=Path('/home/ark/sm-t505-port')
 parser=argparse.ArgumentParser()
 parser.add_argument('--ui',required=True)
 parser.add_argument('--root',type=Path,required=True)
@@ -16,9 +17,10 @@ assert root.is_relative_to(base/'ui-work') and root.name=='chroot_rootfs_samsung
 mounts=[line.split()[4] for line in Path('/proc/self/mountinfo').read_text().splitlines()]
 assert not any(path==str(root) or path.startswith(str(root)+'/') for path in mounts)
 artifacts=workspace/'artifacts/ui-builds'
-stable=(workspace/'artifacts/boot-current.img').read_bytes()
+boot_path,kernel=tested_kernel(workspace)
+stable=boot_path.read_bytes()
 boot_hash=hashlib.sha256(stable).hexdigest()
-assert boot_hash=='4d4c3e929d9c87fc807840e13ae8fee946eea99d0aaeb2a5a3605491e8a98663'
+assert boot_hash==kernel['boot_sha256']
 assert stable[:8]==b'ANDROID!' and struct.unpack_from('<I',stable,40)[0]==2
 ks,_,rs=struct.unpack_from('<3I',stable,8)
 page=struct.unpack_from('<I',stable,36)[0]
@@ -29,7 +31,7 @@ dtb_offset=ramdisk_offset+align(rs)
 dtb_size=struct.unpack_from('<I',stable,1648)[0]
 assert (root/'boot/vmlinuz').read_bytes()==stable[page:page+ks]
 assert (root/'boot/dtbs/qcom/gta4l.dtb').read_bytes()==stable[dtb_offset:dtb_offset+dtb_size]
-modules=json.loads((workspace/'artifacts/bluetooth-fix-verification.json').read_text())['modules_sha256']
+modules=kernel['modules_sha256']
 assert len(modules)==37
 for name,digest in modules.items():assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest,name
 (root/'boot/boot.img').write_bytes(stable)
@@ -38,9 +40,14 @@ records={}
 for section in (root/'lib/apk/db/installed').read_text().split('\n\n'):
     values=dict(line.split(':',1) for line in section.splitlines() if ':' in line)
     if 'P' in values:records[values['P']]=values['V']
-expected={'device-samsung-gta4l':'1-r23','linux-samsung-gta4l':'4.19.300-r8',
-          'camera-gta4l':'1.0-r2','gps-gta4l':'1.0-r3','alsa-ucm-gta4l':'1.0-r3',
-          'alsa-ucm-gta4l-pulseaudio':'1.0-r3','modemmanager':'1.25.95_git20261005-r3'}
+expected={'device-samsung-gta4l':'1-r23','linux-samsung-gta4l':'4.19.300-r10',
+          'camera-gta4l':'1.0-r5','gps-gta4l':'1.0-r5','alsa-ucm-gta4l':'1.0-r4',
+          'alsa-ucm-gta4l-pulseaudio':'1.0-r4','modemmanager':'1.25.95_git20261005-r5',
+          'gps-assistance-gta4l':'1.0-r0','gps-assistance-gta4l-openrc':'1.0-r0',
+          'iio-sensor-proxy':'3.9-r4','iio-sensor-proxy-openrc':'3.9-r4','iio-sensor-proxy-udev':'3.9-r4'}
+if args.ui in ('plasma-desktop','gnome','gnome-mobile'):expected['mesa-zink-kgsl-gta4l']='26.0.8-r3'
+if args.ui in ('plasma-mobile','plasma-desktop','gnome','gnome-mobile'):expected['camera-pipewire-gta4l']='1.0-r0'
+if args.ui in ('gnome','gnome-mobile'):expected['snapshot']='51.0-r1'
 assert all(records.get(name)==version for name,version in expected.items())
 assert profiles[args.ui]['ui_package'] in records
 root_report=json.loads(args.root_report.read_text())
@@ -60,7 +67,7 @@ if profiles[args.ui]['session_type']=='wayland':
         if line and not line.startswith('#'):
             assert line in (root/'etc/environment').read_text()
             assert 'export '+line in (root/'etc/profile.d/80-gta4l-rendering.sh').read_text()
-    root_report['ui_overlay_sha256']={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in overlay_paths}
+    root_report.setdefault('ui_overlay_sha256',{}).update({name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in overlay_paths})
     args.root_report.write_text(json.dumps(root_report,indent=2)+'\n')
 for name,digest in root_report.get('ui_overlay_sha256',{}).items():
     assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest,name
@@ -77,7 +84,7 @@ assert keys,'Package-update trust keys missing'
 template_ready=json.loads((workspace/'artifacts/current-recovery-source-ready.json').read_text())
 template=Path(template_ready['source'])
 with template.open('rb') as stream:assert hashlib.file_digest(stream,'sha256').hexdigest()==template_ready['sha256']
-output=artifacts/f'postmarketOS-SM-T505-OrangeFox-{args.ui}-r5.zip'
+output=artifacts/f'postmarketOS-SM-T505-OrangeFox-{args.ui}-r{PACKAGE_REVISION}.zip'
 with tempfile.TemporaryDirectory(prefix='gta4l-ui-'+args.ui+'-',dir=base) as temporary:
     temporary=Path(temporary)
     archive=temporary/'rootfs.tar.gz'
@@ -127,8 +134,8 @@ with tempfile.TemporaryDirectory(prefix='gta4l-ui-'+args.ui+'-',dir=base) as tem
     print('VERIFYING_INSTALLER_AND_CRC '+args.ui,flush=True)
     native_output=temporary/'candidate.zip'
     subprocess.run([sys.executable,str(workspace/'tools/package-recovery.py'),str(intermediate),str(native_output),
-                    '--expected-boot',str(workspace/'artifacts/boot-current.img'),'--rootfs-report',str(args.root_report),
-                    '--report',str(installer_report),'--package-revision','5'],check=True)
+                    '--expected-boot',str(boot_path),'--rootfs-report',str(args.root_report),
+                    '--report',str(installer_report),'--package-revision',str(PACKAGE_REVISION)],check=True)
     print('COPYING_VERIFIED_INSTALLER '+args.ui,flush=True)
     partial=output.with_suffix('.zip.partial')
     shutil.copyfile(native_output,partial)
@@ -136,9 +143,10 @@ with tempfile.TemporaryDirectory(prefix='gta4l-ui-'+args.ui+'-',dir=base) as tem
     partial.replace(output)
 report={'ui':args.ui,'name':profiles[args.ui]['name'],'build_host':'WSL Ubuntu',
         'package':output.name,'bytes':output.stat().st_size,'sha256':None,
-        'boot_sha256':boot_hash,'boot_bytes':len(stable),'kernel_release':9,'device_release':23,
+        'boot_sha256':boot_hash,'boot_bytes':len(stable),'kernel_release':11,'device_release':23,
         'embedded_modules_verified':37,'embedded_apk_database_verified':True,
-        'packaging_schema':2,'apk_signing_keys_verified':keys,
+        'packaging_schema':PACKAGING_SCHEMA,'package_revision':PACKAGE_REVISION,
+        'recipe_sha256':fingerprint(workspace,args.ui),'apk_signing_keys_verified':keys,
         'selected_packages':{name:records[name] for name in expected},
         'ui_packages':{name:version for name,version in records.items() if name.startswith('postmarketos-ui-')},
         'session_type':profiles[args.ui]['session_type'],'display_manager':profiles[args.ui]['display_manager'],
@@ -146,7 +154,7 @@ report={'ui':args.ui,'name':profiles[args.ui]['name'],'build_host':'WSL Ubuntu',
         'session_descriptors':root_report['session_descriptors'],
         'ui_overlay_sha256':root_report.get('ui_overlay_sha256',{}),
         'audio_backend':'PulseAudio with the tested internal-card interrupt policy',
-        'desktop_rendering':'software','formats_userdata':True,
+        'desktop_rendering':root_report['desktop_rendering'],'formats_userdata':True,
         'rootfs_runtime_verified':False,'installer_flashing_verified':False,
         'preserves_partitions':['recovery','dtbo','super','modem','EFS','persist','bootloader'],
         'source_template_sha256':template_ready['sha256']}

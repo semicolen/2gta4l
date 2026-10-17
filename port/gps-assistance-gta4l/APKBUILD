@@ -1,0 +1,21 @@
+pkgname=gps-assistance-gta4l
+pkgver=1.0
+pkgrel=0
+pkgdesc="On-demand orbit assistance for the SM-T505 GNSS receiver"
+url="https://postmarketos.org"
+arch="aarch64"
+license="MIT"
+options="!check"
+depends="gps-gta4l=1.0-r5 python3 py3-dbus py3-gobject3"
+subpackages="$pkgname-openrc"
+source="gta4l-gps-assistance.py gta4l-gps-assistance.initd"
+
+package() {
+    install -Dm755 "$srcdir/gta4l-gps-assistance.py" "$pkgdir/usr/libexec/gta4l-gps-assistance.py"
+    install -Dm755 "$srcdir/gta4l-gps-assistance.initd" "$pkgdir/etc/init.d/gta4l-gps-assistance"
+}
+
+sha512sums="
+7a6f8aea99ba034b866fdf717455d2627fcaeae913eb218c1240b21c0f4ac55b4ae61926ab63050addc1c6277fd6e78deb41cbc0cd8df5941917a3229be55fa9  gta4l-gps-assistance.py
+534e1985808bcfb2d329fa66b2df4f1f44fa8a3e7950e943e135c785a9b836d06a78e800d5d6eba3700a8373754a01471ff854a47f05682c79b57d9e3cc493dc  gta4l-gps-assistance.initd
+"

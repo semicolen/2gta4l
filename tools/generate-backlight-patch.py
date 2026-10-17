@@ -5,7 +5,7 @@ import difflib
 
 workspace = Path(__file__).resolve().parents[1]
 relative = 'techpack/display/msm/dsi/dsi_panel.c'
-source = Path('/home/pmos/sm-t505-port/kernel') / relative
+source = Path('/home/ark/sm-t505-port/kernel') / relative
 original = source.read_text()
 old = '''\trc = mipi_dsi_dcs_set_display_brightness(dsi, bl_lvl);
 

@@ -2,7 +2,7 @@
 maintainer="Achill Gilgenast <achill@achill.org>"
 pkgname=modemmanager
 pkgver=1.25.95_git20261005
-pkgrel=3
+pkgrel=5
 _commit=7f0bf17ab518cd78925cf7e53cc0d5c42f88b41a
 pkgdesc="ModemManager library"
 url="https://www.freedesktop.org/wiki/Software/ModemManager"
@@ -48,6 +48,8 @@ source="https://gitlab.freedesktop.org/mobile-broadband/ModemManager/-/archive/$
 
 	0001-intel-XMM7360-fix-big-endian-handling-of-ASN-integer.patch
 	gta4l-gps-request-unlock.patch
+	loc-assistance-discovery-order.patch
+	loc-assistance-injection-order.patch
 	"
 #builddir="$srcdir"/ModemManager-$pkgver
 builddir="$srcdir"/ModemManager-$_commit
@@ -101,4 +103,6 @@ e049eecc104c989f516402ca7c21e3374c152e3840cf05c34ac91bc8e3305c83b53693bc0964f657
 6e234cebcdec6d1afbca164ee5c13c96f7132ef31231d5c043cc5750ebe99e362a384d0463874b3c1c30799b433e0d3286add03af13c97fa406b4b5d2b78880c  modemmanager.initd
 f06e9b89acab5b61c5965658d62551b0f168066384674f7c4dd56feb6f811c82c640470e634e32d8c4ef62290588cf974aa5f213e5c67e797a06d33e61fa24ec  0001-intel-XMM7360-fix-big-endian-handling-of-ASN-integer.patch
 bb154897623de4c42fb48ef3b5658e1d1a5295ec0833927c2d37456e81b48fdfd396338b7eadb5f0adf50c14403c31d0d4aebb3575020c7dc245b1e41cfc9840  gta4l-gps-request-unlock.patch
+38870dc8584d023a4ca6765453cbfd0572d38f891e9dc61c8792d1e9c5190564f31121f56500f6b5d1d6d5eb9a584be9cd7612ec448f51a49d056f8ca6755b4b  loc-assistance-discovery-order.patch
+fdd4bec51354dfcb5beec327f2e8de0426219ec71e1c1db7fa4798ebf5bdf251e517b3895ecfcfa11d6f18f1c04dfc054e33a11c838a64e16ab03c0dba57b0ba  loc-assistance-injection-order.patch
 "

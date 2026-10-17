@@ -1,0 +1,77 @@
+# Contributor: Thomas Aldrian <aldrian.thom@proton.me>
+maintainer="team/gnome <achill@achill.org>"
+pkgname=snapshot
+pkgver=51.0
+pkgrel=1
+pkgdesc="Take pictures and videos"
+url="https://gitlab.gnome.org/GNOME/snapshot"
+arch="all"
+license="GPL-3.0-or-later"
+makedepends="
+	cargo
+	cargo-auditable
+	desktop-file-utils
+	glib-dev
+	gst-plugins-bad-dev
+	gst-plugins-base-dev
+	gstreamer-dev
+	gtk4.0-dev
+	lcms2-dev
+	libadwaita-dev
+	libglycin-gtk4-dev
+	libseccomp-dev
+	meson
+	"
+depends="
+	glycin-image-rs
+	gst-plugin-pipewire
+	gst-plugins-bad
+	gst-plugins-good
+	gst-plugins-rs-gtk4
+	gst-plugins-ugly
+	pipewire
+	pipewire-spa-libcamera
+	"
+subpackages="$pkgname-lang"
+source="https://download.gnome.org/sources/snapshot/${pkgver%%.*}/snapshot-$pkgver.tar.xz
+	cargo-auditable.patch
+	rustix.patch
+	reuse-shutter-player.patch
+	crossdirect-auditable-cargo
+	"
+options="net" # cargo fetch for rustix update
+
+prepare() {
+	default_prepare
+
+	mv -v .cargo/config.toml .cargo/config.toml.temp
+	cargo vendor --locked
+	mv -v .cargo/config.toml.temp .cargo/config.toml
+}
+
+build() {
+	if [ "${PMB_CROSS:-}" = crossdirect ]; then
+		mkdir -p "$srcdir/cargo-crossdirect"
+		install -m755 "$srcdir/crossdirect-auditable-cargo" "$srcdir/cargo-crossdirect/cargo"
+		export PATH="$srcdir/cargo-crossdirect:$PATH"
+	fi
+	abuild-meson \
+		. output
+	meson compile -C output
+}
+
+check() {
+	cargo test
+}
+
+package() {
+	DESTDIR="$pkgdir" meson install --no-rebuild -C output
+}
+
+sha512sums="
+49a1cf498f63227168599305c393f34e38f7f9a461262c1bdf08449d005cfca7c44d563fe7863e100a6da7152767cc066901c944f392ee6393778806f9e48f0b  snapshot-51.0.tar.xz
+236fdfe1f2c91ce4d24e9823c1d9d9448171f10065d4608ce0a0c9a003d48666dff98f458980aa1567ecb090c75be754de25fd845ad330d4d8fea2b20aed1d7a  cargo-auditable.patch
+184259b7c8a007ea3d319dc36e877d0d4e0ca19fdca8d28adb83f9fdef28b8da8c37b06e5fca6bfecffa7ef428b733633b602d10337f86ce233651e16ace952b  rustix.patch
+32998a03b2f86dffa719a34341f5830c4bfd7ae556219f59b320da1644cde2cbbc2e7b9b8363ca6b6b5a5e68fe738386b2c403580336707df62c19f6ed276412  reuse-shutter-player.patch
+b602ebfb5bff3f9c0e8e5e85c306dcfd841f6a991c43c2c51f1825415b6414278454fa4f4067ae6b37a81b25dab7d29d75a4f693f7054a17f41e21418ddca904  crossdirect-auditable-cargo
+"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Native GTK camera preview and photo saving for the SM-T505 stock HAL."""
-import argparse, json, os, queue, socket, threading, time
+import argparse, json, os, queue, re, socket, subprocess, threading, time
 from datetime import datetime
 from pathlib import Path
 import gi
@@ -15,6 +15,7 @@ class Camera(Gtk.Window):
         self.current_camera=None; self.last_identity=None; self.last_frame=None
         self.preview_camera=None; self.status={}
         self.taking_photo=False; self.handled_photo_id=None; self.notice=None
+        self.wayland_angle=None; self.output_monitor_stop=threading.Event()
         self.connect('destroy',self.close_camera)
         box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=12)
         box.set_border_width(12); self.add(box)
@@ -34,6 +35,8 @@ class Camera(Gtk.Window):
         self.save.set_sensitive(False); self.save.connect('clicked',self.take_photo)
         box.pack_start(self.save,False,False,0)
         threading.Thread(target=self.worker,daemon=True).start()
+        if os.environ.get('WAYLAND_DISPLAY'):
+            threading.Thread(target=self.monitor_output,daemon=True).start()
         GLib.timeout_add(200,self.refresh)
 
     def select(self,name):
@@ -67,7 +70,33 @@ class Camera(Gtk.Window):
         except (OSError,ValueError) as error:
             GLib.idle_add(self.label.set_text,'Camera unavailable: '+str(error))
 
+    def read_output_angle(self):
+        # Query the actual output transform rather than physical sensor readings,
+        # so preview and saved photos also follow a compositor rotation lock.
+        try:
+            result=subprocess.run(['wayland-info','--interface','wl_output'],
+                capture_output=True,text=True,timeout=2,check=True)
+            for output in result.stdout.split("interface: 'wl_output'")[1:]:
+                if not re.search(r'^\s*name: DSI-1\s*$',output,re.M): continue
+                transform=re.search(r'output_transform:\s*(normal|90|180|270)(?:\D|$)',output)
+                if transform:
+                    degrees=0 if transform[1]=='normal' else int(transform[1])
+                    # Native portrait is a 180-degree output transform on this
+                    # panel. Camera buffers retain their factory sensor axes.
+                    self.wayland_angle=(180+degrees)%360
+                    return
+        except (OSError,subprocess.SubprocessError): pass
+
+    def monitor_output(self):
+        while not self.output_monitor_stop.is_set():
+            self.read_output_angle()
+            self.output_monitor_stop.wait(1)
+
     def rotation(self):
+        if self.wayland_angle is not None:
+            base=90 if self.current_camera=='rear' else 270
+            extra=self.wayland_angle if self.current_camera=='rear' else -self.wayland_angle
+            return (base+extra)%360
         try:
             state=json.loads((Path.home()/'.cache/gta4l-rotation/status.json').read_text())
             orientation=state.get('applied','normal')
@@ -81,6 +110,9 @@ class Camera(Gtk.Window):
     def refresh(self):
         if self.closed: return False
         if self.taking_photo: return True
+        # A completed photo process intentionally exits. Until photo-done has
+        # restarted preview, that exit is not an unexpected camera failure.
+        if self.status.get('mode')=='photo': return True
         if not self.current_camera: return True
         if self.status.get('camera')!=self.current_camera: return True
         if self.status.get('exit_status') is not None:
@@ -110,6 +142,7 @@ class Camera(Gtk.Window):
 
     def take_photo(self,_button):
         if self.last_frame is None or self.preview_camera!=self.current_camera: return
+        if os.environ.get('WAYLAND_DISPLAY'): self.read_output_angle()
         self.taking_photo=True
         self.photo_camera=self.current_camera; self.photo_angle=self.rotation()
         self.save.set_sensitive(False)
@@ -145,6 +178,7 @@ class Camera(Gtk.Window):
 
     def close_camera(self,_window):
         self.closed=True
+        self.output_monitor_stop.set()
         Gtk.main_quit()
 
 arguments=argparse.ArgumentParser()

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y python3 git sudo openssl ca-certificates ripgrep lz4 file xz-utils bzip2 unzip zip curl qemu-user qemu-user-binfmt binfmt-support kpartx mtools e2fsprogs

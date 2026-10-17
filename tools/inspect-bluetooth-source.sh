@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-ROOT=/home/pmos/sm-t505-port
+ROOT=/home/ark/sm-t505-port
 KERNEL="$ROOT/kernel"
 echo '=== Kernel QCA UART startup ==='
 rg -n -C 7 'qca_setup|qca_power|WCN3990|qca_set_speed|qca_init' "$KERNEL/drivers/bluetooth/hci_qca.c" | tail -n 200

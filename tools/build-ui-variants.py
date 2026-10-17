@@ -2,8 +2,10 @@
 """Assemble isolated desktop rootfs/OrangeFox candidates locally in WSL."""
 from pathlib import Path
 import argparse,configparser,hashlib,json,os,re,shutil,struct,subprocess,sys,tarfile
+from apply_ui_compat import apply
+from ui_build_recipe import PACKAGE_REVISION, PACKAGING_SCHEMA, fingerprint, tested_kernel
 workspace=Path(__file__).resolve().parents[1]
-base=Path('/home/pmos/sm-t505-port')
+base=Path('/home/ark/sm-t505-port')
 tools=workspace/'tools'
 parser=argparse.ArgumentParser()
 parser.add_argument('--ui',choices=('xfce4','plasma-mobile','plasma-desktop','gnome-mobile','gnome','sxmo-de-sway'))
@@ -17,10 +19,8 @@ assert re.search(r'^User: tablet$',login,re.M)
 output=workspace/'artifacts/ui-builds'
 output.mkdir(parents=True,exist_ok=True)
 logs=workspace/'logs/ui-builds';logs.mkdir(parents=True,exist_ok=True)
-stable=workspace/'artifacts/boot-current.img'
-boot=json.loads((workspace/'artifacts/boot-current-verification.json').read_text())
-assert hashlib.sha256(stable.read_bytes()).hexdigest()==boot['sha256']=='4d4c3e929d9c87fc807840e13ae8fee946eea99d0aaeb2a5a3605491e8a98663'
-manifest=json.loads((workspace/'artifacts/bluetooth-fix-verification.json').read_text())['modules_sha256']
+stable,boot=tested_kernel(workspace)
+manifest=boot['modules_sha256']
 assert len(manifest)==37
 def step(ui,title,command):
     print(ui+': '+title,flush=True)
@@ -30,7 +30,8 @@ def step(ui,title,command):
 def ready(path):
     if not path.exists():return False
     data=json.loads(path.read_text())
-    if data.get('packaging_schema')!=2:return False
+    if data.get('packaging_schema')!=PACKAGING_SCHEMA:return False
+    if data.get('recipe_sha256')!=fingerprint(workspace,data['ui']):return False
     zip_path=output/data['package']
     if not zip_path.is_file() or zip_path.stat().st_size!=data['bytes']:return False
     with zip_path.open('rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()==data['sha256']
@@ -77,7 +78,15 @@ for ui in selected:
     cfg['pmbootstrap']['work']=str(work)
     cfg['pmbootstrap']['service_manager']='openrc'
     cfg['pmbootstrap']['ui_extras']='False'
-    cfg['pmbootstrap']['extra_packages']+=',device-samsung-gta4l-nonfree-firmware,postmarketos-base-ui-audio-backend-pulseaudio'
+    cfg['pmbootstrap']['extra_packages']+=',device-samsung-gta4l-nonfree-firmware,postmarketos-base-ui-audio-backend-pulseaudio,polkit-elogind,polkit-elogind-libs'
+    cfg['pmbootstrap']['extra_packages']+=',linux-samsung-gta4l=4.19.300-r10,iio-sensor-proxy=3.9-r4,iio-sensor-proxy-openrc=3.9-r4,iio-sensor-proxy-udev=3.9-r4'
+    cfg['pmbootstrap']['extra_packages']+=',alsa-ucm-gta4l=1.0-r4,alsa-ucm-gta4l-pulseaudio=1.0-r4,gps-gta4l=1.0-r5,modemmanager=1.25.95_git20261005-r5,gps-assistance-gta4l=1.0-r0,gps-assistance-gta4l-openrc=1.0-r0'
+    if ui in ('gnome','gnome-mobile','plasma-mobile','plasma-desktop'):
+        cfg['pmbootstrap']['extra_packages']+=',camera-pipewire-gta4l=1.0-r0'
+    if ui in ('gnome','gnome-mobile'):
+        cfg['pmbootstrap']['extra_packages']+=',snapshot=51.0-r1'
+    if ui in ('plasma-desktop','gnome','gnome-mobile'):
+        cfg['pmbootstrap']['extra_packages']+=',mesa-zink-kgsl-gta4l=26.0.8-r3'
     cfg['providers']['postmarketos-base-ui-audio-backend']='postmarketos-base-ui-audio-backend-pulseaudio'
     config=output/(ui+'-pmbootstrap.cfg')
     with config.open('w') as stream:cfg.write(stream)
@@ -93,7 +102,9 @@ for ui in selected:
         values=dict(line.split(':',1) for line in section.splitlines() if ':' in line)
         if 'P' in values:records[values['P']]=values['V']
     assert records['device-samsung-gta4l']=='1-r23',records.get('device-samsung-gta4l')
-    assert records.get('alsa-ucm-gta4l-pulseaudio')=='1.0-r3'
+    assert records['linux-samsung-gta4l']=='4.19.300-r10'
+    assert all(records[name]=='3.9-r4' for name in ('iio-sensor-proxy','iio-sensor-proxy-openrc','iio-sensor-proxy-udev'))
+    assert records.get('alsa-ucm-gta4l-pulseaudio')=='1.0-r4'
     assert profile['ui_package'] in records
     forbidden=[name for name in records if name.startswith('postmarketos-ui-') and name not in
                (profile['ui_package'],profile['ui_package']+'-openrc',profile['ui_package']+'-web')]
@@ -125,6 +136,8 @@ for ui in selected:
             path.parent.mkdir(parents=True,exist_ok=True)
             shutil.copyfile(workspace/'ui-profiles/sxmo-output.conf',path)
             overlays[str(path.relative_to(root))]=hashlib.sha256(path.read_bytes()).hexdigest()
+    overlays.update(apply(root,ui,workspace))
+    step(ui,'enable on-demand GPS assistance',['chroot',str(root),'rc-update','add','gta4l-gps-assistance','default'])
     root_report=output/(ui+'-rootfs-verification.json')
     step(ui,'verify root filesystem',[sys.executable,str(tools/'verify-rootfs.py'),'--root',str(root),'--ui',ui,'--report',str(root_report)])
     verification=json.loads(root_report.read_text())

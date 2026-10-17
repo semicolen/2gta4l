@@ -3,7 +3,7 @@ from pathlib import Path
 import difflib
 
 root = Path(__file__).resolve().parents[1]
-upstream = Path('/home/pmos/sm-t505-port/sources/lockscreen-inspect')
+upstream = Path('/home/ark/sm-t505-port/sources/lockscreen-inspect')
 source = upstream/'xfce4-screensaver-4.20.2'
 package = root/'port/xfce4-screensaver'
 package.mkdir(exist_ok=True)

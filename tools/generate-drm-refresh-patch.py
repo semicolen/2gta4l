@@ -2,7 +2,7 @@
 from pathlib import Path
 import difflib
 
-source = Path('/home/pmos/sm-t505-port/kernel/drivers/gpu/drm/drm_modes.c').read_text()
+source = Path('/home/ark/sm-t505-port/kernel/drivers/gpu/drm/drm_modes.c').read_text()
 needle = '\tout->status = drm_mode_validate_driver(dev, out);'
 assert source.count(needle) == 1
 replacement = (
@@ -15,6 +15,6 @@ replacement = (
 patched = source.replace(needle, replacement)
 diff = ''.join(difflib.unified_diff(source.splitlines(True), patched.splitlines(True),
     fromfile='a/drivers/gpu/drm/drm_modes.c', tofile='b/drivers/gpu/drm/drm_modes.c'))
-target = Path('/mnt/c/postmarketOS-gta4l/port/linux-samsung-gta4l/cache-drm-refresh.patch')
+target = Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os/port/linux-samsung-gta4l/cache-drm-refresh.patch')
 target.write_text(diff, newline='\n')
 print('Generated exact source patch for DRM refresh caching')

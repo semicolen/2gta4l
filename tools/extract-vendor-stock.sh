@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT=/home/pmos/sm-t505-port
-WORKSPACE='/mnt/c/postmarketOS-gta4l'
-AP='/mnt/c/stock-firmware/SM-T505/AP_T505XXS8CXG1_T505XXS8CXG1_MQB82453393_REV00_user_low_ship_MULTI_CERT_meta_RKEY_OS12.tar.md5'
+ROOT=/home/ark/sm-t505-port
+WORKSPACE='/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os'
+AP='/mnt/c/Users/darya/Downloads/Samfw/SAMFW.COM_SM-T505_NEE_T505XXS8CXG1_fac/AP_T505XXS8CXG1_T505XXS8CXG1_MQB82453393_REV00_user_low_ship_MULTI_CERT_meta_RKEY_OS12.tar.md5'
 if [ ! -f "$ROOT/stock/super.img" ]; then
     tar -xOf "$AP" super.img.lz4 | lz4 -d - "$ROOT/stock/super.img"
 fi

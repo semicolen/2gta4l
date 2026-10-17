@@ -2,7 +2,7 @@
 # Maintainer: Natanael Copa <ncopa@alpinelinux.org>
 pkgname=iio-sensor-proxy
 pkgver=3.9
-pkgrel=3
+pkgrel=4
 pkgdesc="IIO sensors to D-Bus proxy"
 url="https://gitlab.freedesktop.org/hadess/iio-sensor-proxy"
 arch="all"
@@ -20,6 +20,7 @@ subpackages="$pkgname-openrc $pkgname-systemd $pkgname-udev $pkgname-dbg"
 source="https://gitlab.freedesktop.org/hadess/iio-sensor-proxy/-/archive/$pkgver/iio-sensor-proxy-$pkgver.tar.gz
 	iio-sensor-proxy.initd
 	downstream-fastrpc-discovery.patch
+	ssc-early-claim.patch
 	"
 
 build() {
@@ -45,4 +46,5 @@ sha512sums="
 a89c842f8db2a1a36c1c7c990434bb57fd905224459170cba2ec56e79f1272acc4cac4221937704d5e9247f957d86fde716d25e2d1ccb80d88fa643b47edfda6  iio-sensor-proxy-3.9.tar.gz
 b25df94e249ca46fe96926e5a866c20dc913fa52a2d9259fb7a3594861c6b2f246fc7fef8a21f5b021f3a71401f734ae27210137b0b1917a7daaffb5e3221f2e  iio-sensor-proxy.initd
 18b78d5136efd8c6a2392ad28a04a7d1d95b34c92505696f78cecf59d738f3a38d964115082c2fc20b5d5c2105c825b9214b70680afec4196b6b23ad99f6a43c  downstream-fastrpc-discovery.patch
+1ead12bfa4a99452c42cd98a156ae7898ef87c680d55ff6b83d4119151ad27d46fce582c12903ea07ae00ee4f530d87d0350f7462620edd5a7ae48325f3180f0  ssc-early-claim.patch
 "

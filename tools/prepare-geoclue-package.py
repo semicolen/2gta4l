@@ -5,8 +5,8 @@ import re
 import tarfile
 import urllib.request
 
-base=Path('/home/pmos/sm-t505-port')
-ws=Path('/mnt/c/postmarketOS-gta4l')
+base=Path('/home/ark/sm-t505-port')
+ws=Path('/mnt/c/Users/darya/Documents/ChatGPT/Postmarket os')
 reference=ws/'downloads/gps-integration-reference'
 recipe=(reference/'geoclue-APKBUILD').read_text()
 assert re.search(r'^pkgver=2.8.2$',recipe,re.M)

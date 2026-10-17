@@ -1,0 +1,58 @@
+Honor sensor claims received while synchronous SSC discovery dispatches D-Bus.
+Initialize deferred invocations before discovery, avoid polling an unpublished
+device, and start sampling for clients already present when initial open ends.
+
+--- a/src/iio-sensor-proxy.c
++++ b/src/iio-sensor-proxy.c
+@@ -424,6 +424,7 @@
+ 	g_hash_table_remove (ht, sender);
+ 
+ 	if (driver_type_exists (data, driver_type) &&
++	    DEVICE_FOR_TYPE(driver_type) != NULL &&
+ 	    g_hash_table_size (ht) == 0) {
+ 		SensorDevice *sensor_device = DEVICE_FOR_TYPE(driver_type);
+ 		driver_set_polling (sensor_device, FALSE);
+@@ -522,7 +523,7 @@
+ 							   NULL);
+ 		g_hash_table_insert (ht, g_strdup (sender), GUINT_TO_POINTER (watch_id));
+ 
+-		if (driver_type_exists (data, driver_type)) {
++		if (driver_type_exists (data, driver_type) && DEVICE_FOR_TYPE(driver_type) != NULL) {
+ 			SensorDevice *sensor_device = DEVICE_FOR_TYPE(driver_type);
+ 
+ 			/* No other clients for this sensor? Start it */
+@@ -742,8 +743,10 @@
+ 	/* Initialize DBus clients hash table before DBus is fully exposed */
+ 	data->client = g_udev_client_new (subsystems);
+ 
+-	for (guint i = 0; i < NUM_SENSOR_TYPES; i++)
++	for (guint i = 0; i < NUM_SENSOR_TYPES; i++) {
+ 		data->clients[i] = create_clients_hash_table ();
++		data->sensor_startup_dbus_invocations_delayed[i] = g_ptr_array_new ();
++	}
+ 
+ 	data->connection = g_object_ref (connection);
+ }
+@@ -764,8 +767,6 @@
+ 
+ 	for (i = 0; i < NUM_SENSOR_TYPES; i++) {
+ 		SensorDevice *sensor_device;
+-
+-		data->sensor_startup_dbus_invocations_delayed[i] = g_ptr_array_new ();
+ 
+ 		if (!driver_type_exists (data, i))
+ 			continue;
+@@ -779,6 +780,13 @@
+ 		}
+ 
+ 		DEVICE_FOR_TYPE(i) = sensor_device;
++
++		/* SSC discovery/open may dispatch claims before the device is ready.
++		 * Honor those clients as we do when a claimed sensor is hotplugged. */
++		if (g_hash_table_size (data->clients[i]) > 0) {
++			data->sensor_startup_dbus_event_delayed[i] = TRUE;
++			driver_set_polling (sensor_device, TRUE);
++		}
+ 	}
+ 
+ 	if (!any_sensors_left (data))

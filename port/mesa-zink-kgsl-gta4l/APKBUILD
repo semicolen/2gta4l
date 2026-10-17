@@ -1,0 +1,58 @@
+pkgname=mesa-zink-kgsl-gta4l
+pkgver=26.0.8
+pkgrel=3
+pkgdesc="Isolated Mesa Zink OpenGL candidate for SM-T505 downstream KGSL"
+url="https://www.mesa3d.org"
+arch="aarch64"
+license="MIT"
+options="!check pmb:cross-native2"
+depends="mesa-vulkan-kgsl-gta4l"
+# Tell abuild to trace and provide the libraries in the private runtime path.
+ldpath="/usr/lib/gta4l-zink/lib"
+# These private libraries cannot satisfy system applications' global loader
+# paths. Do not advertise them as replacements for the distribution's Mesa.
+somask="libEGL.so.1 libGL.so.1 libGLESv1_CM.so.1 libGLESv2.so.2 libgbm.so.1"
+makedepends_build="
+    bison flex meson python3 py3-mako py3-packaging py3-ply py3-yaml
+    wayland-dev
+"
+makedepends_host="
+    libdrm-dev elfutils-dev expat-dev vulkan-loader-dev zlib-dev zstd-dev
+    libx11-dev libxext-dev libxrandr-dev libxfixes-dev libxshmfence-dev
+    libxcb-dev xcb-util-wm-dev wayland-dev wayland-protocols xorgproto
+    spirv-tools-dev
+"
+source="
+    https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz
+    zink-explicit-kgsl-device.patch
+    gta4l-zink-run
+"
+builddir="$srcdir/mesa-$pkgver"
+
+build() {
+    abuild-meson \
+        -Dgallium-drivers=zink -Dvulkan-drivers= -Dfreedreno-kmds=kgsl \
+        -Dplatforms=x11,wayland -Dglx=dri -Degl=enabled -Dgbm=enabled \
+        -Dopengl=true -Dgles1=enabled -Dgles2=enabled -Dglvnd=disabled \
+        -Dllvm=disabled -Dvideo-codecs= -Dmicrosoft-clc=disabled \
+        -Dvalgrind=disabled -Dlibunwind=disabled -Dbuild-tests=false \
+        -Dvulkan-layers= -Dtools= . output
+    meson configure output \
+        -Dprefix=/usr/lib/gta4l-zink -Dlibdir=lib \
+        -Dbindir=bin -Dsbindir=sbin -Dlibexecdir=libexec -Dincludedir=include \
+        -Ddatadir=share -Dmandir=share/man -Dinfodir=share/info \
+        -Dlocaledir=share/locale -Dsysconfdir=etc \
+        -Dlocalstatedir=var -Dsharedstatedir=var/lib
+    ninja -C output
+}
+
+package() {
+    DESTDIR="$pkgdir" meson install -C output --no-rebuild
+    install -Dm755 "$srcdir/gta4l-zink-run" "$pkgdir/usr/bin/gta4l-zink-run"
+}
+
+sha512sums="
+3a43648a86c1bc48161a1669733b6c6a9294bf27ffb529f2ce078c2daa3b90b8c53b9cc06312197fb3a0830303d0b326d7535fb15849e6c26fad58009f3a6112  mesa-26.0.8.tar.xz
+f45fa6c6207c06089df4898776c6a371b5cb822f52d4f20a82423b6f5314b2b2e071f5d2806486b57d1de523d1c376c0c2fc564f60b6f8652abc55786894220e  zink-explicit-kgsl-device.patch
+ef6e1445d4202e4e0cf0830430bbd5fb6cdf86b017c2780a7538d1f99753b4d596fa36aa27c9c61906008f06bb48bd67bd722c800a7c809015c95e12c23562bd  gta4l-zink-run
+"

@@ -1,0 +1,151 @@
+Backport Linux v5.8 faccessat2 flags and ARM64 syscall 439.
+Source: https://github.com/torvalds/linux/tree/v5.8 (fs/open.c and syscall tables).
+Retain Samsung inode_permission2, mount checks and the old do_faccessat API.
+GLib needs AT_SYMLINK_NOFOLLOW; preserve real/effective credential semantics.
+
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -353,22 +353,14 @@
+  * We do this by temporarily clearing all FS-related capabilities and
+  * switching the fsuid/fsgid around to the real ones.
+  */
+-long do_faccessat(int dfd, const char __user *filename, int mode)
++static const struct cred *access_override_creds(void)
+ {
+ 	const struct cred *old_cred;
+ 	struct cred *override_cred;
+-	struct path path;
+-	struct inode *inode;
+-	struct vfsmount *mnt;
+-	int res;
+-	unsigned int lookup_flags = LOOKUP_FOLLOW;
+-
+-	if (mode & ~S_IRWXO)	/* where's F_OK, X_OK, W_OK, R_OK? */
+-		return -EINVAL;
+ 
+ 	override_cred = prepare_creds();
+ 	if (!override_cred)
+-		return -ENOMEM;
++		return NULL;
+ 
+ 	override_cred->fsuid = override_cred->uid;
+ 	override_cred->fsgid = override_cred->gid;
+@@ -403,6 +395,36 @@
+ 	override_cred->non_rcu = 1;
+ 
+ 	old_cred = override_creds(override_cred);
++	put_cred(override_cred);
++	return old_cred;
++}
++
++static long do_faccessat_flags(int dfd, const char __user *filename,
++			      int mode, int flags)
++{
++	const struct cred *old_cred = NULL;
++	struct path path;
++	struct inode *inode;
++	struct vfsmount *mnt;
++	int res;
++	unsigned int lookup_flags = LOOKUP_FOLLOW;
++
++	if (mode & ~S_IRWXO)	/* where's F_OK, X_OK, W_OK, R_OK? */
++		return -EINVAL;
++
++	if (flags & ~(AT_EACCESS | AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH))
++		return -EINVAL;
++	if (flags & AT_SYMLINK_NOFOLLOW)
++		lookup_flags &= ~LOOKUP_FOLLOW;
++	if (flags & AT_EMPTY_PATH)
++		lookup_flags |= LOOKUP_EMPTY;
++
++	if (!(flags & AT_EACCESS)) {
++		old_cred = access_override_creds();
++		if (!old_cred)
++			return -ENOMEM;
++	}
++
+ retry:
+ 	res = user_path_at(dfd, filename, lookup_flags, &path);
+ 	if (res)
+@@ -445,9 +467,21 @@
+ 		goto retry;
+ 	}
+ out:
+-	revert_creds(old_cred);
+-	put_cred(override_cred);
++	if (old_cred)
++		revert_creds(old_cred);
+ 	return res;
++}
++
++/* Keep the existing three-argument helper for downstream in-kernel callers. */
++long do_faccessat(int dfd, const char __user *filename, int mode)
++{
++	return do_faccessat_flags(dfd, filename, mode, 0);
++}
++
++SYSCALL_DEFINE4(faccessat2, int, dfd, const char __user *, filename, int, mode,
++		int, flags)
++{
++	return do_faccessat_flags(dfd, filename, mode, flags);
+ }
+ 
+ SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -80,6 +80,7 @@
+                                            openat should use the current
+                                            working directory. */
+ #define AT_SYMLINK_NOFOLLOW	0x100   /* Do not follow symbolic links.  */
++#define AT_EACCESS		0x200	/* Test access permitted for effective IDs.  */
+ #define AT_REMOVEDIR		0x200   /* Remove directory instead of
+                                            unlinking file.  */
+ #define AT_SYMLINK_FOLLOW	0x400   /* Follow symbolic links.  */
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -410,6 +410,8 @@
+ #endif
+ asmlinkage long sys_fallocate(int fd, int mode, loff_t offset, loff_t len);
+ asmlinkage long sys_faccessat(int dfd, const char __user *filename, int mode);
++asmlinkage long sys_faccessat2(int dfd, const char __user *filename,
++			      int mode, int flags);
+ asmlinkage long sys_chdir(const char __user *filename);
+ asmlinkage long sys_fchdir(unsigned int fd);
+ asmlinkage long sys_chroot(const char __user *filename);
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -740,9 +740,11 @@
+ __SYSCALL(__NR_pidfd_send_signal, sys_pidfd_send_signal)
+ #define __NR_pidfd_open 434
+ __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
++#define __NR_faccessat2 439
++__SYSCALL(__NR_faccessat2, sys_faccessat2)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 435
++#define __NR_syscalls 440
+ 
+ /*
+  * 32 bit systems traditionally used different
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -823,6 +823,8 @@
+ __SYSCALL(__NR_pidfd_send_signal, sys_pidfd_send_signal)
+ #define __NR_pidfd_open 434
+ __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
++#define __NR_faccessat2 439
++__SYSCALL(__NR_faccessat2, sys_faccessat2)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -49,7 +49,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ 
+-#define __NR_compat_syscalls		435
++#define __NR_compat_syscalls		440
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
