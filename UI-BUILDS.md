@@ -1,5 +1,13 @@
 # SM-T505 desktop image builds
 
+The public GNOME Desktop r15 package is derived from the verified r14 payload
+with the documented `user` / `147147` account. The local WSL helper
+`tools/package-public-gnome.py` checks the private r14 input and tested boot,
+repackages the account files, removes private state and audits every retained
+file against the original payload. It does not refresh packages or replace
+the tested driver stack. See `PUBLIC-RELEASE.md` for the public build's
+installation and validation boundary.
+
 The r14 images include audio UCM r4 (verified internal microphone),
 GPS/ModemManager r5, the on-demand GPS assistance service, and standard PipeWire
 camera sources for GNOME/KDE. GNOME also pins the targeted Snapshot shutter-player

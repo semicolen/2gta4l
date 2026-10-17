@@ -8,6 +8,12 @@ See [UI-BUILDS.md](UI-BUILDS.md) for the local desktop installers and
 [UI-QC.md](UI-QC.md) for clean-install and tablet checks. The older r4 snapshot
 is documented separately in [CURRENT-BUILD.md](CURRENT-BUILD.md).
 
+The public [GNOME Desktop r15 build](https://github.com/semicolen/2gta4l/releases/tag/sm-t505-gnome-desktop-r15)
+uses username **`user`** and password **`147147`**. See
+[PUBLIC-RELEASE.md](PUBLIC-RELEASE.md) for OrangeFox installation, checksums,
+tested features and remaining checks. It is a prerelease; installing it erases
+userdata and replaces boot.
+
 **This is bring-up work. Full device functionality is not established by a
 successful build.** Graphical login, Xfce and calibrated touch work.
 An isolated Turnip KGSL driver passes hardware Vulkan compute and graphics tests.

@@ -1,5 +1,8 @@
 # SM-T505 GNOME Desktop r14
 
+These instructions describe the private local r14 image. The public GitHub r15
+build uses `user` / `147147`; see [PUBLIC-RELEASE.md](PUBLIC-RELEASE.md).
+
 This package uses the GNOME Desktop profile tested on the tablet. GNOME Mobile
 is a separate image and has not completed tablet quality control.
 
